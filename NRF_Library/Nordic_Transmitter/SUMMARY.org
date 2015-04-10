@@ -1,0 +1,35 @@
+* Summary of Work
+
+ The *insert awesome name* is a simple to use massive scale data collection tool designed to measure individuals responses to stimulus. The responses measured include motion and galvanic skin response. Devices like these can be worn by large numbers of people at public events (concerts, speeches, etc) and provide realtime feedback on the effect various elements of the event provide to the crowd and the individual.
+ 
+ Our design is a form factor reference design including software, low power electrnics, and wearable packaging. The application tool provides multiple analysis mechanisms and the data can be exported for analysis in other tools. 
+
+** Hardware Stuff
+--Rich Sensor Set
+- Measure skin conductance
+- Digital Petentiometer (for skin calibration)
+- Accelerometer Capabilities in hardware
+--Usable
+- Undervoltage/Overvoltage lockout circuit
+- Rechargable Lithium-Ion battery
+- Wireless Tranceiver (XBee)
+- Event Marking button
+-- Upgradable
+- Programmable Microcontroller with SPI interface
+- THREE programmable buttons
+- LEDs for power, I/O (Composite colors not possible)
+- Programmable LED
+
+** Software Stuff
+- Visualize up to 20 sensors (default)
+- Scalable back-end
+- Event Marking capability for monitoring
+- Seperate CSV files for each device
+- Galvanic Calculations
+- Load old data
+- Choose what sensors to listen too
+- Choose sensors to visualize
+- Choose sensors to listen too
+- Visualize market events
+- Seperate csv files based on marker times (for data processing)
+- visualize aggregate data

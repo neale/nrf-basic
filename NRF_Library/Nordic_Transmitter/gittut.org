@@ -1,0 +1,65 @@
+* Don't GIT it yet??
+
+  Our git tutorial
+  
+  Great tutorial by Jim Weirich gitimmersion.com
+  
+  git clone https://github.com/bardec/music-collaboratory
+
+** Creating a new local git repository
+
+   Our code is currently on https://github.com/bardec/music-collaboratory
+
+   With a student email, you get 5 free repositories!
+
+** Okay now how do I not break things?
+
+   Luckily its really hard to break things.
+
+   Git keeps history of all the files, so you can always back it up after
+   you eradicate everyone's hard work and start crying.
+
+*** Branches!
+
+    branches break off from the main line of code, and then can be merged to combine everything
+
+    everyone can make their own branch with 'git checkout -b myName master'
+
+    now you can make changes at it won't affect the master branch
+
+** Okay, changes have been made
+
+   Now you are ready to add files
+
+   On your personal branch type 'git add listOfFilesHere'
+
+   now all of your files are added, but not committed
+
+   committing actually puts the code into the set
+
+   but this code is still ONLY in your local repository in your personal branch
+
+   switch to your main branch with 'git checkout master'
+
+   incorporate your changes (Note: this is will it will attempt to murder you with an axe)
+   by typing 'git merge myName'
+
+   Now the code is updated on the master branch in your local repository
+
+   Time to send it up!
+
+** What is the Third Cloud?
+
+   So to use this, always make sure your code is updated by typing 'git pull origin/master'
+
+   then type 'git push origin master'
+
+   BAM our code is uploaded
+
+** IMPORTANT NOTES
+
+   Use git pull before you do anything
+
+   git add - git commit - git checkout master - git merge
+
+   if things get scary, use the power of the internet

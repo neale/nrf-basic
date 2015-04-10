@@ -1,0 +1,1117 @@
+   1               		.file	"radioctl.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.openPort,"ax",@progbits
+  11               	.global	openPort
+  13               	openPort:
+  14               	.LFB7:
+  15               		.file 1 "radioctl.c"
+   1:radioctl.c    **** #include "radioctl.h"
+   2:radioctl.c    **** #include "spi.h"
+   3:radioctl.c    **** 
+   4:radioctl.c    **** 
+   5:radioctl.c    **** 
+   6:radioctl.c    **** 
+   7:radioctl.c    **** 
+   8:radioctl.c    **** /*************** PORT OPERATIONS ****************/
+   9:radioctl.c    **** 
+  10:radioctl.c    **** 
+  11:radioctl.c    **** void openPort()
+  12:radioctl.c    **** {
+  16               		.loc 1 12 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  13:radioctl.c    **** 	CSN_LOW;
+  22               		.loc 1 13 0
+  23 0000 8C98      		cbi 0x11,4
+  24 0002 0895      		ret
+  25               		.cfi_endproc
+  26               	.LFE7:
+  28               		.section	.text.closePort,"ax",@progbits
+  29               	.global	closePort
+  31               	closePort:
+  32               	.LFB8:
+  14:radioctl.c    **** }
+  15:radioctl.c    **** 
+  16:radioctl.c    **** void closePort()
+  17:radioctl.c    **** { 
+  33               		.loc 1 17 0
+  34               		.cfi_startproc
+  35               	/* prologue: function */
+  36               	/* frame size = 0 */
+  37               	/* stack size = 0 */
+  38               	.L__stack_usage = 0
+  18:radioctl.c    **** 	CSN_HIGH;        // sets port high
+  39               		.loc 1 18 0
+  40 0000 8C9A      		sbi 0x11,4
+  41               	.L4:
+  19:radioctl.c    **** 	while(!(CSN_PIN_R &= (1<<CSN_PIN)))    //while port is low
+  42               		.loc 1 19 0 discriminator 1
+  43 0002 8FB1      		in r24,0xf
+  44 0004 8071      		andi r24,lo8(16)
+  45 0006 8FB9      		out 0xf,r24
+  46 0008 8823      		tst r24
+  47 000a 01F0      		breq .L4
+  48               	/* epilogue start */
+  20:radioctl.c    **** 	;
+  21:radioctl.c    **** }
+  49               		.loc 1 21 0
+  50 000c 0895      		ret
+  51               		.cfi_endproc
+  52               	.LFE8:
+  54               		.section	.text.initRadioTX,"ax",@progbits
+  55               	.global	initRadioTX
+  57               	initRadioTX:
+  58               	.LFB9:
+  22:radioctl.c    **** 
+  23:radioctl.c    **** 
+  24:radioctl.c    **** 
+  25:radioctl.c    **** /*************** Radio Functions ******************/
+  26:radioctl.c    **** 
+  27:radioctl.c    **** 
+  28:radioctl.c    **** 
+  29:radioctl.c    **** 
+  30:radioctl.c    **** void initRadioTX()
+  31:radioctl.c    **** {
+  59               		.loc 1 31 0
+  60               		.cfi_startproc
+  61               	/* prologue: function */
+  62               	/* frame size = 0 */
+  63               	/* stack size = 0 */
+  64               	.L__stack_usage = 0
+  32:radioctl.c    **** 	openPort();
+  65               		.loc 1 32 0
+  66 0000 0E94 0000 		call openPort
+  67               	.LVL0:
+  33:radioctl.c    **** 	SPI_masterTransmit(0b00100000);
+  68               		.loc 1 33 0
+  69 0004 80E2      		ldi r24,lo8(32)
+  70 0006 0E94 0000 		call SPI_masterTransmit
+  71               	.LVL1:
+  34:radioctl.c    **** 	SPI_masterTransmit(0b00001010);  // sets TX mode on 
+  72               		.loc 1 34 0
+  73 000a 8AE0      		ldi r24,lo8(10)
+  74 000c 0E94 0000 		call SPI_masterTransmit
+  75               	.LVL2:
+  35:radioctl.c    **** 	closePort();
+  76               		.loc 1 35 0
+  77 0010 0C94 0000 		jmp closePort
+  78               	.LVL3:
+  79               		.cfi_endproc
+  80               	.LFE9:
+  82               		.section	.text.initRadioRX,"ax",@progbits
+  83               	.global	initRadioRX
+  85               	initRadioRX:
+  86               	.LFB10:
+  36:radioctl.c    **** }
+  37:radioctl.c    **** 
+  38:radioctl.c    **** void initRadioRX()
+  39:radioctl.c    **** {
+  87               		.loc 1 39 0
+  88               		.cfi_startproc
+  89               	/* prologue: function */
+  90               	/* frame size = 0 */
+  91               	/* stack size = 0 */
+  92               	.L__stack_usage = 0
+  40:radioctl.c    **** 	openPort(); 
+  93               		.loc 1 40 0
+  94 0000 0E94 0000 		call openPort
+  95               	.LVL4:
+  41:radioctl.c    **** 	SPI_masterTransmit(0b00100000);
+  96               		.loc 1 41 0
+  97 0004 80E2      		ldi r24,lo8(32)
+  98 0006 0E94 0000 		call SPI_masterTransmit
+  99               	.LVL5:
+  42:radioctl.c    **** 	SPI_masterTransmit(0b00001011);  // sets RX mode on 
+ 100               		.loc 1 42 0
+ 101 000a 8BE0      		ldi r24,lo8(11)
+ 102 000c 0E94 0000 		call SPI_masterTransmit
+ 103               	.LVL6:
+  43:radioctl.c    **** 	closePort();
+ 104               		.loc 1 43 0
+ 105 0010 0C94 0000 		jmp closePort
+ 106               	.LVL7:
+ 107               		.cfi_endproc
+ 108               	.LFE10:
+ 110               		.section	.text.activateFeatures,"ax",@progbits
+ 111               	.global	activateFeatures
+ 113               	activateFeatures:
+ 114               	.LFB11:
+  44:radioctl.c    **** }
+  45:radioctl.c    **** 
+  46:radioctl.c    **** 
+  47:radioctl.c    **** 
+  48:radioctl.c    **** 
+  49:radioctl.c    **** /***********************************************************
+  50:radioctl.c    ****    This function activates the following features
+  51:radioctl.c    ****      -R_RX_PL_WID
+  52:radioctl.c    ****      -W_ACK_PAYLOAD
+  53:radioctl.c    ****      -W_TX_PAYLOAD_NOACK
+  54:radioctl.c    ****    If not used, writing to these registers has no effect
+  55:radioctl.c    **** *************************************************************/
+  56:radioctl.c    **** 
+  57:radioctl.c    **** void activateFeatures()
+  58:radioctl.c    **** {
+ 115               		.loc 1 58 0
+ 116               		.cfi_startproc
+ 117               	/* prologue: function */
+ 118               	/* frame size = 0 */
+ 119               	/* stack size = 0 */
+ 120               	.L__stack_usage = 0
+  59:radioctl.c    **** 	openPort();
+ 121               		.loc 1 59 0
+ 122 0000 0E94 0000 		call openPort
+ 123               	.LVL8:
+  60:radioctl.c    **** 	SPI_masterTransmit(0b01010000);
+ 124               		.loc 1 60 0
+ 125 0004 80E5      		ldi r24,lo8(80)
+ 126 0006 0E94 0000 		call SPI_masterTransmit
+ 127               	.LVL9:
+  61:radioctl.c    **** 	SPI_masterTransmit(0x73);
+ 128               		.loc 1 61 0
+ 129 000a 83E7      		ldi r24,lo8(115)
+ 130 000c 0E94 0000 		call SPI_masterTransmit
+ 131               	.LVL10:
+  62:radioctl.c    **** 	closePort();
+ 132               		.loc 1 62 0
+ 133 0010 0C94 0000 		jmp closePort
+ 134               	.LVL11:
+ 135               		.cfi_endproc
+ 136               	.LFE11:
+ 138               		.section	.text.setRadioAddressWidth,"ax",@progbits
+ 139               	.global	setRadioAddressWidth
+ 141               	setRadioAddressWidth:
+ 142               	.LFB12:
+  63:radioctl.c    **** }
+  64:radioctl.c    **** 
+  65:radioctl.c    **** /*************************************************************/
+  66:radioctl.c    **** 
+  67:radioctl.c    **** 
+  68:radioctl.c    **** 
+  69:radioctl.c    **** 
+  70:radioctl.c    **** 
+  71:radioctl.c    **** 
+  72:radioctl.c    **** void setRadioAddressWidth(uint8_t width)
+  73:radioctl.c    **** {
+ 143               		.loc 1 73 0
+ 144               		.cfi_startproc
+ 145               	.LVL12:
+ 146 0000 CF93      		push r28
+ 147               	.LCFI0:
+ 148               		.cfi_def_cfa_offset 3
+ 149               		.cfi_offset 28, -2
+ 150               	/* prologue: function */
+ 151               	/* frame size = 0 */
+ 152               	/* stack size = 1 */
+ 153               	.L__stack_usage = 1
+ 154 0002 C82F      		mov r28,r24
+  74:radioctl.c    **** 	openPort();
+ 155               		.loc 1 74 0
+ 156 0004 0E94 0000 		call openPort
+ 157               	.LVL13:
+  75:radioctl.c    **** 	SPI_masterTransmit(0b00100011);  // setup_aw register
+ 158               		.loc 1 75 0
+ 159 0008 83E2      		ldi r24,lo8(35)
+ 160 000a 0E94 0000 		call SPI_masterTransmit
+ 161               	.LVL14:
+  76:radioctl.c    **** 	SPI_masterTransmit(width);  // sets address 
+ 162               		.loc 1 76 0
+ 163 000e 8C2F      		mov r24,r28
+ 164 0010 0E94 0000 		call SPI_masterTransmit
+ 165               	.LVL15:
+ 166               	/* epilogue start */
+  77:radioctl.c    **** 	closePort();
+  78:radioctl.c    **** }
+ 167               		.loc 1 78 0
+ 168 0014 CF91      		pop r28
+ 169               	.LVL16:
+  77:radioctl.c    **** 	closePort();
+ 170               		.loc 1 77 0
+ 171 0016 0C94 0000 		jmp closePort
+ 172               	.LVL17:
+ 173               		.cfi_endproc
+ 174               	.LFE12:
+ 176               		.section	.text.setRadioFrequency,"ax",@progbits
+ 177               	.global	setRadioFrequency
+ 179               	setRadioFrequency:
+ 180               	.LFB13:
+  79:radioctl.c    **** 
+  80:radioctl.c    **** void setRadioFrequency(uint8_t frequency)
+  81:radioctl.c    **** {
+ 181               		.loc 1 81 0
+ 182               		.cfi_startproc
+ 183               	.LVL18:
+ 184 0000 CF93      		push r28
+ 185               	.LCFI1:
+ 186               		.cfi_def_cfa_offset 3
+ 187               		.cfi_offset 28, -2
+ 188               	/* prologue: function */
+ 189               	/* frame size = 0 */
+ 190               	/* stack size = 1 */
+ 191               	.L__stack_usage = 1
+ 192 0002 C82F      		mov r28,r24
+  82:radioctl.c    **** 	openPort();
+ 193               		.loc 1 82 0
+ 194 0004 0E94 0000 		call openPort
+ 195               	.LVL19:
+  83:radioctl.c    **** 	SPI_masterTransmit(0b00100101);  // addresses radio frequency register 
+ 196               		.loc 1 83 0
+ 197 0008 85E2      		ldi r24,lo8(37)
+ 198 000a 0E94 0000 		call SPI_masterTransmit
+ 199               	.LVL20:
+  84:radioctl.c    **** 	SPI_masterTransmit(frequency);  // sets frequency 
+ 200               		.loc 1 84 0
+ 201 000e 8C2F      		mov r24,r28
+ 202 0010 0E94 0000 		call SPI_masterTransmit
+ 203               	.LVL21:
+ 204               	/* epilogue start */
+  85:radioctl.c    **** 	closePort(); 
+  86:radioctl.c    **** }
+ 205               		.loc 1 86 0
+ 206 0014 CF91      		pop r28
+ 207               	.LVL22:
+  85:radioctl.c    **** 	closePort(); 
+ 208               		.loc 1 85 0
+ 209 0016 0C94 0000 		jmp closePort
+ 210               	.LVL23:
+ 211               		.cfi_endproc
+ 212               	.LFE13:
+ 214               		.section	.text.setRadioTXAddress,"ax",@progbits
+ 215               	.global	setRadioTXAddress
+ 217               	setRadioTXAddress:
+ 218               	.LFB14:
+  87:radioctl.c    **** 
+  88:radioctl.c    **** void setRadioTXAddress(uint32_t address)
+  89:radioctl.c    **** {
+ 219               		.loc 1 89 0
+ 220               		.cfi_startproc
+ 221               	.LVL24:
+ 222 0000 CF93      		push r28
+ 223               	.LCFI2:
+ 224               		.cfi_def_cfa_offset 3
+ 225               		.cfi_offset 28, -2
+ 226 0002 DF93      		push r29
+ 227               	.LCFI3:
+ 228               		.cfi_def_cfa_offset 4
+ 229               		.cfi_offset 29, -3
+ 230 0004 00D0      		rcall .
+ 231               	.LCFI4:
+ 232               		.cfi_def_cfa_offset 6
+ 233 0006 CDB7      		in r28,__SP_L__
+ 234 0008 DEB7      		in r29,__SP_H__
+ 235               	.LCFI5:
+ 236               		.cfi_def_cfa_register 28
+ 237               	/* prologue: function */
+ 238               	/* frame size = 2 */
+ 239               	/* stack size = 4 */
+ 240               	.L__stack_usage = 4
+ 241               	.LVL25:
+  90:radioctl.c    **** 	uint8_t addLow = address;
+  91:radioctl.c    **** 	uint8_t addMid = (address >> 8);
+  92:radioctl.c    **** 	uint8_t addHigh = (addMid >> 8);
+  93:radioctl.c    **** 
+  94:radioctl.c    **** 	openPort();
+ 242               		.loc 1 94 0
+ 243 000a 6983      		std Y+1,r22
+ 244 000c 7A83      		std Y+2,r23
+ 245 000e 0E94 0000 		call openPort
+ 246               	.LVL26:
+  95:radioctl.c    **** 	SPI_masterTransmit(0x30);  // TX_ADDR register
+ 247               		.loc 1 95 0
+ 248 0012 80E3      		ldi r24,lo8(48)
+ 249 0014 0E94 0000 		call SPI_masterTransmit
+ 250               	.LVL27:
+  96:radioctl.c    **** 	SPI_masterTransmit(addLow);  // receive address for data pipe 0
+ 251               		.loc 1 96 0
+ 252 0018 6981      		ldd r22,Y+1
+ 253 001a 862F      		mov r24,r22
+ 254 001c 0E94 0000 		call SPI_masterTransmit
+ 255               	.LVL28:
+  97:radioctl.c    **** 	SPI_masterTransmit(addMid); 
+ 256               		.loc 1 97 0
+ 257 0020 7A81      		ldd r23,Y+2
+ 258 0022 872F      		mov r24,r23
+ 259 0024 0E94 0000 		call SPI_masterTransmit
+ 260               	.LVL29:
+  98:radioctl.c    **** 	SPI_masterTransmit(addHigh); 
+ 261               		.loc 1 98 0
+ 262 0028 80E0      		ldi r24,0
+ 263 002a 0E94 0000 		call SPI_masterTransmit
+ 264               	.LVL30:
+ 265               	/* epilogue start */
+  99:radioctl.c    **** 
+ 100:radioctl.c    **** 	closePort();
+ 101:radioctl.c    **** }
+ 266               		.loc 1 101 0
+ 267 002e 0F90      		pop __tmp_reg__
+ 268 0030 0F90      		pop __tmp_reg__
+ 269 0032 DF91      		pop r29
+ 270 0034 CF91      		pop r28
+ 100:radioctl.c    **** 	closePort();
+ 271               		.loc 1 100 0
+ 272 0036 0C94 0000 		jmp closePort
+ 273               	.LVL31:
+ 274               		.cfi_endproc
+ 275               	.LFE14:
+ 277               		.section	.text.setRadioRXAddress,"ax",@progbits
+ 278               	.global	setRadioRXAddress
+ 280               	setRadioRXAddress:
+ 281               	.LFB15:
+ 102:radioctl.c    **** 
+ 103:radioctl.c    **** void setRadioRXAddress(int32_t address)
+ 104:radioctl.c    **** {
+ 282               		.loc 1 104 0
+ 283               		.cfi_startproc
+ 284               	.LVL32:
+ 285 0000 CF93      		push r28
+ 286               	.LCFI6:
+ 287               		.cfi_def_cfa_offset 3
+ 288               		.cfi_offset 28, -2
+ 289 0002 DF93      		push r29
+ 290               	.LCFI7:
+ 291               		.cfi_def_cfa_offset 4
+ 292               		.cfi_offset 29, -3
+ 293 0004 00D0      		rcall .
+ 294               	.LCFI8:
+ 295               		.cfi_def_cfa_offset 6
+ 296 0006 CDB7      		in r28,__SP_L__
+ 297 0008 DEB7      		in r29,__SP_H__
+ 298               	.LCFI9:
+ 299               		.cfi_def_cfa_register 28
+ 300               	/* prologue: function */
+ 301               	/* frame size = 2 */
+ 302               	/* stack size = 4 */
+ 303               	.L__stack_usage = 4
+ 304               	.LVL33:
+ 105:radioctl.c    **** 	uint8_t addLow = address;
+ 106:radioctl.c    **** 	uint8_t addMid = (address >> 8);
+ 107:radioctl.c    **** 	uint8_t addHigh = (addMid >> 8);
+ 108:radioctl.c    **** 
+ 109:radioctl.c    **** 	openPort();
+ 305               		.loc 1 109 0
+ 306 000a 6983      		std Y+1,r22
+ 307 000c 7A83      		std Y+2,r23
+ 308 000e 0E94 0000 		call openPort
+ 309               	.LVL34:
+ 110:radioctl.c    **** 	SPI_masterTransmit(0x2A);  // RX_ADDR_P0 register
+ 310               		.loc 1 110 0
+ 311 0012 8AE2      		ldi r24,lo8(42)
+ 312 0014 0E94 0000 		call SPI_masterTransmit
+ 313               	.LVL35:
+ 111:radioctl.c    **** 	SPI_masterTransmit(addLow);  // receive address for data pipe 0
+ 314               		.loc 1 111 0
+ 315 0018 6981      		ldd r22,Y+1
+ 316 001a 862F      		mov r24,r22
+ 317 001c 0E94 0000 		call SPI_masterTransmit
+ 318               	.LVL36:
+ 112:radioctl.c    **** 	SPI_masterTransmit(addMid); 
+ 319               		.loc 1 112 0
+ 320 0020 7A81      		ldd r23,Y+2
+ 321 0022 872F      		mov r24,r23
+ 322 0024 0E94 0000 		call SPI_masterTransmit
+ 323               	.LVL37:
+ 113:radioctl.c    **** 	SPI_masterTransmit(addHigh); 
+ 324               		.loc 1 113 0
+ 325 0028 80E0      		ldi r24,0
+ 326 002a 0E94 0000 		call SPI_masterTransmit
+ 327               	.LVL38:
+ 328               	/* epilogue start */
+ 114:radioctl.c    **** 
+ 115:radioctl.c    **** 	closePort();
+ 116:radioctl.c    **** }
+ 329               		.loc 1 116 0
+ 330 002e 0F90      		pop __tmp_reg__
+ 331 0030 0F90      		pop __tmp_reg__
+ 332 0032 DF91      		pop r29
+ 333 0034 CF91      		pop r28
+ 115:radioctl.c    **** 	closePort();
+ 334               		.loc 1 115 0
+ 335 0036 0C94 0000 		jmp closePort
+ 336               	.LVL39:
+ 337               		.cfi_endproc
+ 338               	.LFE15:
+ 340               		.section	.text.setRadioRXPayloadSize,"ax",@progbits
+ 341               	.global	setRadioRXPayloadSize
+ 343               	setRadioRXPayloadSize:
+ 344               	.LFB16:
+ 117:radioctl.c    **** 
+ 118:radioctl.c    **** 
+ 119:radioctl.c    **** /***********************************************************
+ 120:radioctl.c    **** 	size is the number of bytes in PL from 1-32
+ 121:radioctl.c    **** ************************************************************/
+ 122:radioctl.c    **** 
+ 123:radioctl.c    **** 
+ 124:radioctl.c    **** void setRadioRXPayloadSize(uint8_t dataPipe, uint8_t size)
+ 125:radioctl.c    **** {
+ 345               		.loc 1 125 0
+ 346               		.cfi_startproc
+ 347               	.LVL40:
+ 348 0000 CF93      		push r28
+ 349               	.LCFI10:
+ 350               		.cfi_def_cfa_offset 3
+ 351               		.cfi_offset 28, -2
+ 352 0002 DF93      		push r29
+ 353               	.LCFI11:
+ 354               		.cfi_def_cfa_offset 4
+ 355               		.cfi_offset 29, -3
+ 356 0004 00D0      		rcall .
+ 357               	.LCFI12:
+ 358               		.cfi_def_cfa_offset 6
+ 359 0006 CDB7      		in r28,__SP_L__
+ 360 0008 DEB7      		in r29,__SP_H__
+ 361               	.LCFI13:
+ 362               		.cfi_def_cfa_register 28
+ 363               	/* prologue: function */
+ 364               	/* frame size = 2 */
+ 365               	/* stack size = 4 */
+ 366               	.L__stack_usage = 4
+ 126:radioctl.c    **** 	openPort();
+ 367               		.loc 1 126 0
+ 368 000a 6A83      		std Y+2,r22
+ 369 000c 8983      		std Y+1,r24
+ 370 000e 0E94 0000 		call openPort
+ 371               	.LVL41:
+ 127:radioctl.c    **** 	SPI_masterTransmit(dataPipe | 0b00100000);  //address data pipe
+ 372               		.loc 1 127 0
+ 373 0012 8981      		ldd r24,Y+1
+ 374 0014 8062      		ori r24,lo8(32)
+ 375 0016 0E94 0000 		call SPI_masterTransmit
+ 376               	.LVL42:
+ 128:radioctl.c    **** 	SPI_masterTransmit(size);  // size of payload for data pipe
+ 377               		.loc 1 128 0
+ 378 001a 6A81      		ldd r22,Y+2
+ 379 001c 862F      		mov r24,r22
+ 380 001e 0E94 0000 		call SPI_masterTransmit
+ 381               	.LVL43:
+ 382               	/* epilogue start */
+ 129:radioctl.c    **** 	closePort();
+ 130:radioctl.c    **** }
+ 383               		.loc 1 130 0
+ 384 0022 0F90      		pop __tmp_reg__
+ 385 0024 0F90      		pop __tmp_reg__
+ 386 0026 DF91      		pop r29
+ 387 0028 CF91      		pop r28
+ 129:radioctl.c    **** 	closePort();
+ 388               		.loc 1 129 0
+ 389 002a 0C94 0000 		jmp closePort
+ 390               	.LVL44:
+ 391               		.cfi_endproc
+ 392               	.LFE16:
+ 394               		.section	.text.setRadioTXPayload,"ax",@progbits
+ 395               	.global	setRadioTXPayload
+ 397               	setRadioTXPayload:
+ 398               	.LFB17:
+ 131:radioctl.c    **** 
+ 132:radioctl.c    **** void setRadioTXPayload(int8_t* frame, int8_t payloadSize)
+ 133:radioctl.c    **** {
+ 399               		.loc 1 133 0
+ 400               		.cfi_startproc
+ 401               	.LVL45:
+ 402 0000 EF92      		push r14
+ 403               	.LCFI14:
+ 404               		.cfi_def_cfa_offset 3
+ 405               		.cfi_offset 14, -2
+ 406 0002 FF92      		push r15
+ 407               	.LCFI15:
+ 408               		.cfi_def_cfa_offset 4
+ 409               		.cfi_offset 15, -3
+ 410 0004 0F93      		push r16
+ 411               	.LCFI16:
+ 412               		.cfi_def_cfa_offset 5
+ 413               		.cfi_offset 16, -4
+ 414 0006 1F93      		push r17
+ 415               	.LCFI17:
+ 416               		.cfi_def_cfa_offset 6
+ 417               		.cfi_offset 17, -5
+ 418 0008 CF93      		push r28
+ 419               	.LCFI18:
+ 420               		.cfi_def_cfa_offset 7
+ 421               		.cfi_offset 28, -6
+ 422 000a DF93      		push r29
+ 423               	.LCFI19:
+ 424               		.cfi_def_cfa_offset 8
+ 425               		.cfi_offset 29, -7
+ 426               	/* prologue: function */
+ 427               	/* frame size = 0 */
+ 428               	/* stack size = 6 */
+ 429               	.L__stack_usage = 6
+ 430 000c 8C01      		movw r16,r24
+ 431 000e E62E      		mov r14,r22
+ 134:radioctl.c    **** 	openPort();
+ 432               		.loc 1 134 0
+ 433 0010 0E94 0000 		call openPort
+ 434               	.LVL46:
+ 135:radioctl.c    **** 	SPI_masterTransmit(0b10100000);  // Initiate writing of payload
+ 435               		.loc 1 135 0
+ 436 0014 80EA      		ldi r24,lo8(-96)
+ 437 0016 0E94 0000 		call SPI_masterTransmit
+ 438               	.LVL47:
+ 439               	.LBB2:
+ 136:radioctl.c    **** 	for(int i = 0; i < payloadSize; i++)
+ 440               		.loc 1 136 0
+ 441 001a E801      		movw r28,r16
+ 442 001c FF24      		clr r15
+ 443 001e E7FC      		sbrc r14,7
+ 444 0020 F094      		com r15
+ 445               	.LVL48:
+ 446               	.L15:
+ 447 0022 CE01      		movw r24,r28
+ 448 0024 801B      		sub r24,r16
+ 449 0026 910B      		sbc r25,r17
+ 450               		.loc 1 136 0 is_stmt 0 discriminator 1
+ 451 0028 8E15      		cp r24,r14
+ 452 002a 9F05      		cpc r25,r15
+ 453 002c 04F4      		brge .L17
+ 137:radioctl.c    **** 	{
+ 138:radioctl.c    **** 		SPI_masterTransmit(frame[i]);
+ 454               		.loc 1 138 0 is_stmt 1 discriminator 2
+ 455 002e 8991      		ld r24,Y+
+ 456               	.LVL49:
+ 457 0030 0E94 0000 		call SPI_masterTransmit
+ 458               	.LVL50:
+ 459 0034 00C0      		rjmp .L15
+ 460               	.L17:
+ 461               	/* epilogue start */
+ 462               	.LBE2:
+ 139:radioctl.c    **** 	}
+ 140:radioctl.c    **** 	closePort();
+ 141:radioctl.c    **** }
+ 463               		.loc 1 141 0
+ 464 0036 DF91      		pop r29
+ 465 0038 CF91      		pop r28
+ 466               	.LVL51:
+ 467 003a 1F91      		pop r17
+ 468 003c 0F91      		pop r16
+ 469               	.LVL52:
+ 470 003e FF90      		pop r15
+ 471 0040 EF90      		pop r14
+ 472               	.LVL53:
+ 140:radioctl.c    **** 	closePort();
+ 473               		.loc 1 140 0
+ 474 0042 0C94 0000 		jmp closePort
+ 475               	.LVL54:
+ 476               		.cfi_endproc
+ 477               	.LFE17:
+ 479               		.section	.text.getRadioRXPayload,"ax",@progbits
+ 480               	.global	getRadioRXPayload
+ 482               	getRadioRXPayload:
+ 483               	.LFB18:
+ 142:radioctl.c    **** 
+ 143:radioctl.c    **** 
+ 144:radioctl.c    **** void getRadioRXPayload(uint8_t* payload, uint8_t payloadSize)
+ 145:radioctl.c    **** {
+ 484               		.loc 1 145 0
+ 485               		.cfi_startproc
+ 486               	.LVL55:
+ 487 0000 EF92      		push r14
+ 488               	.LCFI20:
+ 489               		.cfi_def_cfa_offset 3
+ 490               		.cfi_offset 14, -2
+ 491 0002 FF92      		push r15
+ 492               	.LCFI21:
+ 493               		.cfi_def_cfa_offset 4
+ 494               		.cfi_offset 15, -3
+ 495 0004 0F93      		push r16
+ 496               	.LCFI22:
+ 497               		.cfi_def_cfa_offset 5
+ 498               		.cfi_offset 16, -4
+ 499 0006 1F93      		push r17
+ 500               	.LCFI23:
+ 501               		.cfi_def_cfa_offset 6
+ 502               		.cfi_offset 17, -5
+ 503 0008 CF93      		push r28
+ 504               	.LCFI24:
+ 505               		.cfi_def_cfa_offset 7
+ 506               		.cfi_offset 28, -6
+ 507 000a DF93      		push r29
+ 508               	.LCFI25:
+ 509               		.cfi_def_cfa_offset 8
+ 510               		.cfi_offset 29, -7
+ 511               	/* prologue: function */
+ 512               	/* frame size = 0 */
+ 513               	/* stack size = 6 */
+ 514               	.L__stack_usage = 6
+ 515 000c 8C01      		movw r16,r24
+ 516 000e E62E      		mov r14,r22
+ 146:radioctl.c    **** 	uint8_t radioStatus;
+ 147:radioctl.c    **** 	openPort();
+ 517               		.loc 1 147 0
+ 518 0010 0E94 0000 		call openPort
+ 519               	.LVL56:
+ 148:radioctl.c    **** 	radioStatus = SPI_masterTransmit(0b01100001); //read payload 8 bytes
+ 520               		.loc 1 148 0
+ 521 0014 81E6      		ldi r24,lo8(97)
+ 522 0016 0E94 0000 		call SPI_masterTransmit
+ 523               	.LVL57:
+ 524               	.LBB3:
+ 149:radioctl.c    **** 	for(int i = 0; i<payloadSize; i++)
+ 525               		.loc 1 149 0
+ 526 001a E801      		movw r28,r16
+ 527 001c F12C      		mov r15,__zero_reg__
+ 528               	.LVL58:
+ 529               	.L19:
+ 530 001e CE01      		movw r24,r28
+ 531 0020 801B      		sub r24,r16
+ 532 0022 910B      		sbc r25,r17
+ 533               		.loc 1 149 0 is_stmt 0 discriminator 1
+ 534 0024 8E15      		cp r24,r14
+ 535 0026 9F05      		cpc r25,r15
+ 536 0028 04F4      		brge .L21
+ 150:radioctl.c    **** 	{
+ 151:radioctl.c    **** 		payload[i] = SPI_masterReceive();
+ 537               		.loc 1 151 0 is_stmt 1 discriminator 2
+ 538 002a 0E94 0000 		call SPI_masterReceive
+ 539               	.LVL59:
+ 540 002e 8993      		st Y+,r24
+ 541               	.LVL60:
+ 542 0030 00C0      		rjmp .L19
+ 543               	.L21:
+ 544               	/* epilogue start */
+ 545               	.LBE3:
+ 152:radioctl.c    **** 	}
+ 153:radioctl.c    **** 	closePort();
+ 154:radioctl.c    **** }
+ 546               		.loc 1 154 0
+ 547 0032 DF91      		pop r29
+ 548 0034 CF91      		pop r28
+ 549               	.LVL61:
+ 550 0036 1F91      		pop r17
+ 551 0038 0F91      		pop r16
+ 552               	.LVL62:
+ 553 003a FF90      		pop r15
+ 554 003c EF90      		pop r14
+ 555               	.LVL63:
+ 153:radioctl.c    **** 	closePort();
+ 556               		.loc 1 153 0
+ 557 003e 0C94 0000 		jmp closePort
+ 558               	.LVL64:
+ 559               		.cfi_endproc
+ 560               	.LFE18:
+ 562               		.section	.text.getRadioStatus,"ax",@progbits
+ 563               	.global	getRadioStatus
+ 565               	getRadioStatus:
+ 566               	.LFB19:
+ 155:radioctl.c    **** 
+ 156:radioctl.c    **** 
+ 157:radioctl.c    **** void getRadioStatus(uint8_t* status)
+ 158:radioctl.c    **** {
+ 567               		.loc 1 158 0
+ 568               		.cfi_startproc
+ 569               	.LVL65:
+ 570 0000 CF93      		push r28
+ 571               	.LCFI26:
+ 572               		.cfi_def_cfa_offset 3
+ 573               		.cfi_offset 28, -2
+ 574 0002 DF93      		push r29
+ 575               	.LCFI27:
+ 576               		.cfi_def_cfa_offset 4
+ 577               		.cfi_offset 29, -3
+ 578               	/* prologue: function */
+ 579               	/* frame size = 0 */
+ 580               	/* stack size = 2 */
+ 581               	.L__stack_usage = 2
+ 582 0004 EC01      		movw r28,r24
+ 159:radioctl.c    **** 	openPort();
+ 583               		.loc 1 159 0
+ 584 0006 0E94 0000 		call openPort
+ 585               	.LVL66:
+ 160:radioctl.c    **** 	*status = SPI_masterTransmit(0x07);  // RX_ADDR_P0 register, radioStatus now == status
+ 586               		.loc 1 160 0
+ 587 000a 87E0      		ldi r24,lo8(7)
+ 588 000c 0E94 0000 		call SPI_masterTransmit
+ 589               	.LVL67:
+ 590 0010 8883      		st Y,r24
+ 591               	/* epilogue start */
+ 161:radioctl.c    **** 	closePort();
+ 162:radioctl.c    **** }
+ 592               		.loc 1 162 0
+ 593 0012 DF91      		pop r29
+ 594 0014 CF91      		pop r28
+ 595               	.LVL68:
+ 161:radioctl.c    **** 	closePort();
+ 596               		.loc 1 161 0
+ 597 0016 0C94 0000 		jmp closePort
+ 598               	.LVL69:
+ 599               		.cfi_endproc
+ 600               	.LFE19:
+ 602               		.section	.text.getRX_DR,"ax",@progbits
+ 603               	.global	getRX_DR
+ 605               	getRX_DR:
+ 606               	.LFB20:
+ 163:radioctl.c    **** 
+ 164:radioctl.c    **** 
+ 165:radioctl.c    **** 
+ 166:radioctl.c    **** 
+ 167:radioctl.c    **** 
+ 168:radioctl.c    **** 
+ 169:radioctl.c    **** /**************************************************
+ 170:radioctl.c    **** 	Boolean valued functions. return 1 if bit
+ 171:radioctl.c    **** 	is set, else returns 0 
+ 172:radioctl.c    **** ***************************************************/
+ 173:radioctl.c    **** 
+ 174:radioctl.c    **** 
+ 175:radioctl.c    **** 
+ 176:radioctl.c    **** 
+ 177:radioctl.c    **** uint8_t getRX_DR()
+ 178:radioctl.c    **** {
+ 607               		.loc 1 178 0
+ 608               		.cfi_startproc
+ 609 0000 CF93      		push r28
+ 610               	.LCFI28:
+ 611               		.cfi_def_cfa_offset 3
+ 612               		.cfi_offset 28, -2
+ 613 0002 DF93      		push r29
+ 614               	.LCFI29:
+ 615               		.cfi_def_cfa_offset 4
+ 616               		.cfi_offset 29, -3
+ 617 0004 1F92      		push __zero_reg__
+ 618               	.LCFI30:
+ 619               		.cfi_def_cfa_offset 5
+ 620 0006 CDB7      		in r28,__SP_L__
+ 621 0008 DEB7      		in r29,__SP_H__
+ 622               	.LCFI31:
+ 623               		.cfi_def_cfa_register 28
+ 624               	/* prologue: function */
+ 625               	/* frame size = 1 */
+ 626               	/* stack size = 3 */
+ 627               	.L__stack_usage = 3
+ 179:radioctl.c    **** 	uint8_t status;
+ 180:radioctl.c    **** 	getRadioStatus(&status);
+ 628               		.loc 1 180 0
+ 629 000a CE01      		movw r24,r28
+ 630 000c 0196      		adiw r24,1
+ 631 000e 0E94 0000 		call getRadioStatus
+ 632               	.LVL70:
+ 181:radioctl.c    **** 	if(status & (1<<6))  // if RX_DR is set
+ 633               		.loc 1 181 0
+ 634 0012 8981      		ldd r24,Y+1
+ 182:radioctl.c    **** 		return 1;
+ 183:radioctl.c    **** 	else
+ 184:radioctl.c    **** 		return 0;
+ 185:radioctl.c    **** }
+ 635               		.loc 1 185 0
+ 636 0014 86FB      		bst r24,6
+ 637 0016 8827      		clr r24
+ 638 0018 80F9      		bld r24,0
+ 639               	/* epilogue start */
+ 640 001a 0F90      		pop __tmp_reg__
+ 641 001c DF91      		pop r29
+ 642 001e CF91      		pop r28
+ 643 0020 0895      		ret
+ 644               		.cfi_endproc
+ 645               	.LFE20:
+ 647               		.section	.text.getTX_DS,"ax",@progbits
+ 648               	.global	getTX_DS
+ 650               	getTX_DS:
+ 651               	.LFB21:
+ 186:radioctl.c    **** 
+ 187:radioctl.c    **** uint8_t getTX_DS()
+ 188:radioctl.c    **** {
+ 652               		.loc 1 188 0
+ 653               		.cfi_startproc
+ 654 0000 CF93      		push r28
+ 655               	.LCFI32:
+ 656               		.cfi_def_cfa_offset 3
+ 657               		.cfi_offset 28, -2
+ 658 0002 DF93      		push r29
+ 659               	.LCFI33:
+ 660               		.cfi_def_cfa_offset 4
+ 661               		.cfi_offset 29, -3
+ 662 0004 1F92      		push __zero_reg__
+ 663               	.LCFI34:
+ 664               		.cfi_def_cfa_offset 5
+ 665 0006 CDB7      		in r28,__SP_L__
+ 666 0008 DEB7      		in r29,__SP_H__
+ 667               	.LCFI35:
+ 668               		.cfi_def_cfa_register 28
+ 669               	/* prologue: function */
+ 670               	/* frame size = 1 */
+ 671               	/* stack size = 3 */
+ 672               	.L__stack_usage = 3
+ 189:radioctl.c    **** 	uint8_t status;
+ 190:radioctl.c    **** 	getRadioStatus(&status);
+ 673               		.loc 1 190 0
+ 674 000a CE01      		movw r24,r28
+ 675 000c 0196      		adiw r24,1
+ 676 000e 0E94 0000 		call getRadioStatus
+ 677               	.LVL71:
+ 191:radioctl.c    **** 	if(status & (1<<5))  
+ 678               		.loc 1 191 0
+ 679 0012 8981      		ldd r24,Y+1
+ 192:radioctl.c    **** 		return 1;
+ 193:radioctl.c    **** 	else
+ 194:radioctl.c    **** 		return 0;
+ 195:radioctl.c    **** }
+ 680               		.loc 1 195 0
+ 681 0014 85FB      		bst r24,5
+ 682 0016 8827      		clr r24
+ 683 0018 80F9      		bld r24,0
+ 684               	/* epilogue start */
+ 685 001a 0F90      		pop __tmp_reg__
+ 686 001c DF91      		pop r29
+ 687 001e CF91      		pop r28
+ 688 0020 0895      		ret
+ 689               		.cfi_endproc
+ 690               	.LFE21:
+ 692               		.section	.text.getMAX_RT,"ax",@progbits
+ 693               	.global	getMAX_RT
+ 695               	getMAX_RT:
+ 696               	.LFB22:
+ 196:radioctl.c    **** 
+ 197:radioctl.c    **** uint8_t getMAX_RT()
+ 198:radioctl.c    **** {
+ 697               		.loc 1 198 0
+ 698               		.cfi_startproc
+ 699 0000 CF93      		push r28
+ 700               	.LCFI36:
+ 701               		.cfi_def_cfa_offset 3
+ 702               		.cfi_offset 28, -2
+ 703 0002 DF93      		push r29
+ 704               	.LCFI37:
+ 705               		.cfi_def_cfa_offset 4
+ 706               		.cfi_offset 29, -3
+ 707 0004 1F92      		push __zero_reg__
+ 708               	.LCFI38:
+ 709               		.cfi_def_cfa_offset 5
+ 710 0006 CDB7      		in r28,__SP_L__
+ 711 0008 DEB7      		in r29,__SP_H__
+ 712               	.LCFI39:
+ 713               		.cfi_def_cfa_register 28
+ 714               	/* prologue: function */
+ 715               	/* frame size = 1 */
+ 716               	/* stack size = 3 */
+ 717               	.L__stack_usage = 3
+ 199:radioctl.c    **** 	uint8_t status;
+ 200:radioctl.c    **** 	getRadioStatus(&status);
+ 718               		.loc 1 200 0
+ 719 000a CE01      		movw r24,r28
+ 720 000c 0196      		adiw r24,1
+ 721 000e 0E94 0000 		call getRadioStatus
+ 722               	.LVL72:
+ 201:radioctl.c    **** 	if(status & (1<<4))  
+ 723               		.loc 1 201 0
+ 724 0012 8981      		ldd r24,Y+1
+ 202:radioctl.c    **** 		return 1;
+ 203:radioctl.c    **** 	else
+ 204:radioctl.c    **** 		return 0;
+ 205:radioctl.c    **** }
+ 725               		.loc 1 205 0
+ 726 0014 8295      		swap r24
+ 727 0016 8170      		andi r24,1
+ 728               	/* epilogue start */
+ 729 0018 0F90      		pop __tmp_reg__
+ 730 001a DF91      		pop r29
+ 731 001c CF91      		pop r28
+ 732 001e 0895      		ret
+ 733               		.cfi_endproc
+ 734               	.LFE22:
+ 736               		.section	.text.getTX_FULL,"ax",@progbits
+ 737               	.global	getTX_FULL
+ 739               	getTX_FULL:
+ 740               	.LFB23:
+ 206:radioctl.c    **** 
+ 207:radioctl.c    **** uint8_t getTX_FULL()
+ 208:radioctl.c    **** {
+ 741               		.loc 1 208 0
+ 742               		.cfi_startproc
+ 743 0000 CF93      		push r28
+ 744               	.LCFI40:
+ 745               		.cfi_def_cfa_offset 3
+ 746               		.cfi_offset 28, -2
+ 747 0002 DF93      		push r29
+ 748               	.LCFI41:
+ 749               		.cfi_def_cfa_offset 4
+ 750               		.cfi_offset 29, -3
+ 751 0004 1F92      		push __zero_reg__
+ 752               	.LCFI42:
+ 753               		.cfi_def_cfa_offset 5
+ 754 0006 CDB7      		in r28,__SP_L__
+ 755 0008 DEB7      		in r29,__SP_H__
+ 756               	.LCFI43:
+ 757               		.cfi_def_cfa_register 28
+ 758               	/* prologue: function */
+ 759               	/* frame size = 1 */
+ 760               	/* stack size = 3 */
+ 761               	.L__stack_usage = 3
+ 209:radioctl.c    **** 	uint8_t status;
+ 210:radioctl.c    **** 	getRadioStatus(&status);
+ 762               		.loc 1 210 0
+ 763 000a CE01      		movw r24,r28
+ 764 000c 0196      		adiw r24,1
+ 765 000e 0E94 0000 		call getRadioStatus
+ 766               	.LVL73:
+ 211:radioctl.c    **** 	if(status & (1<<0))  
+ 767               		.loc 1 211 0
+ 768 0012 8981      		ldd r24,Y+1
+ 212:radioctl.c    **** 		return 1;
+ 213:radioctl.c    **** 	else
+ 214:radioctl.c    **** 		return 0;
+ 215:radioctl.c    **** }
+ 769               		.loc 1 215 0
+ 770 0014 8170      		andi r24,lo8(1)
+ 771               	/* epilogue start */
+ 772 0016 0F90      		pop __tmp_reg__
+ 773 0018 DF91      		pop r29
+ 774 001a CF91      		pop r28
+ 775 001c 0895      		ret
+ 776               		.cfi_endproc
+ 777               	.LFE23:
+ 779               		.section	.text.clearMAX_RT,"ax",@progbits
+ 780               	.global	clearMAX_RT
+ 782               	clearMAX_RT:
+ 783               	.LFB24:
+ 216:radioctl.c    **** 
+ 217:radioctl.c    **** 
+ 218:radioctl.c    **** 
+ 219:radioctl.c    **** 
+ 220:radioctl.c    **** /*********** Clear Status Bits **************/
+ 221:radioctl.c    **** 
+ 222:radioctl.c    **** 
+ 223:radioctl.c    **** 
+ 224:radioctl.c    **** 
+ 225:radioctl.c    **** void clearMAX_RT()
+ 226:radioctl.c    **** {   
+ 784               		.loc 1 226 0
+ 785               		.cfi_startproc
+ 786               	/* prologue: function */
+ 787               	/* frame size = 0 */
+ 788               	/* stack size = 0 */
+ 789               	.L__stack_usage = 0
+ 227:radioctl.c    **** 	uint8_t status;
+ 228:radioctl.c    **** 	openPort();
+ 790               		.loc 1 228 0
+ 791 0000 0E94 0000 		call openPort
+ 792               	.LVL74:
+ 229:radioctl.c    **** 	status = SPI_masterTransmit(0x07 | 0b00100000);  
+ 793               		.loc 1 229 0
+ 794 0004 87E2      		ldi r24,lo8(39)
+ 795 0006 0E94 0000 		call SPI_masterTransmit
+ 796               	.LVL75:
+ 230:radioctl.c    **** 	SPI_masterTransmit(status |= (1<<4));
+ 797               		.loc 1 230 0
+ 798 000a 8061      		ori r24,lo8(16)
+ 799               	.LVL76:
+ 800 000c 0E94 0000 		call SPI_masterTransmit
+ 801               	.LVL77:
+ 231:radioctl.c    **** 	closePort();
+ 802               		.loc 1 231 0
+ 803 0010 0C94 0000 		jmp closePort
+ 804               	.LVL78:
+ 805               		.cfi_endproc
+ 806               	.LFE24:
+ 808               		.section	.text.clearTX_DS,"ax",@progbits
+ 809               	.global	clearTX_DS
+ 811               	clearTX_DS:
+ 812               	.LFB25:
+ 232:radioctl.c    **** }
+ 233:radioctl.c    **** 
+ 234:radioctl.c    **** void clearTX_DS()
+ 235:radioctl.c    **** {
+ 813               		.loc 1 235 0
+ 814               		.cfi_startproc
+ 815               	/* prologue: function */
+ 816               	/* frame size = 0 */
+ 817               	/* stack size = 0 */
+ 818               	.L__stack_usage = 0
+ 236:radioctl.c    **** 	uint8_t status;
+ 237:radioctl.c    **** 	openPort();
+ 819               		.loc 1 237 0
+ 820 0000 0E94 0000 		call openPort
+ 821               	.LVL79:
+ 238:radioctl.c    **** 	status = SPI_masterTransmit(0x07 | 0b00100000);  
+ 822               		.loc 1 238 0
+ 823 0004 87E2      		ldi r24,lo8(39)
+ 824 0006 0E94 0000 		call SPI_masterTransmit
+ 825               	.LVL80:
+ 239:radioctl.c    **** 	SPI_masterTransmit(status |= (1<<5));
+ 826               		.loc 1 239 0
+ 827 000a 8062      		ori r24,lo8(32)
+ 828               	.LVL81:
+ 829 000c 0E94 0000 		call SPI_masterTransmit
+ 830               	.LVL82:
+ 240:radioctl.c    **** 	closePort();
+ 831               		.loc 1 240 0
+ 832 0010 0C94 0000 		jmp closePort
+ 833               	.LVL83:
+ 834               		.cfi_endproc
+ 835               	.LFE25:
+ 837               		.section	.text.clearRX_DR,"ax",@progbits
+ 838               	.global	clearRX_DR
+ 840               	clearRX_DR:
+ 841               	.LFB26:
+ 241:radioctl.c    **** }
+ 242:radioctl.c    **** 
+ 243:radioctl.c    **** void clearRX_DR()
+ 244:radioctl.c    **** {
+ 842               		.loc 1 244 0
+ 843               		.cfi_startproc
+ 844               	/* prologue: function */
+ 845               	/* frame size = 0 */
+ 846               	/* stack size = 0 */
+ 847               	.L__stack_usage = 0
+ 245:radioctl.c    **** 	uint8_t status;
+ 246:radioctl.c    **** 	openPort();
+ 848               		.loc 1 246 0
+ 849 0000 0E94 0000 		call openPort
+ 850               	.LVL84:
+ 247:radioctl.c    **** 	status = SPI_masterTransmit(0x07 | 0b00100000); 
+ 851               		.loc 1 247 0
+ 852 0004 87E2      		ldi r24,lo8(39)
+ 853 0006 0E94 0000 		call SPI_masterTransmit
+ 854               	.LVL85:
+ 248:radioctl.c    **** 	SPI_masterTransmit(status |= (1<<6));  //reset receive bit
+ 855               		.loc 1 248 0
+ 856 000a 8064      		ori r24,lo8(64)
+ 857               	.LVL86:
+ 858 000c 0E94 0000 		call SPI_masterTransmit
+ 859               	.LVL87:
+ 249:radioctl.c    **** 	closePort();
+ 860               		.loc 1 249 0
+ 861 0010 0C94 0000 		jmp closePort
+ 862               	.LVL88:
+ 863               		.cfi_endproc
+ 864               	.LFE26:
+ 866               		.text
+ 867               	.Letext0:
+ 868               		.file 2 "/usr/lib/avr/include/stdint.h"
+ 869               		.file 3 "spi.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 radioctl.c
+     /tmp/ccFbewrX.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccFbewrX.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccFbewrX.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccFbewrX.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccFbewrX.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccFbewrX.s:13     .text.openPort:0000000000000000 openPort
+     /tmp/ccFbewrX.s:31     .text.closePort:0000000000000000 closePort
+     /tmp/ccFbewrX.s:57     .text.initRadioTX:0000000000000000 initRadioTX
+     /tmp/ccFbewrX.s:85     .text.initRadioRX:0000000000000000 initRadioRX
+     /tmp/ccFbewrX.s:113    .text.activateFeatures:0000000000000000 activateFeatures
+     /tmp/ccFbewrX.s:141    .text.setRadioAddressWidth:0000000000000000 setRadioAddressWidth
+     /tmp/ccFbewrX.s:179    .text.setRadioFrequency:0000000000000000 setRadioFrequency
+     /tmp/ccFbewrX.s:217    .text.setRadioTXAddress:0000000000000000 setRadioTXAddress
+     /tmp/ccFbewrX.s:280    .text.setRadioRXAddress:0000000000000000 setRadioRXAddress
+     /tmp/ccFbewrX.s:343    .text.setRadioRXPayloadSize:0000000000000000 setRadioRXPayloadSize
+     /tmp/ccFbewrX.s:397    .text.setRadioTXPayload:0000000000000000 setRadioTXPayload
+     /tmp/ccFbewrX.s:482    .text.getRadioRXPayload:0000000000000000 getRadioRXPayload
+     /tmp/ccFbewrX.s:565    .text.getRadioStatus:0000000000000000 getRadioStatus
+     /tmp/ccFbewrX.s:605    .text.getRX_DR:0000000000000000 getRX_DR
+     /tmp/ccFbewrX.s:650    .text.getTX_DS:0000000000000000 getTX_DS
+     /tmp/ccFbewrX.s:695    .text.getMAX_RT:0000000000000000 getMAX_RT
+     /tmp/ccFbewrX.s:739    .text.getTX_FULL:0000000000000000 getTX_FULL
+     /tmp/ccFbewrX.s:782    .text.clearMAX_RT:0000000000000000 clearMAX_RT
+     /tmp/ccFbewrX.s:811    .text.clearTX_DS:0000000000000000 clearTX_DS
+     /tmp/ccFbewrX.s:840    .text.clearRX_DR:0000000000000000 clearRX_DR
+
+UNDEFINED SYMBOLS
+SPI_masterTransmit
+SPI_masterReceive

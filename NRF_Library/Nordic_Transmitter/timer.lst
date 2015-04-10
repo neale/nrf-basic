@@ -1,0 +1,80 @@
+   1               		.file	"timer.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.setupTimer,"ax",@progbits
+  11               	.global	setupTimer
+  13               	setupTimer:
+  14               	.LFB0:
+  15               		.file 1 "timer.c"
+   1:timer.c       **** /*
+   2:timer.c       ****  * timer.c
+   3:timer.c       ****  *
+   4:timer.c       ****  * Created: 7/16/2014 4:31:15 PM
+   5:timer.c       ****  *  Author: Tanner Christensen
+   6:timer.c       ****  */ 
+   7:timer.c       **** 
+   8:timer.c       **** 
+   9:timer.c       **** #include <avr/io.h>
+  10:timer.c       **** #include <stdlib.h>
+  11:timer.c       **** #include "timer.h"
+  12:timer.c       **** 
+  13:timer.c       **** 
+  14:timer.c       **** 
+  15:timer.c       **** #define F_CPU 8000000
+  16:timer.c       **** 
+  17:timer.c       **** 
+  18:timer.c       **** 
+  19:timer.c       **** void setupTimer() {
+  16               		.loc 1 19 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  20:timer.c       **** 	
+  21:timer.c       **** 	TCCR1A = 0b00000000; //Normal pin operation
+  22               		.loc 1 21 0
+  23 0000 1092 8000 		sts 128,__zero_reg__
+  22:timer.c       **** 	TCCR1B = 0b00001101; //  set TIMER1 clock to clk/1024, CTC mode
+  24               		.loc 1 22 0
+  25 0004 8DE0      		ldi r24,lo8(13)
+  26 0006 8093 8100 		sts 129,r24
+  23:timer.c       **** 	TCNT1 = 0x0000; //initialize TIMER1 to 0
+  27               		.loc 1 23 0
+  28 000a 1092 8500 		sts 132+1,__zero_reg__
+  29 000e 1092 8400 		sts 132,__zero_reg__
+  24:timer.c       **** 	TIMSK1 |= (1 << OCIE1A) | (1 << TOIE1); //Enable Timer/Counter, and compare interrupts
+  30               		.loc 1 24 0
+  31 0012 EFE6      		ldi r30,lo8(111)
+  32 0014 F0E0      		ldi r31,0
+  33 0016 8081      		ld r24,Z
+  34 0018 8360      		ori r24,lo8(3)
+  35 001a 8083      		st Z,r24
+  25:timer.c       **** 	OCR1A = 0x3E8; // sets initial TIMER1 COMPARE A to 1000
+  36               		.loc 1 25 0
+  37 001c 88EE      		ldi r24,lo8(-24)
+  38 001e 93E0      		ldi r25,lo8(3)
+  39 0020 9093 8900 		sts 136+1,r25
+  40 0024 8093 8800 		sts 136,r24
+  41 0028 0895      		ret
+  42               		.cfi_endproc
+  43               	.LFE0:
+  45               		.text
+  46               	.Letext0:
+  47               		.file 2 "/usr/lib/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 timer.c
+     /tmp/cccqTxjO.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cccqTxjO.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cccqTxjO.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cccqTxjO.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cccqTxjO.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cccqTxjO.s:13     .text.setupTimer:0000000000000000 setupTimer
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,245 @@
+   1               		.file	"com.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+  15               	.Ltext0:
+  16               		.section	.text.initUART,"ax",@progbits
+  17               	.global	initUART
+  19               	initUART:
+  20               	.LFB6:
+  21               	.LSM0:
+  22               	/* prologue: function */
+  23               	/* frame size = 0 */
+  24               	.LSM1:
+  25 0000 89E1      		ldi r24,lo8(25)
+  26 0002 90E0      		ldi r25,hi8(25)
+  27 0004 9093 CD00 		sts (204)+1,r25
+  28 0008 8093 CC00 		sts 204,r24
+  29               	.LSM2:
+  30 000c 82E0      		ldi r24,lo8(2)
+  31 000e 8093 C800 		sts 200,r24
+  32               	.LSM3:
+  33 0012 88E1      		ldi r24,lo8(24)
+  34 0014 8093 C900 		sts 201,r24
+  35               	.LSM4:
+  36 0018 86E0      		ldi r24,lo8(6)
+  37 001a 8093 CA00 		sts 202,r24
+  38               	/* epilogue start */
+  39               	.LSM5:
+  40 001e 0895      		ret
+  41               	.LFE6:
+  43               		.section	.text.main,"ax",@progbits
+  44               	.global	main
+  46               	main:
+  47               	.LFB7:
+  48               	.LSM6:
+  49 0000 8F92      		push r8
+  50 0002 9F92      		push r9
+  51 0004 AF92      		push r10
+  52 0006 BF92      		push r11
+  53 0008 CF92      		push r12
+  54 000a DF92      		push r13
+  55 000c EF92      		push r14
+  56 000e FF92      		push r15
+  57 0010 0F93      		push r16
+  58 0012 1F93      		push r17
+  59 0014 DF93      		push r29
+  60 0016 CF93      		push r28
+  61 0018 0F92      		push __tmp_reg__
+  62 001a CDB7      		in r28,__SP_L__
+  63 001c DEB7      		in r29,__SP_H__
+  64               	/* prologue: function */
+  65               	/* frame size = 1 */
+  66               	.LSM7:
+  67 001e 88E0      		ldi r24,lo8(8)
+  68 0020 90E0      		ldi r25,hi8(8)
+  69 0022 0E94 0000 		call malloc
+  70 0026 992E      		mov r9,r25
+  71 0028 082F      		mov r16,r24
+  72 002a 192F      		mov r17,r25
+  73 002c 882E      		mov r8,r24
+  74               	.LVL0:
+  75               	.LSM8:
+  76 002e 80E8      		ldi r24,lo8(-128)
+  77 0030 8093 6100 		sts 97,r24
+  78 0034 81E0      		ldi r24,lo8(1)
+  79 0036 8093 6100 		sts 97,r24
+  80               	.LSM9:
+  81 003a 849A      		sbi 48-32,4
+  82               	.LSM10:
+  83 003c 819A      		sbi 48-32,1
+  84               	.LSM11:
+  85 003e 8C9A      		sbi 49-32,4
+  86               	.LSM12:
+  87 0040 899A      		sbi 49-32,1
+  88               	.LBB22:
+  89               	.LBB23:
+  90               	.LSM13:
+  91 0042 89E1      		ldi r24,lo8(25)
+  92 0044 90E0      		ldi r25,hi8(25)
+  93 0046 9093 CD00 		sts (204)+1,r25
+  94 004a 8093 CC00 		sts 204,r24
+  95               	.LSM14:
+  96 004e 82E0      		ldi r24,lo8(2)
+  97 0050 8093 C800 		sts 200,r24
+  98               	.LSM15:
+  99 0054 88E1      		ldi r24,lo8(24)
+ 100 0056 8093 C900 		sts 201,r24
+ 101               	.LSM16:
+ 102 005a 86E0      		ldi r24,lo8(6)
+ 103 005c 8093 CA00 		sts 202,r24
+ 104               	.LBE23:
+ 105               	.LBE22:
+ 106               	.LSM17:
+ 107 0060 0E94 0000 		call SPI_masterInit
+ 108               	.LSM18:
+ 109 0064 0E94 0000 		call initRadioRX
+ 110               	.LSM19:
+ 111 0068 81E0      		ldi r24,lo8(1)
+ 112 006a 0E94 0000 		call setRadioAddressWidth
+ 113               	.LSM20:
+ 114 006e 63E2      		ldi r22,lo8(11256099)
+ 115 0070 71EC      		ldi r23,hi8(11256099)
+ 116 0072 8BEA      		ldi r24,hlo8(11256099)
+ 117 0074 90E0      		ldi r25,hhi8(11256099)
+ 118 0076 0E94 0000 		call setRadioRXAddress
+ 119               	.LSM21:
+ 120 007a 81E1      		ldi r24,lo8(17)
+ 121 007c 68E0      		ldi r22,lo8(8)
+ 122 007e 0E94 0000 		call setRadioRXPayloadSize
+ 123               	.LSM22:
+ 124 0082 82E0      		ldi r24,lo8(2)
+ 125 0084 0E94 0000 		call setRadioFrequency
+ 126               	.LBB24:
+ 127               	.LBB25:
+ 128               	.LBB26:
+ 129               	.LBB27:
+ 130               	.LSM23:
+ 131 0088 80E1      		ldi r24,lo8(10000)
+ 132 008a 97E2      		ldi r25,hi8(10000)
+ 133               	.LVL1:
+ 134               	/* #APP */
+ 135               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 136 008c 0197      		1: sbiw r24,1
+ 137 008e 01F4      		brne 1b
+ 138               	 ;  0 "" 2
+ 139               	/* #NOAPP */
+ 140               	.LBE27:
+ 141               	.LBE26:
+ 142               	.LBE25:
+ 143               	.LBE24:
+ 144               	.LBB28:
+ 145               	.LSM24:
+ 146 0090 5E01      		movw r10,r28
+ 147 0092 0894      		sec
+ 148 0094 A11C      		adc r10,__zero_reg__
+ 149 0096 B11C      		adc r11,__zero_reg__
+ 150               	.LBB29:
+ 151               	.LSM25:
+ 152 0098 98E0      		ldi r25,lo8(8)
+ 153 009a E92E      		mov r14,r25
+ 154 009c F12C      		mov r15,__zero_reg__
+ 155 009e E00E      		add r14,r16
+ 156 00a0 F11E      		adc r15,r17
+ 157               	.LBE29:
+ 158               	.LBB30:
+ 159               	.LBB31:
+ 160               	.LBB32:
+ 161               	.LBB33:
+ 162               	.LSM26:
+ 163 00a2 80E1      		ldi r24,lo8(10000)
+ 164 00a4 C82E      		mov r12,r24
+ 165 00a6 87E2      		ldi r24,hi8(10000)
+ 166 00a8 D82E      		mov r13,r24
+ 167               	.LVL2:
+ 168               	.L6:
+ 169               	.LBE33:
+ 170               	.LBE32:
+ 171               	.LBE31:
+ 172               	.LBE30:
+ 173               	.LSM27:
+ 174 00aa 1982      		std Y+1,__zero_reg__
+ 175               	.LVL3:
+ 176               	.LSM28:
+ 177 00ac C501      		movw r24,r10
+ 178               	.LVL4:
+ 179 00ae 0E94 0000 		call getRadioStatus
+ 180               	.LSM29:
+ 181 00b2 0E94 0000 		call getRX_DR
+ 182 00b6 8823      		tst r24
+ 183 00b8 01F0      		breq .L4
+ 184               	.LSM30:
+ 185 00ba 0E94 0000 		call clearRX_DR
+ 186               	.LSM31:
+ 187 00be C401      		movw r24,r8
+ 188               	.LVL5:
+ 189 00c0 68E0      		ldi r22,lo8(8)
+ 190 00c2 0E94 0000 		call getRadioRXPayload
+ 191               	.LSM32:
+ 192 00c6 8998      		cbi 49-32,1
+ 193 00c8 F801      		movw r30,r16
+ 194               	.L10:
+ 195               	.LBB37:
+ 196               	.LSM33:
+ 197 00ca 8091 C800 		lds r24,200
+ 198 00ce 85FF      		sbrs r24,5
+ 199 00d0 00C0      		rjmp .L10
+ 200               	.LSM34:
+ 201 00d2 8191      		ld r24,Z+
+ 202 00d4 8093 CE00 		sts 206,r24
+ 203               	.LSM35:
+ 204 00d8 EE15      		cp r30,r14
+ 205 00da FF05      		cpc r31,r15
+ 206 00dc 01F4      		brne .L10
+ 207               	.LVL6:
+ 208               	.L4:
+ 209               	.LBE37:
+ 210               	.LSM36:
+ 211 00de 899A      		sbi 49-32,1
+ 212               	.LBB38:
+ 213               	.LBB36:
+ 214               	.LBB35:
+ 215               	.LBB34:
+ 216               	.LSM37:
+ 217 00e0 C601      		movw r24,r12
+ 218               	.LVL7:
+ 219               	/* #APP */
+ 220               	 ;  105 "c:/winavr-20100110/lib/gcc/../../avr/include/util/delay_basic.h" 1
+ 221 00e2 0197      		1: sbiw r24,1
+ 222 00e4 01F4      		brne 1b
+ 223               	 ;  0 "" 2
+ 224               	/* #NOAPP */
+ 225 00e6 00C0      		rjmp .L6
+ 226               	.LBE34:
+ 227               	.LBE35:
+ 228               	.LBE36:
+ 229               	.LBE38:
+ 230               	.LBE28:
+ 231               	.LFE7:
+ 265               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 com.c
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:2      *ABS*:0000003f __SREG__
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:3      *ABS*:0000003e __SP_H__
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:4      *ABS*:0000003d __SP_L__
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:5      *ABS*:00000034 __CCP__
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:6      *ABS*:00000000 __tmp_reg__
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:7      *ABS*:00000001 __zero_reg__
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:19     .text.initUART:00000000 initUART
+C:\Users\Tanner\AppData\Local\Temp/ccIeXxtd.s:46     .text.main:00000000 main
+
+UNDEFINED SYMBOLS
+malloc
+SPI_masterInit
+initRadioRX
+setRadioAddressWidth
+setRadioRXAddress
+setRadioRXPayloadSize
+setRadioFrequency
+getRadioStatus
+getRX_DR
+clearRX_DR
+getRadioRXPayload

@@ -1,0 +1,23 @@
+* Short term
+  Get Tanner caught up
+
+** Sneha
+   Research GSR and voltage - one page summary
+** Caleb
+   Set up basic graphic visualization
+   Set up serial viewing - send working program and visualization
+
+** Tanner
+   integrate schematic - schematic
+   design review
+
+
+* Long term
+
+  Bluetooth or XBee?
+  Battery Charger circuit
+  Battery selection
+  integrate schematic
+  finalize schematic
+  develop enclosure
+  develop visualization

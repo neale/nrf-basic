@@ -1,0 +1,1825 @@
+   1               		.file	"usb_debug_only.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.usb_wait_in_ready,"ax",@progbits
+  12               	usb_wait_in_ready:
+  13               	.LFB6:
+  14               		.file 1 "usb_debug_only.c"
+   1:usb_debug_only.c **** /* USB Debug Channel Example for Teensy USB Development Board
+   2:usb_debug_only.c ****  * http://www.pjrc.com/teensy/
+   3:usb_debug_only.c ****  * Copyright (c) 2008 PJRC.COM, LLC
+   4:usb_debug_only.c ****  *
+   5:usb_debug_only.c ****  * Permission is hereby granted, free of charge, to any person obtaining a copy
+   6:usb_debug_only.c ****  * of this software and associated documentation files (the "Software"), to deal
+   7:usb_debug_only.c ****  * in the Software without restriction, including without limitation the rights
+   8:usb_debug_only.c ****  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   9:usb_debug_only.c ****  * copies of the Software, and to permit persons to whom the Software is
+  10:usb_debug_only.c ****  * furnished to do so, subject to the following conditions:
+  11:usb_debug_only.c ****  *
+  12:usb_debug_only.c ****  * The above copyright notice and this permission notice shall be included in
+  13:usb_debug_only.c ****  * all copies or substantial portions of the Software.
+  14:usb_debug_only.c ****  *
+  15:usb_debug_only.c ****  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  16:usb_debug_only.c ****  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  17:usb_debug_only.c ****  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  18:usb_debug_only.c ****  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  19:usb_debug_only.c ****  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  20:usb_debug_only.c ****  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  21:usb_debug_only.c ****  * THE SOFTWARE.
+  22:usb_debug_only.c ****  */
+  23:usb_debug_only.c **** 
+  24:usb_debug_only.c **** // Version 1.0: Initial Release
+  25:usb_debug_only.c **** // Version 1.1: Add support for Teensy 2.0
+  26:usb_debug_only.c **** 
+  27:usb_debug_only.c **** #define USB_SERIAL_PRIVATE_INCLUDE
+  28:usb_debug_only.c **** #include "usb_debug_only.h"
+  29:usb_debug_only.c **** 
+  30:usb_debug_only.c **** /**************************************************************************
+  31:usb_debug_only.c ****  *
+  32:usb_debug_only.c ****  *  Configurable Options
+  33:usb_debug_only.c ****  *
+  34:usb_debug_only.c ****  **************************************************************************/
+  35:usb_debug_only.c **** 
+  36:usb_debug_only.c **** // You can change these to give your code its own name.  On Windows,
+  37:usb_debug_only.c **** // these are only used before an INF file (driver install) is loaded.
+  38:usb_debug_only.c **** #define STR_MANUFACTURER	L"Your Name"
+  39:usb_debug_only.c **** #define STR_PRODUCT		L"Your USB Device"
+  40:usb_debug_only.c **** 
+  41:usb_debug_only.c **** 
+  42:usb_debug_only.c **** // Mac OS-X and Linux automatically load the correct drivers.  On
+  43:usb_debug_only.c **** // Windows, even though the driver is supplied by Microsoft, an
+  44:usb_debug_only.c **** // INF file is needed to load the driver.  These numbers need to
+  45:usb_debug_only.c **** // match the INF file.
+  46:usb_debug_only.c **** #define VENDOR_ID		0x16C0
+  47:usb_debug_only.c **** #define PRODUCT_ID		0x0479
+  48:usb_debug_only.c **** 
+  49:usb_debug_only.c **** 
+  50:usb_debug_only.c **** // USB devices are supposed to implment a halt feature, which is
+  51:usb_debug_only.c **** // rarely (if ever) used.  If you comment this line out, the halt
+  52:usb_debug_only.c **** // code will be removed, saving 102 bytes of space (gcc 4.3.0).
+  53:usb_debug_only.c **** // This is not strictly USB compliant, but works with all major
+  54:usb_debug_only.c **** // operating systems.
+  55:usb_debug_only.c **** #define SUPPORT_ENDPOINT_HALT
+  56:usb_debug_only.c **** 
+  57:usb_debug_only.c **** 
+  58:usb_debug_only.c **** 
+  59:usb_debug_only.c **** /**************************************************************************
+  60:usb_debug_only.c ****  *
+  61:usb_debug_only.c ****  *  Endpoint Buffer Configuration
+  62:usb_debug_only.c ****  *
+  63:usb_debug_only.c ****  **************************************************************************/
+  64:usb_debug_only.c **** 
+  65:usb_debug_only.c **** // you might want to change the buffer size, up to 64 bytes.
+  66:usb_debug_only.c **** // The host reserves your bandwidth because this is an interrupt
+  67:usb_debug_only.c **** // endpoint, so it won't be available to other interrupt or isync
+  68:usb_debug_only.c **** // endpoints in other devices on the bus.
+  69:usb_debug_only.c **** 
+  70:usb_debug_only.c **** #define ENDPOINT0_SIZE		32
+  71:usb_debug_only.c **** #define DEBUG_TX_ENDPOINT	3
+  72:usb_debug_only.c **** #define DEBUG_TX_SIZE		32
+  73:usb_debug_only.c **** #define DEBUG_TX_BUFFER		EP_DOUBLE_BUFFER
+  74:usb_debug_only.c **** 
+  75:usb_debug_only.c **** static const uint8_t PROGMEM endpoint_config_table[] = {
+  76:usb_debug_only.c **** 	0,
+  77:usb_debug_only.c **** 	0,
+  78:usb_debug_only.c **** 	1, EP_TYPE_INTERRUPT_IN,  EP_SIZE(DEBUG_TX_SIZE) | DEBUG_TX_BUFFER,
+  79:usb_debug_only.c **** 	0
+  80:usb_debug_only.c **** };
+  81:usb_debug_only.c **** 
+  82:usb_debug_only.c **** 
+  83:usb_debug_only.c **** /**************************************************************************
+  84:usb_debug_only.c ****  *
+  85:usb_debug_only.c ****  *  Descriptor Data
+  86:usb_debug_only.c ****  *
+  87:usb_debug_only.c ****  **************************************************************************/
+  88:usb_debug_only.c **** 
+  89:usb_debug_only.c **** // Descriptors are the data that your computer reads when it auto-detects
+  90:usb_debug_only.c **** // this USB device (called "enumeration" in USB lingo).  The most commonly
+  91:usb_debug_only.c **** // changed items are editable at the top of this file.  Changing things
+  92:usb_debug_only.c **** // in here should only be done by those who've read chapter 9 of the USB
+  93:usb_debug_only.c **** // spec and relevant portions of any USB class specifications!
+  94:usb_debug_only.c **** 
+  95:usb_debug_only.c **** 
+  96:usb_debug_only.c **** static const uint8_t PROGMEM device_descriptor[] = {
+  97:usb_debug_only.c **** 	18,					// bLength
+  98:usb_debug_only.c **** 	1,					// bDescriptorType
+  99:usb_debug_only.c **** 	0x00, 0x02,				// bcdUSB
+ 100:usb_debug_only.c **** 	0,					// bDeviceClass
+ 101:usb_debug_only.c **** 	0,					// bDeviceSubClass
+ 102:usb_debug_only.c **** 	0,					// bDeviceProtocol
+ 103:usb_debug_only.c **** 	ENDPOINT0_SIZE,				// bMaxPacketSize0
+ 104:usb_debug_only.c **** 	LSB(VENDOR_ID), MSB(VENDOR_ID),		// idVendor
+ 105:usb_debug_only.c **** 	LSB(PRODUCT_ID), MSB(PRODUCT_ID),	// idProduct
+ 106:usb_debug_only.c **** 	0x00, 0x01,				// bcdDevice
+ 107:usb_debug_only.c **** 	1,					// iManufacturer
+ 108:usb_debug_only.c **** 	2,					// iProduct
+ 109:usb_debug_only.c **** 	0,					// iSerialNumber
+ 110:usb_debug_only.c **** 	1					// bNumConfigurations
+ 111:usb_debug_only.c **** };
+ 112:usb_debug_only.c **** 
+ 113:usb_debug_only.c **** static const uint8_t PROGMEM hid_report_descriptor[] = {
+ 114:usb_debug_only.c **** 	0x06, 0x31, 0xFF,			// Usage Page 0xFF31 (vendor defined)
+ 115:usb_debug_only.c **** 	0x09, 0x74,				// Usage 0x74
+ 116:usb_debug_only.c **** 	0xA1, 0x53,				// Collection 0x53
+ 117:usb_debug_only.c **** 	0x75, 0x08,				// report size = 8 bits
+ 118:usb_debug_only.c **** 	0x15, 0x00,				// logical minimum = 0
+ 119:usb_debug_only.c **** 	0x26, 0xFF, 0x00,			// logical maximum = 255
+ 120:usb_debug_only.c **** 	0x95, DEBUG_TX_SIZE,			// report count
+ 121:usb_debug_only.c **** 	0x09, 0x75,				// usage
+ 122:usb_debug_only.c **** 	0x81, 0x02,				// Input (array)
+ 123:usb_debug_only.c **** 	0xC0					// end collection
+ 124:usb_debug_only.c **** };
+ 125:usb_debug_only.c **** 
+ 126:usb_debug_only.c **** #define CONFIG1_DESC_SIZE (9+9+9+7)
+ 127:usb_debug_only.c **** #define HID_DESC2_OFFSET  (9+9)
+ 128:usb_debug_only.c **** static const uint8_t PROGMEM config1_descriptor[CONFIG1_DESC_SIZE] = {
+ 129:usb_debug_only.c **** 	// configuration descriptor, USB spec 9.6.3, page 264-266, Table 9-10
+ 130:usb_debug_only.c **** 	9, 					// bLength;
+ 131:usb_debug_only.c **** 	2,					// bDescriptorType;
+ 132:usb_debug_only.c **** 	LSB(CONFIG1_DESC_SIZE),			// wTotalLength
+ 133:usb_debug_only.c **** 	MSB(CONFIG1_DESC_SIZE),
+ 134:usb_debug_only.c **** 	1,					// bNumInterfaces
+ 135:usb_debug_only.c **** 	1,					// bConfigurationValue
+ 136:usb_debug_only.c **** 	0,					// iConfiguration
+ 137:usb_debug_only.c **** 	0xC0,					// bmAttributes
+ 138:usb_debug_only.c **** 	50,					// bMaxPower
+ 139:usb_debug_only.c **** 	// interface descriptor, USB spec 9.6.5, page 267-269, Table 9-12
+ 140:usb_debug_only.c **** 	9,					// bLength
+ 141:usb_debug_only.c **** 	4,					// bDescriptorType
+ 142:usb_debug_only.c **** 	0,					// bInterfaceNumber
+ 143:usb_debug_only.c **** 	0,					// bAlternateSetting
+ 144:usb_debug_only.c **** 	1,					// bNumEndpoints
+ 145:usb_debug_only.c **** 	0x03,					// bInterfaceClass (0x03 = HID)
+ 146:usb_debug_only.c **** 	0x00,					// bInterfaceSubClass
+ 147:usb_debug_only.c **** 	0x00,					// bInterfaceProtocol
+ 148:usb_debug_only.c **** 	0,					// iInterface
+ 149:usb_debug_only.c **** 	// HID interface descriptor, HID 1.11 spec, section 6.2.1
+ 150:usb_debug_only.c **** 	9,					// bLength
+ 151:usb_debug_only.c **** 	0x21,					// bDescriptorType
+ 152:usb_debug_only.c **** 	0x11, 0x01,				// bcdHID
+ 153:usb_debug_only.c **** 	0,					// bCountryCode
+ 154:usb_debug_only.c **** 	1,					// bNumDescriptors
+ 155:usb_debug_only.c **** 	0x22,					// bDescriptorType
+ 156:usb_debug_only.c **** 	sizeof(hid_report_descriptor),		// wDescriptorLength
+ 157:usb_debug_only.c **** 	0,
+ 158:usb_debug_only.c **** 	// endpoint descriptor, USB spec 9.6.6, page 269-271, Table 9-13
+ 159:usb_debug_only.c **** 	7,					// bLength
+ 160:usb_debug_only.c **** 	5,					// bDescriptorType
+ 161:usb_debug_only.c **** 	DEBUG_TX_ENDPOINT | 0x80,		// bEndpointAddress
+ 162:usb_debug_only.c **** 	0x03,					// bmAttributes (0x03=intr)
+ 163:usb_debug_only.c **** 	DEBUG_TX_SIZE, 0,			// wMaxPacketSize
+ 164:usb_debug_only.c **** 	1					// bInterval
+ 165:usb_debug_only.c **** };
+ 166:usb_debug_only.c **** 
+ 167:usb_debug_only.c **** // If you're desperate for a little extra code memory, these strings
+ 168:usb_debug_only.c **** // can be completely removed if iManufacturer, iProduct, iSerialNumber
+ 169:usb_debug_only.c **** // in the device desciptor are changed to zeros.
+ 170:usb_debug_only.c **** struct usb_string_descriptor_struct {
+ 171:usb_debug_only.c **** 	uint8_t bLength;
+ 172:usb_debug_only.c **** 	uint8_t bDescriptorType;
+ 173:usb_debug_only.c **** 	int16_t wString[];
+ 174:usb_debug_only.c **** };
+ 175:usb_debug_only.c **** static const struct usb_string_descriptor_struct PROGMEM string0 = {
+ 176:usb_debug_only.c **** 	4,
+ 177:usb_debug_only.c **** 	3,
+ 178:usb_debug_only.c **** 	{0x0409}
+ 179:usb_debug_only.c **** };
+ 180:usb_debug_only.c **** static const struct usb_string_descriptor_struct PROGMEM string1 = {
+ 181:usb_debug_only.c **** 	sizeof(STR_MANUFACTURER),
+ 182:usb_debug_only.c **** 	3,
+ 183:usb_debug_only.c **** 	STR_MANUFACTURER
+ 184:usb_debug_only.c **** };
+ 185:usb_debug_only.c **** static const struct usb_string_descriptor_struct PROGMEM string2 = {
+ 186:usb_debug_only.c **** 	sizeof(STR_PRODUCT),
+ 187:usb_debug_only.c **** 	3,
+ 188:usb_debug_only.c **** 	STR_PRODUCT
+ 189:usb_debug_only.c **** };
+ 190:usb_debug_only.c **** 
+ 191:usb_debug_only.c **** // This table defines which descriptor data is sent for each specific
+ 192:usb_debug_only.c **** // request from the host (in wValue and wIndex).
+ 193:usb_debug_only.c **** static const struct descriptor_list_struct {
+ 194:usb_debug_only.c **** 	uint16_t	wValue;
+ 195:usb_debug_only.c **** 	uint16_t	wIndex;
+ 196:usb_debug_only.c **** 	const uint8_t	*addr;
+ 197:usb_debug_only.c **** 	uint8_t		length;
+ 198:usb_debug_only.c **** } PROGMEM descriptor_list[] = {
+ 199:usb_debug_only.c **** 	{0x0100, 0x0000, device_descriptor, sizeof(device_descriptor)},
+ 200:usb_debug_only.c **** 	{0x0200, 0x0000, config1_descriptor, sizeof(config1_descriptor)},
+ 201:usb_debug_only.c **** 	{0x2200, 0x0000, hid_report_descriptor, sizeof(hid_report_descriptor)},
+ 202:usb_debug_only.c **** 	{0x2100, 0x0000, config1_descriptor+HID_DESC2_OFFSET, 9},
+ 203:usb_debug_only.c **** 	{0x0300, 0x0000, (const uint8_t *)&string0, 4},
+ 204:usb_debug_only.c **** 	{0x0301, 0x0409, (const uint8_t *)&string1, sizeof(STR_MANUFACTURER)},
+ 205:usb_debug_only.c **** 	{0x0302, 0x0409, (const uint8_t *)&string2, sizeof(STR_PRODUCT)}
+ 206:usb_debug_only.c **** };
+ 207:usb_debug_only.c **** #define NUM_DESC_LIST (sizeof(descriptor_list)/sizeof(struct descriptor_list_struct))
+ 208:usb_debug_only.c **** 
+ 209:usb_debug_only.c **** 
+ 210:usb_debug_only.c **** /**************************************************************************
+ 211:usb_debug_only.c ****  *
+ 212:usb_debug_only.c ****  *  Variables - these are the only non-stack RAM usage
+ 213:usb_debug_only.c ****  *
+ 214:usb_debug_only.c ****  **************************************************************************/
+ 215:usb_debug_only.c **** 
+ 216:usb_debug_only.c **** // zero when we are not configured, non-zero when enumerated
+ 217:usb_debug_only.c **** static volatile uint8_t usb_configuration=0;
+ 218:usb_debug_only.c **** 
+ 219:usb_debug_only.c **** // the time remaining before we transmit any partially full
+ 220:usb_debug_only.c **** // packet, or send a zero length packet.
+ 221:usb_debug_only.c **** static volatile uint8_t debug_flush_timer=0;
+ 222:usb_debug_only.c **** 
+ 223:usb_debug_only.c **** 
+ 224:usb_debug_only.c **** /**************************************************************************
+ 225:usb_debug_only.c ****  *
+ 226:usb_debug_only.c ****  *  Public Functions - these are the API intended for the user
+ 227:usb_debug_only.c ****  *
+ 228:usb_debug_only.c ****  **************************************************************************/
+ 229:usb_debug_only.c **** 
+ 230:usb_debug_only.c **** 
+ 231:usb_debug_only.c **** // initialize USB
+ 232:usb_debug_only.c **** void usb_init(void)
+ 233:usb_debug_only.c **** {
+ 234:usb_debug_only.c **** 	HW_CONFIG();
+ 235:usb_debug_only.c **** 	USB_FREEZE();				// enable USB
+ 236:usb_debug_only.c **** 	PLL_CONFIG();				// config PLL
+ 237:usb_debug_only.c ****         while (!(PLLCSR & (1<<PLOCK))) ;	// wait for PLL lock
+ 238:usb_debug_only.c ****         USB_CONFIG();				// start USB clock
+ 239:usb_debug_only.c ****         UDCON = 0;				// enable attach resistor
+ 240:usb_debug_only.c **** 	usb_configuration = 0;
+ 241:usb_debug_only.c ****         UDIEN = (1<<EORSTE)|(1<<SOFE);
+ 242:usb_debug_only.c **** 	sei();
+ 243:usb_debug_only.c **** }
+ 244:usb_debug_only.c **** 
+ 245:usb_debug_only.c **** // return 0 if the USB is not configured, or the configuration
+ 246:usb_debug_only.c **** // number selected by the HOST
+ 247:usb_debug_only.c **** uint8_t usb_configured(void)
+ 248:usb_debug_only.c **** {
+ 249:usb_debug_only.c **** 	return usb_configuration;
+ 250:usb_debug_only.c **** }
+ 251:usb_debug_only.c **** 
+ 252:usb_debug_only.c **** // transmit a character.  0 returned on success, -1 on error
+ 253:usb_debug_only.c **** int8_t usb_debug_putchar(uint8_t c)
+ 254:usb_debug_only.c **** {
+ 255:usb_debug_only.c **** 	static uint8_t previous_timeout=0;
+ 256:usb_debug_only.c **** 	uint8_t timeout, intr_state;
+ 257:usb_debug_only.c **** 
+ 258:usb_debug_only.c **** 	// if we're not online (enumerated and configured), error
+ 259:usb_debug_only.c **** 	if (!usb_configuration) return -1;
+ 260:usb_debug_only.c **** 	// interrupts are disabled so these functions can be
+ 261:usb_debug_only.c **** 	// used from the main program or interrupt context,
+ 262:usb_debug_only.c **** 	// even both in the same program!
+ 263:usb_debug_only.c **** 	intr_state = SREG;
+ 264:usb_debug_only.c **** 	cli();
+ 265:usb_debug_only.c **** 	UENUM = DEBUG_TX_ENDPOINT;
+ 266:usb_debug_only.c **** 	// if we gave up due to timeout before, don't wait again
+ 267:usb_debug_only.c **** 	if (previous_timeout) {
+ 268:usb_debug_only.c **** 		if (!(UEINTX & (1<<RWAL))) {
+ 269:usb_debug_only.c **** 			SREG = intr_state;
+ 270:usb_debug_only.c **** 			return -1;
+ 271:usb_debug_only.c **** 		}
+ 272:usb_debug_only.c **** 		previous_timeout = 0;
+ 273:usb_debug_only.c **** 	}
+ 274:usb_debug_only.c **** 	// wait for the FIFO to be ready to accept data
+ 275:usb_debug_only.c **** 	timeout = UDFNUML + 4;
+ 276:usb_debug_only.c **** 	while (1) {
+ 277:usb_debug_only.c **** 		// are we ready to transmit?
+ 278:usb_debug_only.c **** 		if (UEINTX & (1<<RWAL)) break;
+ 279:usb_debug_only.c **** 		SREG = intr_state;
+ 280:usb_debug_only.c **** 		// have we waited too long?
+ 281:usb_debug_only.c **** 		if (UDFNUML == timeout) {
+ 282:usb_debug_only.c **** 			previous_timeout = 1;
+ 283:usb_debug_only.c **** 			return -1;
+ 284:usb_debug_only.c **** 		}
+ 285:usb_debug_only.c **** 		// has the USB gone offline?
+ 286:usb_debug_only.c **** 		if (!usb_configuration) return -1;
+ 287:usb_debug_only.c **** 		// get ready to try checking again
+ 288:usb_debug_only.c **** 		intr_state = SREG;
+ 289:usb_debug_only.c **** 		cli();
+ 290:usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 291:usb_debug_only.c **** 	}
+ 292:usb_debug_only.c **** 	// actually write the byte into the FIFO
+ 293:usb_debug_only.c **** 	UEDATX = c;
+ 294:usb_debug_only.c **** 	// if this completed a packet, transmit it now!
+ 295:usb_debug_only.c **** 	if (!(UEINTX & (1<<RWAL))) {
+ 296:usb_debug_only.c **** 		UEINTX = 0x3A;
+ 297:usb_debug_only.c **** 		debug_flush_timer = 0;
+ 298:usb_debug_only.c **** 	} else {
+ 299:usb_debug_only.c **** 		debug_flush_timer = 2;
+ 300:usb_debug_only.c **** 	}
+ 301:usb_debug_only.c **** 	SREG = intr_state;
+ 302:usb_debug_only.c **** 	return 0;
+ 303:usb_debug_only.c **** }
+ 304:usb_debug_only.c **** 
+ 305:usb_debug_only.c **** 
+ 306:usb_debug_only.c **** // immediately transmit any buffered output.
+ 307:usb_debug_only.c **** void usb_debug_flush_output(void)
+ 308:usb_debug_only.c **** {
+ 309:usb_debug_only.c **** 	uint8_t intr_state;
+ 310:usb_debug_only.c **** 
+ 311:usb_debug_only.c **** 	intr_state = SREG;
+ 312:usb_debug_only.c **** 	cli();
+ 313:usb_debug_only.c **** 	if (debug_flush_timer) {
+ 314:usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 315:usb_debug_only.c **** 		while ((UEINTX & (1<<RWAL))) {
+ 316:usb_debug_only.c **** 			UEDATX = 0;
+ 317:usb_debug_only.c **** 		}
+ 318:usb_debug_only.c **** 		UEINTX = 0x3A;
+ 319:usb_debug_only.c **** 		debug_flush_timer = 0;
+ 320:usb_debug_only.c **** 	}
+ 321:usb_debug_only.c **** 	SREG = intr_state;
+ 322:usb_debug_only.c **** }
+ 323:usb_debug_only.c **** 
+ 324:usb_debug_only.c **** 
+ 325:usb_debug_only.c **** 
+ 326:usb_debug_only.c **** /**************************************************************************
+ 327:usb_debug_only.c ****  *
+ 328:usb_debug_only.c ****  *  Private Functions - not intended for general user consumption....
+ 329:usb_debug_only.c ****  *
+ 330:usb_debug_only.c ****  **************************************************************************/
+ 331:usb_debug_only.c **** 
+ 332:usb_debug_only.c **** 
+ 333:usb_debug_only.c **** 
+ 334:usb_debug_only.c **** // USB Device Interrupt - handle all device-level events
+ 335:usb_debug_only.c **** // the transmit buffer flushing is triggered by the start of frame
+ 336:usb_debug_only.c **** //
+ 337:usb_debug_only.c **** ISR(USB_GEN_vect)
+ 338:usb_debug_only.c **** {
+ 339:usb_debug_only.c **** 	uint8_t intbits, t;
+ 340:usb_debug_only.c **** 
+ 341:usb_debug_only.c ****         intbits = UDINT;
+ 342:usb_debug_only.c ****         UDINT = 0;
+ 343:usb_debug_only.c ****         if (intbits & (1<<EORSTI)) {
+ 344:usb_debug_only.c **** 		UENUM = 0;
+ 345:usb_debug_only.c **** 		UECONX = 1;
+ 346:usb_debug_only.c **** 		UECFG0X = EP_TYPE_CONTROL;
+ 347:usb_debug_only.c **** 		UECFG1X = EP_SIZE(ENDPOINT0_SIZE) | EP_SINGLE_BUFFER;
+ 348:usb_debug_only.c **** 		UEIENX = (1<<RXSTPE);
+ 349:usb_debug_only.c **** 		usb_configuration = 0;
+ 350:usb_debug_only.c ****         }
+ 351:usb_debug_only.c **** 	if (intbits & (1<<SOFI)) {
+ 352:usb_debug_only.c **** 		if (usb_configuration) {
+ 353:usb_debug_only.c **** 			t = debug_flush_timer;
+ 354:usb_debug_only.c **** 			if (t) {
+ 355:usb_debug_only.c **** 				debug_flush_timer = -- t;
+ 356:usb_debug_only.c **** 				if (!t) {
+ 357:usb_debug_only.c **** 					UENUM = DEBUG_TX_ENDPOINT;
+ 358:usb_debug_only.c **** 					while ((UEINTX & (1<<RWAL))) {
+ 359:usb_debug_only.c **** 						UEDATX = 0;
+ 360:usb_debug_only.c **** 					}
+ 361:usb_debug_only.c **** 					UEINTX = 0x3A;
+ 362:usb_debug_only.c **** 				}
+ 363:usb_debug_only.c **** 			}
+ 364:usb_debug_only.c **** 		}
+ 365:usb_debug_only.c **** 	}
+ 366:usb_debug_only.c **** }
+ 367:usb_debug_only.c **** 
+ 368:usb_debug_only.c **** 
+ 369:usb_debug_only.c **** // Misc functions to wait for ready and send/receive packets
+ 370:usb_debug_only.c **** static inline void usb_wait_in_ready(void)
+ 371:usb_debug_only.c **** {
+  15               		.loc 1 371 0
+  16               		.cfi_startproc
+  17               	/* prologue: function */
+  18               	/* frame size = 0 */
+  19               	/* stack size = 0 */
+  20               	.L__stack_usage = 0
+  21               	.L3:
+ 372:usb_debug_only.c **** 	while (!(UEINTX & (1<<TXINI))) ;
+  22               		.loc 1 372 0 discriminator 1
+  23 0000 8091 E800 		lds r24,232
+  24 0004 80FF      		sbrs r24,0
+  25 0006 00C0      		rjmp .L3
+  26               	/* epilogue start */
+ 373:usb_debug_only.c **** }
+  27               		.loc 1 373 0
+  28 0008 0895      		ret
+  29               		.cfi_endproc
+  30               	.LFE6:
+  32               		.section	.text.usb_init,"ax",@progbits
+  33               	.global	usb_init
+  35               	usb_init:
+  36               	.LFB1:
+ 233:usb_debug_only.c **** {
+  37               		.loc 1 233 0
+  38               		.cfi_startproc
+  39               	/* prologue: function */
+  40               	/* frame size = 0 */
+  41               	/* stack size = 0 */
+  42               	.L__stack_usage = 0
+ 234:usb_debug_only.c **** 	HW_CONFIG();
+  43               		.loc 1 234 0
+  44 0000 81E0      		ldi r24,lo8(1)
+  45 0002 8093 D700 		sts 215,r24
+ 235:usb_debug_only.c **** 	USB_FREEZE();				// enable USB
+  46               		.loc 1 235 0
+  47 0006 80EA      		ldi r24,lo8(-96)
+  48 0008 8093 D800 		sts 216,r24
+ 236:usb_debug_only.c **** 	PLL_CONFIG();				// config PLL
+  49               		.loc 1 236 0
+  50 000c 82E1      		ldi r24,lo8(18)
+  51 000e 89BD      		out 0x29,r24
+  52               	.L7:
+ 237:usb_debug_only.c ****         while (!(PLLCSR & (1<<PLOCK))) ;	// wait for PLL lock
+  53               		.loc 1 237 0 discriminator 1
+  54 0010 09B4      		in __tmp_reg__,0x29
+  55 0012 00FE      		sbrs __tmp_reg__,0
+  56 0014 00C0      		rjmp .L7
+ 238:usb_debug_only.c ****         USB_CONFIG();				// start USB clock
+  57               		.loc 1 238 0
+  58 0016 80E9      		ldi r24,lo8(-112)
+  59 0018 8093 D800 		sts 216,r24
+ 239:usb_debug_only.c ****         UDCON = 0;				// enable attach resistor
+  60               		.loc 1 239 0
+  61 001c 1092 E000 		sts 224,__zero_reg__
+ 240:usb_debug_only.c **** 	usb_configuration = 0;
+  62               		.loc 1 240 0
+  63 0020 1092 0000 		sts usb_configuration,__zero_reg__
+ 241:usb_debug_only.c ****         UDIEN = (1<<EORSTE)|(1<<SOFE);
+  64               		.loc 1 241 0
+  65 0024 8CE0      		ldi r24,lo8(12)
+  66 0026 8093 E200 		sts 226,r24
+ 242:usb_debug_only.c **** 	sei();
+  67               		.loc 1 242 0
+  68               	/* #APP */
+  69               	 ;  242 "usb_debug_only.c" 1
+  70 002a 7894      		sei
+  71               	 ;  0 "" 2
+  72               	/* #NOAPP */
+  73 002c 0895      		ret
+  74               		.cfi_endproc
+  75               	.LFE1:
+  77               		.section	.text.usb_configured,"ax",@progbits
+  78               	.global	usb_configured
+  80               	usb_configured:
+  81               	.LFB2:
+ 248:usb_debug_only.c **** {
+  82               		.loc 1 248 0
+  83               		.cfi_startproc
+  84               	/* prologue: function */
+  85               	/* frame size = 0 */
+  86               	/* stack size = 0 */
+  87               	.L__stack_usage = 0
+ 249:usb_debug_only.c **** 	return usb_configuration;
+  88               		.loc 1 249 0
+  89 0000 8091 0000 		lds r24,usb_configuration
+ 250:usb_debug_only.c **** }
+  90               		.loc 1 250 0
+  91 0004 0895      		ret
+  92               		.cfi_endproc
+  93               	.LFE2:
+  95               		.section	.text.usb_debug_putchar,"ax",@progbits
+  96               	.global	usb_debug_putchar
+  98               	usb_debug_putchar:
+  99               	.LFB3:
+ 254:usb_debug_only.c **** {
+ 100               		.loc 1 254 0
+ 101               		.cfi_startproc
+ 102               	.LVL0:
+ 103               	/* prologue: function */
+ 104               	/* frame size = 0 */
+ 105               	/* stack size = 0 */
+ 106               	.L__stack_usage = 0
+ 259:usb_debug_only.c **** 	if (!usb_configuration) return -1;
+ 107               		.loc 1 259 0
+ 108 0000 9091 0000 		lds r25,usb_configuration
+ 109 0004 9923      		tst r25
+ 110 0006 01F0      		breq .L26
+ 263:usb_debug_only.c **** 	intr_state = SREG;
+ 111               		.loc 1 263 0
+ 112 0008 9FB7      		in r25,__SREG__
+ 113               	.LVL1:
+ 264:usb_debug_only.c **** 	cli();
+ 114               		.loc 1 264 0
+ 115               	/* #APP */
+ 116               	 ;  264 "usb_debug_only.c" 1
+ 117 000a F894      		cli
+ 118               	 ;  0 "" 2
+ 265:usb_debug_only.c **** 	UENUM = DEBUG_TX_ENDPOINT;
+ 119               		.loc 1 265 0
+ 120               	/* #NOAPP */
+ 121 000c 23E0      		ldi r18,lo8(3)
+ 122 000e 2093 E900 		sts 233,r18
+ 267:usb_debug_only.c **** 	if (previous_timeout) {
+ 123               		.loc 1 267 0
+ 124 0012 2091 0000 		lds r18,previous_timeout.1693
+ 125 0016 2223      		tst r18
+ 126 0018 01F0      		breq .L12
+ 268:usb_debug_only.c **** 		if (!(UEINTX & (1<<RWAL))) {
+ 127               		.loc 1 268 0
+ 128 001a 2091 E800 		lds r18,232
+ 129 001e 25FD      		sbrc r18,5
+ 130 0020 00C0      		rjmp .L13
+ 269:usb_debug_only.c **** 			SREG = intr_state;
+ 131               		.loc 1 269 0
+ 132 0022 9FBF      		out __SREG__,r25
+ 133               	.LVL2:
+ 134               	.L26:
+ 270:usb_debug_only.c **** 			return -1;
+ 135               		.loc 1 270 0
+ 136 0024 8FEF      		ldi r24,lo8(-1)
+ 137 0026 0895      		ret
+ 138               	.LVL3:
+ 139               	.L13:
+ 272:usb_debug_only.c **** 		previous_timeout = 0;
+ 140               		.loc 1 272 0
+ 141 0028 1092 0000 		sts previous_timeout.1693,__zero_reg__
+ 142               	.L12:
+ 275:usb_debug_only.c **** 	timeout = UDFNUML + 4;
+ 143               		.loc 1 275 0
+ 144 002c 2091 E400 		lds r18,228
+ 145 0030 2C5F      		subi r18,lo8(-(4))
+ 146               	.LVL4:
+ 290:usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 147               		.loc 1 290 0
+ 148 0032 33E0      		ldi r19,lo8(3)
+ 149               	.L17:
+ 278:usb_debug_only.c **** 		if (UEINTX & (1<<RWAL)) break;
+ 150               		.loc 1 278 0
+ 151 0034 4091 E800 		lds r20,232
+ 152 0038 45FD      		sbrc r20,5
+ 153 003a 00C0      		rjmp .L14
+ 279:usb_debug_only.c **** 		SREG = intr_state;
+ 154               		.loc 1 279 0
+ 155 003c 9FBF      		out __SREG__,r25
+ 281:usb_debug_only.c **** 		if (UDFNUML == timeout) {
+ 156               		.loc 1 281 0
+ 157 003e 9091 E400 		lds r25,228
+ 158               	.LVL5:
+ 159 0042 9213      		cpse r25,r18
+ 160 0044 00C0      		rjmp .L15
+ 282:usb_debug_only.c **** 			previous_timeout = 1;
+ 161               		.loc 1 282 0
+ 162 0046 81E0      		ldi r24,lo8(1)
+ 163               	.LVL6:
+ 164 0048 8093 0000 		sts previous_timeout.1693,r24
+ 165               	.LVL7:
+ 166 004c 00C0      		rjmp .L26
+ 167               	.LVL8:
+ 168               	.L15:
+ 286:usb_debug_only.c **** 		if (!usb_configuration) return -1;
+ 169               		.loc 1 286 0
+ 170 004e 9091 0000 		lds r25,usb_configuration
+ 171 0052 9923      		tst r25
+ 172 0054 01F0      		breq .L26
+ 288:usb_debug_only.c **** 		intr_state = SREG;
+ 173               		.loc 1 288 0
+ 174 0056 9FB7      		in r25,__SREG__
+ 175               	.LVL9:
+ 289:usb_debug_only.c **** 		cli();
+ 176               		.loc 1 289 0
+ 177               	/* #APP */
+ 178               	 ;  289 "usb_debug_only.c" 1
+ 179 0058 F894      		cli
+ 180               	 ;  0 "" 2
+ 290:usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 181               		.loc 1 290 0
+ 182               	/* #NOAPP */
+ 183 005a 3093 E900 		sts 233,r19
+ 291:usb_debug_only.c **** 	}
+ 184               		.loc 1 291 0
+ 185 005e 00C0      		rjmp .L17
+ 186               	.L14:
+ 293:usb_debug_only.c **** 	UEDATX = c;
+ 187               		.loc 1 293 0
+ 188 0060 8093 F100 		sts 241,r24
+ 295:usb_debug_only.c **** 	if (!(UEINTX & (1<<RWAL))) {
+ 189               		.loc 1 295 0
+ 190 0064 8091 E800 		lds r24,232
+ 191               	.LVL10:
+ 192 0068 85FD      		sbrc r24,5
+ 193 006a 00C0      		rjmp .L18
+ 296:usb_debug_only.c **** 		UEINTX = 0x3A;
+ 194               		.loc 1 296 0
+ 195 006c 8AE3      		ldi r24,lo8(58)
+ 196 006e 8093 E800 		sts 232,r24
+ 197               	.LVL11:
+ 297:usb_debug_only.c **** 		debug_flush_timer = 0;
+ 198               		.loc 1 297 0
+ 199 0072 1092 0000 		sts debug_flush_timer,__zero_reg__
+ 200 0076 00C0      		rjmp .L19
+ 201               	.LVL12:
+ 202               	.L18:
+ 299:usb_debug_only.c **** 		debug_flush_timer = 2;
+ 203               		.loc 1 299 0
+ 204 0078 82E0      		ldi r24,lo8(2)
+ 205 007a 8093 0000 		sts debug_flush_timer,r24
+ 206               	.LVL13:
+ 207               	.L19:
+ 301:usb_debug_only.c **** 	SREG = intr_state;
+ 208               		.loc 1 301 0
+ 209 007e 9FBF      		out __SREG__,r25
+ 302:usb_debug_only.c **** 	return 0;
+ 210               		.loc 1 302 0
+ 211 0080 80E0      		ldi r24,0
+ 303:usb_debug_only.c **** }
+ 212               		.loc 1 303 0
+ 213 0082 0895      		ret
+ 214               		.cfi_endproc
+ 215               	.LFE3:
+ 217               		.section	.text.usb_debug_flush_output,"ax",@progbits
+ 218               	.global	usb_debug_flush_output
+ 220               	usb_debug_flush_output:
+ 221               	.LFB4:
+ 308:usb_debug_only.c **** {
+ 222               		.loc 1 308 0
+ 223               		.cfi_startproc
+ 224               	/* prologue: function */
+ 225               	/* frame size = 0 */
+ 226               	/* stack size = 0 */
+ 227               	.L__stack_usage = 0
+ 311:usb_debug_only.c **** 	intr_state = SREG;
+ 228               		.loc 1 311 0
+ 229 0000 8FB7      		in r24,__SREG__
+ 230               	.LVL14:
+ 312:usb_debug_only.c **** 	cli();
+ 231               		.loc 1 312 0
+ 232               	/* #APP */
+ 233               	 ;  312 "usb_debug_only.c" 1
+ 234 0002 F894      		cli
+ 235               	 ;  0 "" 2
+ 313:usb_debug_only.c **** 	if (debug_flush_timer) {
+ 236               		.loc 1 313 0
+ 237               	/* #NOAPP */
+ 238 0004 9091 0000 		lds r25,debug_flush_timer
+ 239 0008 9923      		tst r25
+ 240 000a 01F0      		breq .L28
+ 314:usb_debug_only.c **** 		UENUM = DEBUG_TX_ENDPOINT;
+ 241               		.loc 1 314 0
+ 242 000c 93E0      		ldi r25,lo8(3)
+ 243 000e 9093 E900 		sts 233,r25
+ 244               	.L29:
+ 315:usb_debug_only.c **** 		while ((UEINTX & (1<<RWAL))) {
+ 245               		.loc 1 315 0 discriminator 1
+ 246 0012 9091 E800 		lds r25,232
+ 247 0016 95FF      		sbrs r25,5
+ 248 0018 00C0      		rjmp .L34
+ 316:usb_debug_only.c **** 			UEDATX = 0;
+ 249               		.loc 1 316 0
+ 250 001a 1092 F100 		sts 241,__zero_reg__
+ 251 001e 00C0      		rjmp .L29
+ 252               	.L34:
+ 318:usb_debug_only.c **** 		UEINTX = 0x3A;
+ 253               		.loc 1 318 0
+ 254 0020 9AE3      		ldi r25,lo8(58)
+ 255 0022 9093 E800 		sts 232,r25
+ 319:usb_debug_only.c **** 		debug_flush_timer = 0;
+ 256               		.loc 1 319 0
+ 257 0026 1092 0000 		sts debug_flush_timer,__zero_reg__
+ 258               	.L28:
+ 321:usb_debug_only.c **** 	SREG = intr_state;
+ 259               		.loc 1 321 0
+ 260 002a 8FBF      		out __SREG__,r24
+ 261 002c 0895      		ret
+ 262               		.cfi_endproc
+ 263               	.LFE4:
+ 265               		.section	.text.__vector_10,"ax",@progbits
+ 266               	.global	__vector_10
+ 268               	__vector_10:
+ 269               	.LFB5:
+ 338:usb_debug_only.c **** {
+ 270               		.loc 1 338 0
+ 271               		.cfi_startproc
+ 272 0000 1F92      		push r1
+ 273               	.LCFI0:
+ 274               		.cfi_def_cfa_offset 3
+ 275               		.cfi_offset 1, -2
+ 276 0002 0F92      		push r0
+ 277               	.LCFI1:
+ 278               		.cfi_def_cfa_offset 4
+ 279               		.cfi_offset 0, -3
+ 280 0004 0FB6      		in r0,__SREG__
+ 281 0006 0F92      		push r0
+ 282 0008 1124      		clr __zero_reg__
+ 283 000a 8F93      		push r24
+ 284               	.LCFI2:
+ 285               		.cfi_def_cfa_offset 5
+ 286               		.cfi_offset 24, -4
+ 287 000c 9F93      		push r25
+ 288               	.LCFI3:
+ 289               		.cfi_def_cfa_offset 6
+ 290               		.cfi_offset 25, -5
+ 291               	/* prologue: Signal */
+ 292               	/* frame size = 0 */
+ 293               	/* stack size = 5 */
+ 294               	.L__stack_usage = 5
+ 341:usb_debug_only.c ****         intbits = UDINT;
+ 295               		.loc 1 341 0
+ 296 000e 8091 E100 		lds r24,225
+ 297               	.LVL15:
+ 342:usb_debug_only.c ****         UDINT = 0;
+ 298               		.loc 1 342 0
+ 299 0012 1092 E100 		sts 225,__zero_reg__
+ 343:usb_debug_only.c ****         if (intbits & (1<<EORSTI)) {
+ 300               		.loc 1 343 0
+ 301 0016 83FF      		sbrs r24,3
+ 302 0018 00C0      		rjmp .L36
+ 344:usb_debug_only.c **** 		UENUM = 0;
+ 303               		.loc 1 344 0
+ 304 001a 1092 E900 		sts 233,__zero_reg__
+ 345:usb_debug_only.c **** 		UECONX = 1;
+ 305               		.loc 1 345 0
+ 306 001e 91E0      		ldi r25,lo8(1)
+ 307 0020 9093 EB00 		sts 235,r25
+ 346:usb_debug_only.c **** 		UECFG0X = EP_TYPE_CONTROL;
+ 308               		.loc 1 346 0
+ 309 0024 1092 EC00 		sts 236,__zero_reg__
+ 347:usb_debug_only.c **** 		UECFG1X = EP_SIZE(ENDPOINT0_SIZE) | EP_SINGLE_BUFFER;
+ 310               		.loc 1 347 0
+ 311 0028 92E2      		ldi r25,lo8(34)
+ 312 002a 9093 ED00 		sts 237,r25
+ 348:usb_debug_only.c **** 		UEIENX = (1<<RXSTPE);
+ 313               		.loc 1 348 0
+ 314 002e 98E0      		ldi r25,lo8(8)
+ 315 0030 9093 F000 		sts 240,r25
+ 349:usb_debug_only.c **** 		usb_configuration = 0;
+ 316               		.loc 1 349 0
+ 317 0034 1092 0000 		sts usb_configuration,__zero_reg__
+ 318               	.L36:
+ 351:usb_debug_only.c **** 	if (intbits & (1<<SOFI)) {
+ 319               		.loc 1 351 0
+ 320 0038 82FF      		sbrs r24,2
+ 321 003a 00C0      		rjmp .L35
+ 352:usb_debug_only.c **** 		if (usb_configuration) {
+ 322               		.loc 1 352 0
+ 323 003c 8091 0000 		lds r24,usb_configuration
+ 324               	.LVL16:
+ 325 0040 8823      		tst r24
+ 326 0042 01F0      		breq .L35
+ 353:usb_debug_only.c **** 			t = debug_flush_timer;
+ 327               		.loc 1 353 0
+ 328 0044 8091 0000 		lds r24,debug_flush_timer
+ 329               	.LVL17:
+ 354:usb_debug_only.c **** 			if (t) {
+ 330               		.loc 1 354 0
+ 331 0048 8823      		tst r24
+ 332 004a 01F0      		breq .L35
+ 355:usb_debug_only.c **** 				debug_flush_timer = -- t;
+ 333               		.loc 1 355 0
+ 334 004c 8150      		subi r24,lo8(-(-1))
+ 335               	.LVL18:
+ 336 004e 8093 0000 		sts debug_flush_timer,r24
+ 356:usb_debug_only.c **** 				if (!t) {
+ 337               		.loc 1 356 0
+ 338 0052 8111      		cpse r24,__zero_reg__
+ 339 0054 00C0      		rjmp .L35
+ 357:usb_debug_only.c **** 					UENUM = DEBUG_TX_ENDPOINT;
+ 340               		.loc 1 357 0
+ 341 0056 83E0      		ldi r24,lo8(3)
+ 342               	.LVL19:
+ 343 0058 8093 E900 		sts 233,r24
+ 344               	.LVL20:
+ 345               	.L40:
+ 358:usb_debug_only.c **** 					while ((UEINTX & (1<<RWAL))) {
+ 346               		.loc 1 358 0 discriminator 1
+ 347 005c 8091 E800 		lds r24,232
+ 348 0060 85FF      		sbrs r24,5
+ 349 0062 00C0      		rjmp .L51
+ 359:usb_debug_only.c **** 						UEDATX = 0;
+ 350               		.loc 1 359 0
+ 351 0064 1092 F100 		sts 241,__zero_reg__
+ 352 0068 00C0      		rjmp .L40
+ 353               	.L51:
+ 361:usb_debug_only.c **** 					UEINTX = 0x3A;
+ 354               		.loc 1 361 0
+ 355 006a 8AE3      		ldi r24,lo8(58)
+ 356 006c 8093 E800 		sts 232,r24
+ 357               	.L35:
+ 358               	/* epilogue start */
+ 366:usb_debug_only.c **** }
+ 359               		.loc 1 366 0
+ 360 0070 9F91      		pop r25
+ 361 0072 8F91      		pop r24
+ 362 0074 0F90      		pop r0
+ 363 0076 0FBE      		out __SREG__,r0
+ 364 0078 0F90      		pop r0
+ 365 007a 1F90      		pop r1
+ 366 007c 1895      		reti
+ 367               		.cfi_endproc
+ 368               	.LFE5:
+ 370               		.section	.text.__vector_11,"ax",@progbits
+ 371               	.global	__vector_11
+ 373               	__vector_11:
+ 374               	.LFB10:
+ 374:usb_debug_only.c **** static inline void usb_send_in(void)
+ 375:usb_debug_only.c **** {
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 377:usb_debug_only.c **** }
+ 378:usb_debug_only.c **** static inline void usb_wait_receive_out(void)
+ 379:usb_debug_only.c **** {
+ 380:usb_debug_only.c **** 	while (!(UEINTX & (1<<RXOUTI))) ;
+ 381:usb_debug_only.c **** }
+ 382:usb_debug_only.c **** static inline void usb_ack_out(void)
+ 383:usb_debug_only.c **** {
+ 384:usb_debug_only.c **** 	UEINTX = ~(1<<RXOUTI);
+ 385:usb_debug_only.c **** }
+ 386:usb_debug_only.c **** 
+ 387:usb_debug_only.c **** 
+ 388:usb_debug_only.c **** 
+ 389:usb_debug_only.c **** // USB Endpoint Interrupt - endpoint 0 is handled here.  The
+ 390:usb_debug_only.c **** // other endpoints are manipulated by the user-callable
+ 391:usb_debug_only.c **** // functions, and the start-of-frame interrupt.
+ 392:usb_debug_only.c **** //
+ 393:usb_debug_only.c **** ISR(USB_COM_vect)
+ 394:usb_debug_only.c **** {
+ 375               		.loc 1 394 0
+ 376               		.cfi_startproc
+ 377 0000 1F92      		push r1
+ 378               	.LCFI4:
+ 379               		.cfi_def_cfa_offset 3
+ 380               		.cfi_offset 1, -2
+ 381 0002 0F92      		push r0
+ 382               	.LCFI5:
+ 383               		.cfi_def_cfa_offset 4
+ 384               		.cfi_offset 0, -3
+ 385 0004 0FB6      		in r0,__SREG__
+ 386 0006 0F92      		push r0
+ 387 0008 1124      		clr __zero_reg__
+ 388 000a EF92      		push r14
+ 389               	.LCFI6:
+ 390               		.cfi_def_cfa_offset 5
+ 391               		.cfi_offset 14, -4
+ 392 000c FF92      		push r15
+ 393               	.LCFI7:
+ 394               		.cfi_def_cfa_offset 6
+ 395               		.cfi_offset 15, -5
+ 396 000e 0F93      		push r16
+ 397               	.LCFI8:
+ 398               		.cfi_def_cfa_offset 7
+ 399               		.cfi_offset 16, -6
+ 400 0010 1F93      		push r17
+ 401               	.LCFI9:
+ 402               		.cfi_def_cfa_offset 8
+ 403               		.cfi_offset 17, -7
+ 404 0012 2F93      		push r18
+ 405               	.LCFI10:
+ 406               		.cfi_def_cfa_offset 9
+ 407               		.cfi_offset 18, -8
+ 408 0014 3F93      		push r19
+ 409               	.LCFI11:
+ 410               		.cfi_def_cfa_offset 10
+ 411               		.cfi_offset 19, -9
+ 412 0016 4F93      		push r20
+ 413               	.LCFI12:
+ 414               		.cfi_def_cfa_offset 11
+ 415               		.cfi_offset 20, -10
+ 416 0018 5F93      		push r21
+ 417               	.LCFI13:
+ 418               		.cfi_def_cfa_offset 12
+ 419               		.cfi_offset 21, -11
+ 420 001a 6F93      		push r22
+ 421               	.LCFI14:
+ 422               		.cfi_def_cfa_offset 13
+ 423               		.cfi_offset 22, -12
+ 424 001c 7F93      		push r23
+ 425               	.LCFI15:
+ 426               		.cfi_def_cfa_offset 14
+ 427               		.cfi_offset 23, -13
+ 428 001e 8F93      		push r24
+ 429               	.LCFI16:
+ 430               		.cfi_def_cfa_offset 15
+ 431               		.cfi_offset 24, -14
+ 432 0020 9F93      		push r25
+ 433               	.LCFI17:
+ 434               		.cfi_def_cfa_offset 16
+ 435               		.cfi_offset 25, -15
+ 436 0022 AF93      		push r26
+ 437               	.LCFI18:
+ 438               		.cfi_def_cfa_offset 17
+ 439               		.cfi_offset 26, -16
+ 440 0024 BF93      		push r27
+ 441               	.LCFI19:
+ 442               		.cfi_def_cfa_offset 18
+ 443               		.cfi_offset 27, -17
+ 444 0026 EF93      		push r30
+ 445               	.LCFI20:
+ 446               		.cfi_def_cfa_offset 19
+ 447               		.cfi_offset 30, -18
+ 448 0028 FF93      		push r31
+ 449               	.LCFI21:
+ 450               		.cfi_def_cfa_offset 20
+ 451               		.cfi_offset 31, -19
+ 452 002a CF93      		push r28
+ 453               	.LCFI22:
+ 454               		.cfi_def_cfa_offset 21
+ 455               		.cfi_offset 28, -20
+ 456 002c DF93      		push r29
+ 457               	.LCFI23:
+ 458               		.cfi_def_cfa_offset 22
+ 459               		.cfi_offset 29, -21
+ 460 002e 1F92      		push __zero_reg__
+ 461               	.LCFI24:
+ 462               		.cfi_def_cfa_offset 23
+ 463 0030 CDB7      		in r28,__SP_L__
+ 464 0032 DEB7      		in r29,__SP_H__
+ 465               	.LCFI25:
+ 466               		.cfi_def_cfa_register 28
+ 467               	/* prologue: Signal */
+ 468               	/* frame size = 1 */
+ 469               	/* stack size = 22 */
+ 470               	.L__stack_usage = 22
+ 395:usb_debug_only.c ****         uint8_t intbits;
+ 396:usb_debug_only.c **** 	const uint8_t *list;
+ 397:usb_debug_only.c ****         const uint8_t *cfg;
+ 398:usb_debug_only.c **** 	uint8_t i, n, len, en;
+ 399:usb_debug_only.c **** 	uint8_t bmRequestType;
+ 400:usb_debug_only.c **** 	uint8_t bRequest;
+ 401:usb_debug_only.c **** 	uint16_t wValue;
+ 402:usb_debug_only.c **** 	uint16_t wIndex;
+ 403:usb_debug_only.c **** 	uint16_t wLength;
+ 404:usb_debug_only.c **** 	uint16_t desc_val;
+ 405:usb_debug_only.c **** 	const uint8_t *desc_addr;
+ 406:usb_debug_only.c **** 	uint8_t	desc_length;
+ 407:usb_debug_only.c **** 
+ 408:usb_debug_only.c ****         UENUM = 0;
+ 471               		.loc 1 408 0
+ 472 0034 1092 E900 		sts 233,__zero_reg__
+ 409:usb_debug_only.c ****         intbits = UEINTX;
+ 473               		.loc 1 409 0
+ 474 0038 8091 E800 		lds r24,232
+ 475               	.LVL21:
+ 410:usb_debug_only.c ****         if (intbits & (1<<RXSTPI)) {
+ 476               		.loc 1 410 0
+ 477 003c 83FF      		sbrs r24,3
+ 478 003e 00C0      		rjmp .L53
+ 411:usb_debug_only.c ****                 bmRequestType = UEDATX;
+ 479               		.loc 1 411 0
+ 480 0040 9091 F100 		lds r25,241
+ 481               	.LVL22:
+ 412:usb_debug_only.c ****                 bRequest = UEDATX;
+ 482               		.loc 1 412 0
+ 483 0044 8091 F100 		lds r24,241
+ 484               	.LVL23:
+ 413:usb_debug_only.c ****                 wValue = UEDATX;
+ 485               		.loc 1 413 0
+ 486 0048 0091 F100 		lds r16,241
+ 487               	.LVL24:
+ 414:usb_debug_only.c ****                 wValue |= (UEDATX << 8);
+ 488               		.loc 1 414 0
+ 489 004c 2091 F100 		lds r18,241
+ 490 0050 10E0      		ldi r17,0
+ 491 0052 122B      		or r17,r18
+ 492               	.LVL25:
+ 415:usb_debug_only.c ****                 wIndex = UEDATX;
+ 493               		.loc 1 415 0
+ 494 0054 3091 F100 		lds r19,241
+ 495               	.LVL26:
+ 416:usb_debug_only.c ****                 wIndex |= (UEDATX << 8);
+ 496               		.loc 1 416 0
+ 497 0058 2091 F100 		lds r18,241
+ 498 005c E32E      		mov r14,r19
+ 499 005e F12C      		mov r15,__zero_reg__
+ 500 0060 F22A      		or r15,r18
+ 501               	.LVL27:
+ 417:usb_debug_only.c ****                 wLength = UEDATX;
+ 502               		.loc 1 417 0
+ 503 0062 2091 F100 		lds r18,241
+ 504               	.LVL28:
+ 418:usb_debug_only.c ****                 wLength |= (UEDATX << 8);
+ 505               		.loc 1 418 0
+ 506 0066 4091 F100 		lds r20,241
+ 507 006a 30E0      		ldi r19,0
+ 508 006c 342B      		or r19,r20
+ 509               	.LVL29:
+ 419:usb_debug_only.c ****                 UEINTX = ~((1<<RXSTPI) | (1<<RXOUTI) | (1<<TXINI));
+ 510               		.loc 1 419 0
+ 511 006e 42EF      		ldi r20,lo8(-14)
+ 512               	.LVL30:
+ 513 0070 4093 E800 		sts 232,r20
+ 420:usb_debug_only.c ****                 if (bRequest == GET_DESCRIPTOR) {
+ 514               		.loc 1 420 0
+ 515 0074 8630      		cpi r24,lo8(6)
+ 516 0076 01F0      		breq .+2
+ 517 0078 00C0      		rjmp .L103
+ 518 007a 67E0      		ldi r22,lo8(7)
+ 519 007c 80E0      		ldi r24,lo8(descriptor_list)
+ 520 007e 90E0      		ldi r25,hi8(descriptor_list)
+ 521               	.LVL31:
+ 522               	.L64:
+ 523               	.LBB24:
+ 421:usb_debug_only.c **** 			list = (const uint8_t *)descriptor_list;
+ 422:usb_debug_only.c **** 			for (i=0; ; i++) {
+ 423:usb_debug_only.c **** 				if (i >= NUM_DESC_LIST) {
+ 424:usb_debug_only.c **** 					UECONX = (1<<STALLRQ)|(1<<EPEN);  //stall
+ 425:usb_debug_only.c **** 					return;
+ 426:usb_debug_only.c **** 				}
+ 427:usb_debug_only.c **** 				desc_val = pgm_read_word(list);
+ 524               		.loc 1 427 0
+ 525 0080 FC01      		movw r30,r24
+ 526               	/* #APP */
+ 527               	 ;  427 "usb_debug_only.c" 1
+ 528 0082 4591      		lpm r20, Z+
+ 529 0084 5491      		lpm r21, Z
+ 530               		
+ 531               	 ;  0 "" 2
+ 532               	.LVL32:
+ 533               	/* #NOAPP */
+ 534               	.LBE24:
+ 428:usb_debug_only.c **** 				if (desc_val != wValue) {
+ 535               		.loc 1 428 0
+ 536 0086 4017      		cp r20,r16
+ 537 0088 5107      		cpc r21,r17
+ 538 008a 01F4      		brne .L104
+ 539               	.LVL33:
+ 429:usb_debug_only.c **** 					list += sizeof(struct descriptor_list_struct);
+ 430:usb_debug_only.c **** 					continue;
+ 431:usb_debug_only.c **** 				}
+ 432:usb_debug_only.c **** 				list += 2;
+ 540               		.loc 1 432 0
+ 541 008c FC01      		movw r30,r24
+ 542 008e 3296      		adiw r30,2
+ 543               	.LVL34:
+ 544               	.LBB25:
+ 433:usb_debug_only.c **** 				desc_val = pgm_read_word(list);
+ 545               		.loc 1 433 0
+ 546               	/* #APP */
+ 547               	 ;  433 "usb_debug_only.c" 1
+ 548 0090 4591      		lpm r20, Z+
+ 549 0092 5491      		lpm r21, Z
+ 550               		
+ 551               	 ;  0 "" 2
+ 552               	.LVL35:
+ 553               	/* #NOAPP */
+ 554               	.LBE25:
+ 434:usb_debug_only.c **** 				if (desc_val != wIndex) {
+ 555               		.loc 1 434 0
+ 556 0094 4E15      		cp r20,r14
+ 557 0096 5F05      		cpc r21,r15
+ 558 0098 01F0      		breq .L59
+ 559               	.LVL36:
+ 560               	.L104:
+ 435:usb_debug_only.c **** 					list += sizeof(struct descriptor_list_struct)-2;
+ 561               		.loc 1 435 0
+ 562 009a 0796      		adiw r24,7
+ 563               	.LVL37:
+ 564 009c 6150      		subi r22,lo8(-(-1))
+ 565               	.LVL38:
+ 423:usb_debug_only.c **** 				if (i >= NUM_DESC_LIST) {
+ 566               		.loc 1 423 0
+ 567 009e 01F4      		brne .L64
+ 568 00a0 00C0      		rjmp .L53
+ 569               	.LVL39:
+ 570               	.L59:
+ 436:usb_debug_only.c **** 					continue;
+ 437:usb_debug_only.c **** 				}
+ 438:usb_debug_only.c **** 				list += 2;
+ 571               		.loc 1 438 0
+ 572 00a2 FC01      		movw r30,r24
+ 573 00a4 3496      		adiw r30,4
+ 574               	.LVL40:
+ 439:usb_debug_only.c **** 				desc_addr = (const uint8_t *)pgm_read_word(list);
+ 575               		.loc 1 439 0
+ 576               	/* #APP */
+ 577               	 ;  439 "usb_debug_only.c" 1
+ 578 00a6 4591      		lpm r20, Z+
+ 579 00a8 5491      		lpm r21, Z
+ 580               		
+ 581               	 ;  0 "" 2
+ 582               	.LVL41:
+ 440:usb_debug_only.c **** 				list += 2;
+ 583               		.loc 1 440 0
+ 584               	/* #NOAPP */
+ 585 00aa FC01      		movw r30,r24
+ 586 00ac 3696      		adiw r30,6
+ 587               	.LVL42:
+ 588               	.LBB26:
+ 441:usb_debug_only.c **** 				desc_length = pgm_read_byte(list);
+ 589               		.loc 1 441 0
+ 590               	/* #APP */
+ 591               	 ;  441 "usb_debug_only.c" 1
+ 592 00ae 8491      		lpm r24, Z
+ 593               		
+ 594               	 ;  0 "" 2
+ 595               	.LVL43:
+ 596               	/* #NOAPP */
+ 597               	.LBE26:
+ 442:usb_debug_only.c **** 				break;
+ 443:usb_debug_only.c **** 			}
+ 444:usb_debug_only.c **** 			len = (wLength < 256) ? wLength : 255;
+ 598               		.loc 1 444 0
+ 599 00b0 2F3F      		cpi r18,-1
+ 600 00b2 3105      		cpc r19,__zero_reg__
+ 601 00b4 01F0      		breq .L60
+ 602 00b6 00F0      		brlo .L60
+ 603 00b8 2FEF      		ldi r18,lo8(-1)
+ 604 00ba 30E0      		ldi r19,0
+ 605               	.L60:
+ 606               	.LVL44:
+ 607 00bc 2817      		cp r18,r24
+ 608 00be 00F4      		brsh .L61
+ 609 00c0 822F      		mov r24,r18
+ 610               	.LVL45:
+ 611               	.L61:
+ 612               	.LBB27:
+ 613               	.LBB28:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 614               		.loc 1 376 0
+ 615 00c2 3EEF      		ldi r19,lo8(-2)
+ 616               	.LVL46:
+ 617               	.L66:
+ 618               	.LBE28:
+ 619               	.LBE27:
+ 445:usb_debug_only.c **** 			if (len > desc_length) len = desc_length;
+ 446:usb_debug_only.c **** 			do {
+ 447:usb_debug_only.c **** 				// wait for host ready for IN packet
+ 448:usb_debug_only.c **** 				do {
+ 449:usb_debug_only.c **** 					i = UEINTX;
+ 620               		.loc 1 449 0 discriminator 1
+ 621 00c4 9091 E800 		lds r25,232
+ 622               	.LVL47:
+ 450:usb_debug_only.c **** 				} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
+ 623               		.loc 1 450 0 discriminator 1
+ 624 00c8 292F      		mov r18,r25
+ 625 00ca 2570      		andi r18,lo8(5)
+ 626 00cc 01F0      		breq .L66
+ 451:usb_debug_only.c **** 				if (i & (1<<RXOUTI)) return;	// abort
+ 627               		.loc 1 451 0
+ 628 00ce 92FD      		sbrc r25,2
+ 629 00d0 00C0      		rjmp .L52
+ 452:usb_debug_only.c **** 				// send IN packet
+ 453:usb_debug_only.c **** 				n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
+ 630               		.loc 1 453 0
+ 631 00d2 982F      		mov r25,r24
+ 632               	.LVL48:
+ 633 00d4 8132      		cpi r24,lo8(33)
+ 634 00d6 00F0      		brlo .L68
+ 635 00d8 90E2      		ldi r25,lo8(32)
+ 636               	.L68:
+ 637               	.LVL49:
+ 454:usb_debug_only.c **** 				for (i = n; i; i--) {
+ 638               		.loc 1 454 0
+ 639 00da FA01      		movw r30,r20
+ 640 00dc 292F      		mov r18,r25
+ 641               	.LVL50:
+ 642               	.L69:
+ 643               		.loc 1 454 0 is_stmt 0 discriminator 1
+ 644 00de 2223      		tst r18
+ 645 00e0 01F0      		breq .L107
+ 646               	.LVL51:
+ 647               	.LBB30:
+ 455:usb_debug_only.c **** 					UEDATX = pgm_read_byte(desc_addr++);
+ 648               		.loc 1 455 0 is_stmt 1 discriminator 2
+ 649               	/* #APP */
+ 650               	 ;  455 "usb_debug_only.c" 1
+ 651 00e2 6491      		lpm r22, Z
+ 652               		
+ 653               	 ;  0 "" 2
+ 654               	.LVL52:
+ 655               	/* #NOAPP */
+ 656               	.LBE30:
+ 657 00e4 6093 F100 		sts 241,r22
+ 454:usb_debug_only.c **** 				for (i = n; i; i--) {
+ 658               		.loc 1 454 0 discriminator 2
+ 659 00e8 2150      		subi r18,lo8(-(-1))
+ 660               	.LVL53:
+ 661 00ea 3196      		adiw r30,1
+ 662               	.LVL54:
+ 663 00ec 00C0      		rjmp .L69
+ 664               	.LVL55:
+ 665               	.L107:
+ 666 00ee 490F      		add r20,r25
+ 667 00f0 511D      		adc r21,__zero_reg__
+ 456:usb_debug_only.c **** 				}
+ 457:usb_debug_only.c **** 				len -= n;
+ 668               		.loc 1 457 0
+ 669 00f2 891B      		sub r24,r25
+ 670               	.LVL56:
+ 671               	.LBB31:
+ 672               	.LBB29:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 673               		.loc 1 376 0
+ 674 00f4 3093 E800 		sts 232,r19
+ 675               	.LBE29:
+ 676               	.LBE31:
+ 458:usb_debug_only.c **** 				usb_send_in();
+ 459:usb_debug_only.c **** 			} while (len || n == ENDPOINT0_SIZE);
+ 677               		.loc 1 459 0
+ 678 00f8 8111      		cpse r24,__zero_reg__
+ 679 00fa 00C0      		rjmp .L66
+ 680               		.loc 1 459 0 is_stmt 0 discriminator 1
+ 681 00fc 9032      		cpi r25,lo8(32)
+ 682 00fe 01F0      		breq .L66
+ 683 0100 00C0      		rjmp .L52
+ 684               	.LVL57:
+ 685               	.L103:
+ 460:usb_debug_only.c **** 			return;
+ 461:usb_debug_only.c ****                 }
+ 462:usb_debug_only.c **** 		if (bRequest == SET_ADDRESS) {
+ 686               		.loc 1 462 0 is_stmt 1
+ 687 0102 8530      		cpi r24,lo8(5)
+ 688 0104 01F4      		brne .L73
+ 689               	.LBB32:
+ 690               	.LBB33:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 691               		.loc 1 376 0
+ 692 0106 8EEF      		ldi r24,lo8(-2)
+ 693               	.LVL58:
+ 694 0108 8093 E800 		sts 232,r24
+ 695               	.LBE33:
+ 696               	.LBE32:
+ 463:usb_debug_only.c **** 			usb_send_in();
+ 464:usb_debug_only.c **** 			usb_wait_in_ready();
+ 697               		.loc 1 464 0
+ 698 010c 0E94 0000 		call usb_wait_in_ready
+ 699               	.LVL59:
+ 465:usb_debug_only.c **** 			UDADDR = wValue | (1<<ADDEN);
+ 700               		.loc 1 465 0
+ 701 0110 0068      		ori r16,lo8(-128)
+ 702               	.LVL60:
+ 703 0112 0093 E300 		sts 227,r16
+ 466:usb_debug_only.c **** 			return;
+ 704               		.loc 1 466 0
+ 705 0116 00C0      		rjmp .L52
+ 706               	.LVL61:
+ 707               	.L73:
+ 467:usb_debug_only.c **** 		}
+ 468:usb_debug_only.c **** 		if (bRequest == SET_CONFIGURATION && bmRequestType == 0) {
+ 708               		.loc 1 468 0
+ 709 0118 8930      		cpi r24,lo8(9)
+ 710 011a 01F4      		brne .L74
+ 711               		.loc 1 468 0 is_stmt 0 discriminator 1
+ 712 011c 9111      		cpse r25,__zero_reg__
+ 713 011e 00C0      		rjmp .L75
+ 469:usb_debug_only.c **** 			usb_configuration = wValue;
+ 714               		.loc 1 469 0 is_stmt 1
+ 715 0120 0093 0000 		sts usb_configuration,r16
+ 716               	.LBB34:
+ 717               	.LBB35:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 718               		.loc 1 376 0
+ 719 0124 8EEF      		ldi r24,lo8(-2)
+ 720               	.LVL62:
+ 721 0126 8093 E800 		sts 232,r24
+ 722               	.LVL63:
+ 723               	.LBE35:
+ 724               	.LBE34:
+ 470:usb_debug_only.c **** 			usb_send_in();
+ 471:usb_debug_only.c **** 			cfg = endpoint_config_table;
+ 472:usb_debug_only.c **** 			for (i=1; i<5; i++) {
+ 725               		.loc 1 472 0
+ 726 012a 41E0      		ldi r20,lo8(1)
+ 471:usb_debug_only.c **** 			cfg = endpoint_config_table;
+ 727               		.loc 1 471 0
+ 728 012c 80E0      		ldi r24,lo8(endpoint_config_table)
+ 729 012e 90E0      		ldi r25,hi8(endpoint_config_table)
+ 730               	.LVL64:
+ 731               	.L78:
+ 473:usb_debug_only.c **** 				UENUM = i;
+ 732               		.loc 1 473 0
+ 733 0130 4093 E900 		sts 233,r20
+ 734               	.LBB36:
+ 474:usb_debug_only.c **** 				en = pgm_read_byte(cfg++);
+ 735               		.loc 1 474 0
+ 736 0134 9C01      		movw r18,r24
+ 737 0136 2F5F      		subi r18,-1
+ 738 0138 3F4F      		sbci r19,-1
+ 739               	.LVL65:
+ 740 013a FC01      		movw r30,r24
+ 741               	/* #APP */
+ 742               	 ;  474 "usb_debug_only.c" 1
+ 743 013c 5491      		lpm r21, Z
+ 744               		
+ 745               	 ;  0 "" 2
+ 746               	.LVL66:
+ 747               	/* #NOAPP */
+ 748               	.LBE36:
+ 475:usb_debug_only.c **** 				UECONX = en;
+ 749               		.loc 1 475 0
+ 750 013e 5093 EB00 		sts 235,r21
+ 476:usb_debug_only.c **** 				if (en) {
+ 751               		.loc 1 476 0
+ 752 0142 5523      		tst r21
+ 753 0144 01F0      		breq .L76
+ 754               	.LVL67:
+ 755               	.LBB37:
+ 477:usb_debug_only.c **** 					UECFG0X = pgm_read_byte(cfg++);
+ 756               		.loc 1 477 0
+ 757 0146 F901      		movw r30,r18
+ 758               	/* #APP */
+ 759               	 ;  477 "usb_debug_only.c" 1
+ 760 0148 2491      		lpm r18, Z
+ 761               		
+ 762               	 ;  0 "" 2
+ 763               	.LVL68:
+ 764               	/* #NOAPP */
+ 765               	.LBE37:
+ 766 014a 2093 EC00 		sts 236,r18
+ 767               	.LBB38:
+ 478:usb_debug_only.c **** 					UECFG1X = pgm_read_byte(cfg++);
+ 768               		.loc 1 478 0
+ 769 014e 9C01      		movw r18,r24
+ 770               	.LVL69:
+ 771 0150 2D5F      		subi r18,-3
+ 772 0152 3F4F      		sbci r19,-1
+ 773               	.LVL70:
+ 774 0154 FC01      		movw r30,r24
+ 775               	.LVL71:
+ 776 0156 3296      		adiw r30,2
+ 777               	.LVL72:
+ 778               	/* #APP */
+ 779               	 ;  478 "usb_debug_only.c" 1
+ 780 0158 8491      		lpm r24, Z
+ 781               		
+ 782               	 ;  0 "" 2
+ 783               	.LVL73:
+ 784               	/* #NOAPP */
+ 785               	.LBE38:
+ 786 015a 8093 ED00 		sts 237,r24
+ 787               	.LVL74:
+ 788               	.L76:
+ 472:usb_debug_only.c **** 			for (i=1; i<5; i++) {
+ 789               		.loc 1 472 0
+ 790 015e 4F5F      		subi r20,lo8(-(1))
+ 791               	.LVL75:
+ 792 0160 4530      		cpi r20,lo8(5)
+ 793 0162 01F0      		breq .L77
+ 794 0164 C901      		movw r24,r18
+ 795 0166 00C0      		rjmp .L78
+ 796               	.L77:
+ 479:usb_debug_only.c **** 				}
+ 480:usb_debug_only.c **** 			}
+ 481:usb_debug_only.c ****         		UERST = 0x1E;
+ 797               		.loc 1 481 0
+ 798 0168 8EE1      		ldi r24,lo8(30)
+ 799 016a 00C0      		rjmp .L105
+ 800               	.LVL76:
+ 801               	.L74:
+ 482:usb_debug_only.c ****         		UERST = 0;
+ 483:usb_debug_only.c **** 			return;
+ 484:usb_debug_only.c **** 		}
+ 485:usb_debug_only.c **** 		if (bRequest == GET_CONFIGURATION && bmRequestType == 0x80) {
+ 802               		.loc 1 485 0
+ 803 016c 8830      		cpi r24,lo8(8)
+ 804 016e 01F4      		brne .L79
+ 805               		.loc 1 485 0 is_stmt 0 discriminator 1
+ 806 0170 9038      		cpi r25,lo8(-128)
+ 807 0172 01F0      		breq .+2
+ 808 0174 00C0      		rjmp .L53
+ 486:usb_debug_only.c **** 			usb_wait_in_ready();
+ 809               		.loc 1 486 0 is_stmt 1
+ 810 0176 0E94 0000 		call usb_wait_in_ready
+ 811               	.LVL77:
+ 487:usb_debug_only.c **** 			UEDATX = usb_configuration;
+ 812               		.loc 1 487 0
+ 813 017a 8091 0000 		lds r24,usb_configuration
+ 814 017e 8093 F100 		sts 241,r24
+ 815 0182 00C0      		rjmp .L106
+ 816               	.LVL78:
+ 817               	.L79:
+ 488:usb_debug_only.c **** 			usb_send_in();
+ 489:usb_debug_only.c **** 			return;
+ 490:usb_debug_only.c **** 		}
+ 491:usb_debug_only.c **** 
+ 492:usb_debug_only.c **** 		if (bRequest == GET_STATUS) {
+ 818               		.loc 1 492 0
+ 819 0184 8111      		cpse r24,__zero_reg__
+ 820 0186 00C0      		rjmp .L75
+ 493:usb_debug_only.c **** 			usb_wait_in_ready();
+ 821               		.loc 1 493 0
+ 822 0188 9983      		std Y+1,r25
+ 823 018a 0E94 0000 		call usb_wait_in_ready
+ 824               	.LVL79:
+ 494:usb_debug_only.c **** 			i = 0;
+ 495:usb_debug_only.c **** 			#ifdef SUPPORT_ENDPOINT_HALT
+ 496:usb_debug_only.c **** 			if (bmRequestType == 0x82) {
+ 825               		.loc 1 496 0
+ 826 018e 9981      		ldd r25,Y+1
+ 827 0190 9238      		cpi r25,lo8(-126)
+ 828 0192 01F4      		brne .L90
+ 497:usb_debug_only.c **** 				UENUM = wIndex;
+ 829               		.loc 1 497 0
+ 830 0194 E092 E900 		sts 233,r14
+ 498:usb_debug_only.c **** 				if (UECONX & (1<<STALLRQ)) i = 1;
+ 831               		.loc 1 498 0
+ 832 0198 8091 EB00 		lds r24,235
+ 833 019c 85FB      		bst r24,5
+ 834 019e 8827      		clr r24
+ 835 01a0 80F9      		bld r24,0
+ 836               	.LVL80:
+ 499:usb_debug_only.c **** 				UENUM = 0;
+ 837               		.loc 1 499 0
+ 838 01a2 1092 E900 		sts 233,__zero_reg__
+ 839 01a6 00C0      		rjmp .L80
+ 840               	.LVL81:
+ 841               	.L90:
+ 494:usb_debug_only.c **** 			i = 0;
+ 842               		.loc 1 494 0
+ 843 01a8 80E0      		ldi r24,0
+ 844               	.LVL82:
+ 845               	.L80:
+ 500:usb_debug_only.c **** 			}
+ 501:usb_debug_only.c **** 			#endif
+ 502:usb_debug_only.c **** 			UEDATX = i;
+ 846               		.loc 1 502 0
+ 847 01aa 8093 F100 		sts 241,r24
+ 503:usb_debug_only.c **** 			UEDATX = 0;
+ 848               		.loc 1 503 0
+ 849 01ae 1092 F100 		sts 241,__zero_reg__
+ 850               	.LVL83:
+ 851               	.L106:
+ 852               	.LBB39:
+ 853               	.LBB40:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 854               		.loc 1 376 0
+ 855 01b2 8EEF      		ldi r24,lo8(-2)
+ 856 01b4 8093 E800 		sts 232,r24
+ 857 01b8 00C0      		rjmp .L52
+ 858               	.LVL84:
+ 859               	.L75:
+ 860               	.LBE40:
+ 861               	.LBE39:
+ 504:usb_debug_only.c **** 			usb_send_in();
+ 505:usb_debug_only.c **** 			return;
+ 506:usb_debug_only.c **** 		}
+ 507:usb_debug_only.c **** 		#ifdef SUPPORT_ENDPOINT_HALT
+ 508:usb_debug_only.c **** 		if ((bRequest == CLEAR_FEATURE || bRequest == SET_FEATURE)
+ 862               		.loc 1 508 0
+ 863 01ba 482F      		mov r20,r24
+ 864 01bc 4D7F      		andi r20,lo8(-3)
+ 865 01be 4130      		cpi r20,lo8(1)
+ 866 01c0 01F0      		breq .+2
+ 867 01c2 00C0      		rjmp .L53
+ 509:usb_debug_only.c **** 		  && bmRequestType == 0x02 && wValue == 0) {
+ 868               		.loc 1 509 0
+ 869 01c4 9230      		cpi r25,lo8(2)
+ 870 01c6 01F4      		brne .L81
+ 871               		.loc 1 509 0 is_stmt 0 discriminator 1
+ 872 01c8 012B      		or r16,r17
+ 873 01ca 01F4      		brne .L53
+ 510:usb_debug_only.c **** 			i = wIndex & 0x7F;
+ 874               		.loc 1 510 0 is_stmt 1
+ 875 01cc 2E2D      		mov r18,r14
+ 876 01ce 2F77      		andi r18,lo8(127)
+ 877               	.LVL85:
+ 511:usb_debug_only.c **** 			if (i >= 1 && i <= MAX_ENDPOINT) {
+ 878               		.loc 1 511 0
+ 879 01d0 9FEF      		ldi r25,lo8(-1)
+ 880               	.LVL86:
+ 881 01d2 920F      		add r25,r18
+ 882 01d4 9430      		cpi r25,lo8(4)
+ 883 01d6 00F4      		brsh .L53
+ 884               	.LBB41:
+ 885               	.LBB42:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 886               		.loc 1 376 0
+ 887 01d8 9EEF      		ldi r25,lo8(-2)
+ 888 01da 9093 E800 		sts 232,r25
+ 889               	.LBE42:
+ 890               	.LBE41:
+ 512:usb_debug_only.c **** 				usb_send_in();
+ 513:usb_debug_only.c **** 				UENUM = i;
+ 891               		.loc 1 513 0
+ 892 01de 2093 E900 		sts 233,r18
+ 514:usb_debug_only.c **** 				if (bRequest == SET_FEATURE) {
+ 893               		.loc 1 514 0
+ 894 01e2 8330      		cpi r24,lo8(3)
+ 895 01e4 01F0      		breq .L53
+ 515:usb_debug_only.c **** 					UECONX = (1<<STALLRQ)|(1<<EPEN);
+ 516:usb_debug_only.c **** 				} else {
+ 517:usb_debug_only.c **** 					UECONX = (1<<STALLRQC)|(1<<RSTDT)|(1<<EPEN);
+ 896               		.loc 1 517 0
+ 897 01e6 89E1      		ldi r24,lo8(25)
+ 898               	.LVL87:
+ 899 01e8 8093 EB00 		sts 235,r24
+ 518:usb_debug_only.c **** 					UERST = (1 << i);
+ 900               		.loc 1 518 0
+ 901 01ec 81E0      		ldi r24,lo8(1)
+ 902 01ee 90E0      		ldi r25,0
+ 903 01f0 022E      		mov r0,r18
+ 904 01f2 00C0      		rjmp 2f
+ 905               		1:
+ 906 01f4 880F      		lsl r24
+ 907               		2:
+ 908 01f6 0A94      		dec r0
+ 909 01f8 02F4      		brpl 1b
+ 910               	.LVL88:
+ 911               	.L105:
+ 912 01fa 8093 EA00 		sts 234,r24
+ 519:usb_debug_only.c **** 					UERST = 0;
+ 913               		.loc 1 519 0
+ 914 01fe 1092 EA00 		sts 234,__zero_reg__
+ 915 0202 00C0      		rjmp .L52
+ 916               	.LVL89:
+ 917               	.L81:
+ 520:usb_debug_only.c **** 				}
+ 521:usb_debug_only.c **** 				return;
+ 522:usb_debug_only.c **** 			}
+ 523:usb_debug_only.c **** 		}
+ 524:usb_debug_only.c **** 		#endif
+ 525:usb_debug_only.c **** 		if (bRequest == HID_GET_REPORT && bmRequestType == 0xA1) {
+ 918               		.loc 1 525 0
+ 919 0204 8130      		cpi r24,lo8(1)
+ 920 0206 01F4      		brne .L53
+ 921               		.loc 1 525 0 is_stmt 0 discriminator 1
+ 922 0208 913A      		cpi r25,lo8(-95)
+ 923 020a 01F4      		brne .L53
+ 526:usb_debug_only.c **** 			if (wIndex == 0) {
+ 924               		.loc 1 526 0 is_stmt 1
+ 925 020c EF28      		or r14,r15
+ 926 020e 01F4      		brne .L53
+ 927               	.LBB43:
+ 928               	.LBB44:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 929               		.loc 1 376 0
+ 930 0210 3EEF      		ldi r19,lo8(-2)
+ 931               	.LVL90:
+ 932               	.L85:
+ 933               	.LBE44:
+ 934               	.LBE43:
+ 527:usb_debug_only.c **** 				len = wLength;
+ 528:usb_debug_only.c **** 				do {
+ 529:usb_debug_only.c **** 					// wait for host ready for IN packet
+ 530:usb_debug_only.c **** 					do {
+ 531:usb_debug_only.c **** 						i = UEINTX;
+ 935               		.loc 1 531 0 discriminator 1
+ 936 0212 8091 E800 		lds r24,232
+ 937               	.LVL91:
+ 532:usb_debug_only.c **** 					} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
+ 938               		.loc 1 532 0 discriminator 1
+ 939 0216 982F      		mov r25,r24
+ 940 0218 9570      		andi r25,lo8(5)
+ 941 021a 01F0      		breq .L85
+ 533:usb_debug_only.c **** 					if (i & (1<<RXOUTI)) return;	// abort
+ 942               		.loc 1 533 0
+ 943 021c 82FD      		sbrc r24,2
+ 944 021e 00C0      		rjmp .L52
+ 534:usb_debug_only.c **** 					// send IN packet
+ 535:usb_debug_only.c **** 					n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
+ 945               		.loc 1 535 0
+ 946 0220 822F      		mov r24,r18
+ 947               	.LVL92:
+ 948 0222 2132      		cpi r18,lo8(33)
+ 949 0224 00F0      		brlo .L86
+ 950 0226 80E2      		ldi r24,lo8(32)
+ 951               	.L86:
+ 952               	.LVL93:
+ 536:usb_debug_only.c **** 					for (i = n; i; i--) {
+ 953               		.loc 1 536 0
+ 954 0228 982F      		mov r25,r24
+ 955               	.LVL94:
+ 956               	.L87:
+ 957               		.loc 1 536 0 is_stmt 0 discriminator 1
+ 958 022a 9923      		tst r25
+ 959 022c 01F0      		breq .L108
+ 537:usb_debug_only.c **** 						UEDATX = 0;
+ 960               		.loc 1 537 0 is_stmt 1 discriminator 2
+ 961 022e 1092 F100 		sts 241,__zero_reg__
+ 536:usb_debug_only.c **** 					for (i = n; i; i--) {
+ 962               		.loc 1 536 0 discriminator 2
+ 963 0232 9150      		subi r25,lo8(-(-1))
+ 964               	.LVL95:
+ 965 0234 00C0      		rjmp .L87
+ 966               	.L108:
+ 538:usb_debug_only.c **** 					}
+ 539:usb_debug_only.c **** 					len -= n;
+ 967               		.loc 1 539 0
+ 968 0236 281B      		sub r18,r24
+ 969               	.LVL96:
+ 970               	.LBB46:
+ 971               	.LBB45:
+ 376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
+ 972               		.loc 1 376 0
+ 973 0238 3093 E800 		sts 232,r19
+ 974               	.LBE45:
+ 975               	.LBE46:
+ 540:usb_debug_only.c **** 					usb_send_in();
+ 541:usb_debug_only.c **** 				} while (len || n == ENDPOINT0_SIZE);
+ 976               		.loc 1 541 0
+ 977 023c 2111      		cpse r18,__zero_reg__
+ 978 023e 00C0      		rjmp .L85
+ 979               		.loc 1 541 0 is_stmt 0 discriminator 1
+ 980 0240 8032      		cpi r24,lo8(32)
+ 981 0242 01F0      		breq .L85
+ 982 0244 00C0      		rjmp .L52
+ 983               	.LVL97:
+ 984               	.L53:
+ 542:usb_debug_only.c **** 				return;
+ 543:usb_debug_only.c **** 			}
+ 544:usb_debug_only.c **** 		}
+ 545:usb_debug_only.c ****         }
+ 546:usb_debug_only.c **** 	UECONX = (1<<STALLRQ) | (1<<EPEN);	// stall
+ 985               		.loc 1 546 0 is_stmt 1
+ 986 0246 81E2      		ldi r24,lo8(33)
+ 987 0248 8093 EB00 		sts 235,r24
+ 988               	.L52:
+ 989               	/* epilogue start */
+ 547:usb_debug_only.c **** }
+ 990               		.loc 1 547 0
+ 991 024c 0F90      		pop __tmp_reg__
+ 992 024e DF91      		pop r29
+ 993 0250 CF91      		pop r28
+ 994 0252 FF91      		pop r31
+ 995 0254 EF91      		pop r30
+ 996 0256 BF91      		pop r27
+ 997 0258 AF91      		pop r26
+ 998 025a 9F91      		pop r25
+ 999 025c 8F91      		pop r24
+ 1000 025e 7F91      		pop r23
+ 1001 0260 6F91      		pop r22
+ 1002 0262 5F91      		pop r21
+ 1003 0264 4F91      		pop r20
+ 1004 0266 3F91      		pop r19
+ 1005 0268 2F91      		pop r18
+ 1006 026a 1F91      		pop r17
+ 1007 026c 0F91      		pop r16
+ 1008 026e FF90      		pop r15
+ 1009 0270 EF90      		pop r14
+ 1010 0272 0F90      		pop r0
+ 1011 0274 0FBE      		out __SREG__,r0
+ 1012 0276 0F90      		pop r0
+ 1013 0278 1F90      		pop r1
+ 1014 027a 1895      		reti
+ 1015               		.cfi_endproc
+ 1016               	.LFE10:
+ 1018               		.local	previous_timeout.1693
+ 1019               		.comm	previous_timeout.1693,1,1
+ 1020               		.local	debug_flush_timer
+ 1021               		.comm	debug_flush_timer,1,1
+ 1022               		.local	usb_configuration
+ 1023               		.comm	usb_configuration,1,1
+ 1024               		.section	.progmem.data,"a",@progbits
+ 1027               	descriptor_list:
+ 1028 0000 0001      		.word	256
+ 1029 0002 0000      		.word	0
+ 1030 0004 0000      		.word	device_descriptor
+ 1031 0006 12        		.byte	18
+ 1032 0007 0002      		.word	512
+ 1033 0009 0000      		.word	0
+ 1034 000b 0000      		.word	config1_descriptor
+ 1035 000d 22        		.byte	34
+ 1036 000e 0022      		.word	8704
+ 1037 0010 0000      		.word	0
+ 1038 0012 0000      		.word	hid_report_descriptor
+ 1039 0014 15        		.byte	21
+ 1040 0015 0021      		.word	8448
+ 1041 0017 0000      		.word	0
+ 1042 0019 0000      		.word	config1_descriptor+18
+ 1043 001b 09        		.byte	9
+ 1044 001c 0003      		.word	768
+ 1045 001e 0000      		.word	0
+ 1046 0020 0000      		.word	string0
+ 1047 0022 04        		.byte	4
+ 1048 0023 0103      		.word	769
+ 1049 0025 0904      		.word	1033
+ 1050 0027 0000      		.word	string1
+ 1051 0029 14        		.byte	20
+ 1052 002a 0203      		.word	770
+ 1053 002c 0904      		.word	1033
+ 1054 002e 0000      		.word	string2
+ 1055 0030 20        		.byte	32
+ 1058               	string2:
+ 1059 0031 20        		.byte	32
+ 1060 0032 03        		.byte	3
+ 1061 0033 5900      		.string	"Y"
+ 1062 0035 6F00      		.string	"o"
+ 1063 0037 7500      		.string	"u"
+ 1064 0039 7200      		.string	"r"
+ 1065 003b 2000      		.string	" "
+ 1066 003d 5500      		.string	"U"
+ 1067 003f 5300      		.string	"S"
+ 1068 0041 4200      		.string	"B"
+ 1069 0043 2000      		.string	" "
+ 1070 0045 4400      		.string	"D"
+ 1071 0047 6500      		.string	"e"
+ 1072 0049 7600      		.string	"v"
+ 1073 004b 6900      		.string	"i"
+ 1074 004d 6300      		.string	"c"
+ 1075 004f 6500      		.string	"e"
+ 1076 0051 00        		.string	""
+ 1077 0052 00        		.string	""
+ 1080               	string1:
+ 1081 0053 14        		.byte	20
+ 1082 0054 03        		.byte	3
+ 1083 0055 5900      		.string	"Y"
+ 1084 0057 6F00      		.string	"o"
+ 1085 0059 7500      		.string	"u"
+ 1086 005b 7200      		.string	"r"
+ 1087 005d 2000      		.string	" "
+ 1088 005f 4E00      		.string	"N"
+ 1089 0061 6100      		.string	"a"
+ 1090 0063 6D00      		.string	"m"
+ 1091 0065 6500      		.string	"e"
+ 1092 0067 00        		.string	""
+ 1093 0068 00        		.string	""
+ 1096               	string0:
+ 1097 0069 04        		.byte	4
+ 1098 006a 03        		.byte	3
+ 1099 006b 0904      		.word	1033
+ 1102               	config1_descriptor:
+ 1103 006d 09        		.byte	9
+ 1104 006e 02        		.byte	2
+ 1105 006f 22        		.byte	34
+ 1106 0070 00        		.byte	0
+ 1107 0071 01        		.byte	1
+ 1108 0072 01        		.byte	1
+ 1109 0073 00        		.byte	0
+ 1110 0074 C0        		.byte	-64
+ 1111 0075 32        		.byte	50
+ 1112 0076 09        		.byte	9
+ 1113 0077 04        		.byte	4
+ 1114 0078 00        		.byte	0
+ 1115 0079 00        		.byte	0
+ 1116 007a 01        		.byte	1
+ 1117 007b 03        		.byte	3
+ 1118 007c 00        		.byte	0
+ 1119 007d 00        		.byte	0
+ 1120 007e 00        		.byte	0
+ 1121 007f 09        		.byte	9
+ 1122 0080 21        		.byte	33
+ 1123 0081 11        		.byte	17
+ 1124 0082 01        		.byte	1
+ 1125 0083 00        		.byte	0
+ 1126 0084 01        		.byte	1
+ 1127 0085 22        		.byte	34
+ 1128 0086 15        		.byte	21
+ 1129 0087 00        		.byte	0
+ 1130 0088 07        		.byte	7
+ 1131 0089 05        		.byte	5
+ 1132 008a 83        		.byte	-125
+ 1133 008b 03        		.byte	3
+ 1134 008c 20        		.byte	32
+ 1135 008d 00        		.byte	0
+ 1136 008e 01        		.byte	1
+ 1139               	hid_report_descriptor:
+ 1140 008f 06        		.byte	6
+ 1141 0090 31        		.byte	49
+ 1142 0091 FF        		.byte	-1
+ 1143 0092 09        		.byte	9
+ 1144 0093 74        		.byte	116
+ 1145 0094 A1        		.byte	-95
+ 1146 0095 53        		.byte	83
+ 1147 0096 75        		.byte	117
+ 1148 0097 08        		.byte	8
+ 1149 0098 15        		.byte	21
+ 1150 0099 00        		.byte	0
+ 1151 009a 26        		.byte	38
+ 1152 009b FF        		.byte	-1
+ 1153 009c 00        		.byte	0
+ 1154 009d 95        		.byte	-107
+ 1155 009e 20        		.byte	32
+ 1156 009f 09        		.byte	9
+ 1157 00a0 75        		.byte	117
+ 1158 00a1 81        		.byte	-127
+ 1159 00a2 02        		.byte	2
+ 1160 00a3 C0        		.byte	-64
+ 1163               	device_descriptor:
+ 1164 00a4 12        		.byte	18
+ 1165 00a5 01        		.byte	1
+ 1166 00a6 00        		.byte	0
+ 1167 00a7 02        		.byte	2
+ 1168 00a8 00        		.byte	0
+ 1169 00a9 00        		.byte	0
+ 1170 00aa 00        		.byte	0
+ 1171 00ab 20        		.byte	32
+ 1172 00ac C0        		.byte	-64
+ 1173 00ad 16        		.byte	22
+ 1174 00ae 79        		.byte	121
+ 1175 00af 04        		.byte	4
+ 1176 00b0 00        		.byte	0
+ 1177 00b1 01        		.byte	1
+ 1178 00b2 01        		.byte	1
+ 1179 00b3 02        		.byte	2
+ 1180 00b4 00        		.byte	0
+ 1181 00b5 01        		.byte	1
+ 1184               	endpoint_config_table:
+ 1185 00b6 00        		.byte	0
+ 1186 00b7 00        		.byte	0
+ 1187 00b8 01        		.byte	1
+ 1188 00b9 C1        		.byte	-63
+ 1189 00ba 26        		.byte	38
+ 1190 00bb 00        		.byte	0
+ 1191               		.text
+ 1192               	.Letext0:
+ 1193               		.file 2 "/usr/lib/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 usb_debug_only.c
+     /tmp/ccqIUoBG.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccqIUoBG.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccqIUoBG.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccqIUoBG.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccqIUoBG.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccqIUoBG.s:12     .text.usb_wait_in_ready:0000000000000000 usb_wait_in_ready
+     /tmp/ccqIUoBG.s:35     .text.usb_init:0000000000000000 usb_init
+     /tmp/ccqIUoBG.s:1021   .bss:0000000000000002 usb_configuration
+     /tmp/ccqIUoBG.s:80     .text.usb_configured:0000000000000000 usb_configured
+     /tmp/ccqIUoBG.s:98     .text.usb_debug_putchar:0000000000000000 usb_debug_putchar
+                             .bss:0000000000000000 previous_timeout.1693
+     /tmp/ccqIUoBG.s:1019   .bss:0000000000000001 debug_flush_timer
+     /tmp/ccqIUoBG.s:220    .text.usb_debug_flush_output:0000000000000000 usb_debug_flush_output
+     /tmp/ccqIUoBG.s:268    .text.__vector_10:0000000000000000 __vector_10
+     /tmp/ccqIUoBG.s:373    .text.__vector_11:0000000000000000 __vector_11
+     /tmp/ccqIUoBG.s:1027   .progmem.data:0000000000000000 descriptor_list
+     /tmp/ccqIUoBG.s:1184   .progmem.data:00000000000000b6 endpoint_config_table
+     /tmp/ccqIUoBG.s:1163   .progmem.data:00000000000000a4 device_descriptor
+     /tmp/ccqIUoBG.s:1102   .progmem.data:000000000000006d config1_descriptor
+     /tmp/ccqIUoBG.s:1139   .progmem.data:000000000000008f hid_report_descriptor
+     /tmp/ccqIUoBG.s:1096   .progmem.data:0000000000000069 string0
+     /tmp/ccqIUoBG.s:1080   .progmem.data:0000000000000053 string1
+     /tmp/ccqIUoBG.s:1058   .progmem.data:0000000000000031 string2
+
+UNDEFINED SYMBOLS
+__do_clear_bss
