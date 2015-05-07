@@ -1,0 +1,858 @@
+   1               		.file	"receive.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.initUART,"ax",@progbits
+  11               	.global	initUART
+  13               	initUART:
+  14               	.LFB7:
+  15               		.file 1 "receive.c"
+   1:receive.c     **** #define F_CPU 8000000
+   2:receive.c     **** 
+   3:receive.c     **** #include <avr/io.h>
+   4:receive.c     **** #include <avr/pgmspace.h>
+   5:receive.c     **** #include <avr/interrupt.h>
+   6:receive.c     **** #include <util/delay.h>
+   7:receive.c     **** #include <avr/cpufunc.h>
+   8:receive.c     **** #include "spi.h"
+   9:receive.c     **** #include <stdlib.h>
+  10:receive.c     **** #include "radioctl.h"
+  11:receive.c     **** 
+  12:receive.c     **** #define ADC_PRESCALER 0
+  13:receive.c     **** #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
+  14:receive.c     **** #define PACKET_SIZE 16
+  15:receive.c     **** 
+  16:receive.c     **** char mode = 'r';
+  17:receive.c     **** 
+  18:receive.c     **** void initUART(void){
+  16               		.loc 1 18 0
+  17               		.cfi_startproc
+  18               	/* prologue: function */
+  19               	/* frame size = 0 */
+  20               	/* stack size = 0 */
+  21               	.L__stack_usage = 0
+  19:receive.c     **** 
+  20:receive.c     ****   UBRR1 = 25;  //38.4k baud
+  22               		.loc 1 20 0
+  23 0000 89E1      		ldi r24,lo8(25)
+  24 0002 90E0      		ldi r25,0
+  25 0004 9093 CD00 		sts 204+1,r25
+  26 0008 8093 CC00 		sts 204,r24
+  21:receive.c     ****   UCSR1A = (1<<U2X1);
+  27               		.loc 1 21 0
+  28 000c 82E0      		ldi r24,lo8(2)
+  29 000e 8093 C800 		sts 200,r24
+  22:receive.c     ****   UCSR1B = (1<<RXEN1) | (1<<TXEN1);
+  30               		.loc 1 22 0
+  31 0012 88E1      		ldi r24,lo8(24)
+  32 0014 8093 C900 		sts 201,r24
+  23:receive.c     ****   UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);  //1 stop bit
+  33               		.loc 1 23 0
+  34 0018 86E0      		ldi r24,lo8(6)
+  35 001a 8093 CA00 		sts 202,r24
+  36 001e 0895      		ret
+  37               		.cfi_endproc
+  38               	.LFE7:
+  40               		.section	.text.transmit_payload,"ax",@progbits
+  41               	.global	transmit_payload
+  43               	transmit_payload:
+  44               	.LFB8:
+  24:receive.c     **** }
+  25:receive.c     **** void transmit_payload(uint8_t *data){
+  45               		.loc 1 25 0
+  46               		.cfi_startproc
+  47               	.LVL0:
+  48 0000 CF93      		push r28
+  49               	.LCFI0:
+  50               		.cfi_def_cfa_offset 3
+  51               		.cfi_offset 28, -2
+  52 0002 DF93      		push r29
+  53               	.LCFI1:
+  54               		.cfi_def_cfa_offset 4
+  55               		.cfi_offset 29, -3
+  56 0004 00D0      		rcall .
+  57               	.LCFI2:
+  58               		.cfi_def_cfa_offset 6
+  59 0006 CDB7      		in r28,__SP_L__
+  60 0008 DEB7      		in r29,__SP_H__
+  61               	.LCFI3:
+  62               		.cfi_def_cfa_register 28
+  63               	/* prologue: function */
+  64               	/* frame size = 2 */
+  65               	/* stack size = 4 */
+  66               	.L__stack_usage = 4
+  26:receive.c     ****   
+  27:receive.c     ****   CE_HIGH;
+  67               		.loc 1 27 0
+  68 000a 899A      		sbi 0x11,1
+  28:receive.c     ****   initRadioTX();
+  69               		.loc 1 28 0
+  70 000c 8983      		std Y+1,r24
+  71 000e 9A83      		std Y+2,r25
+  72 0010 0E94 0000 		call initRadioTX
+  73               	.LVL1:
+  74               	.LBB21:
+  75               	.LBB22:
+  76               		.file 2 "/usr/lib/avr/include/util/delay.h"
+   1:/usr/lib/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/avr/include/util/delay.h **** 
+   6:/usr/lib/avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/avr/include/util/delay.h **** 
+   9:/usr/lib/avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/avr/include/util/delay.h **** 
+  12:/usr/lib/avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/avr/include/util/delay.h **** 
+  17:/usr/lib/avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/avr/include/util/delay.h **** 
+  21:/usr/lib/avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/avr/include/util/delay.h **** 
+  33:/usr/lib/avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/avr/include/util/delay.h **** 
+  35:/usr/lib/avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/avr/include/util/delay.h **** 
+  38:/usr/lib/avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/avr/include/util/delay.h **** #endif
+  41:/usr/lib/avr/include/util/delay.h **** 
+  42:/usr/lib/avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/avr/include/util/delay.h **** 
+  46:/usr/lib/avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/avr/include/util/delay.h ****     \code
+  49:/usr/lib/avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/avr/include/util/delay.h **** 
+  54:/usr/lib/avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/avr/include/util/delay.h ****     used.
+  58:/usr/lib/avr/include/util/delay.h **** 
+  59:/usr/lib/avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/avr/include/util/delay.h **** 
+  68:/usr/lib/avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/avr/include/util/delay.h **** 
+  77:/usr/lib/avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/avr/include/util/delay.h **** 
+  81:/usr/lib/avr/include/util/delay.h **** */
+  82:/usr/lib/avr/include/util/delay.h **** 
+  83:/usr/lib/avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/avr/include/util/delay.h **** #endif
+  87:/usr/lib/avr/include/util/delay.h **** 
+  88:/usr/lib/avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/avr/include/util/delay.h **** #endif
+  93:/usr/lib/avr/include/util/delay.h **** 
+  94:/usr/lib/avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/avr/include/util/delay.h **** #endif
+  97:/usr/lib/avr/include/util/delay.h **** 
+  98:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/avr/include/util/delay.h **** #endif
+ 103:/usr/lib/avr/include/util/delay.h **** 
+ 104:/usr/lib/avr/include/util/delay.h **** /**
+ 105:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/avr/include/util/delay.h **** 
+ 107:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/avr/include/util/delay.h **** 
+ 109:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/avr/include/util/delay.h **** 
+ 112:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/avr/include/util/delay.h **** 
+ 114:/usr/lib/avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/avr/include/util/delay.h **** 
+ 120:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/avr/include/util/delay.h **** 
+ 125:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/avr/include/util/delay.h **** 
+ 129:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/avr/include/util/delay.h **** 
+ 132:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/avr/include/util/delay.h **** 
+ 140:/usr/lib/avr/include/util/delay.h ****  */
+ 141:/usr/lib/avr/include/util/delay.h **** void
+ 142:/usr/lib/avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/avr/include/util/delay.h **** {
+ 144:/usr/lib/avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/avr/include/util/delay.h **** 
+ 153:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/avr/include/util/delay.h **** 
+ 156:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/avr/include/util/delay.h **** 
+ 159:/usr/lib/avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/avr/include/util/delay.h **** 
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+  77               		.loc 2 164 0
+  78 0014 AFE0      		ldi r26,lo8(9999)
+  79 0016 B7E2      		ldi r27,hi8(9999)
+  80 0018 1197      		1: sbiw r26,1
+  81 001a 01F4      		brne 1b
+  82 001c 00C0      		rjmp .
+  83 001e 0000      		nop
+  84               	.LVL2:
+  85 0020 8981      		ldd r24,Y+1
+  86 0022 E82F      		mov r30,r24
+  87 0024 9A81      		ldd r25,Y+2
+  88 0026 F92F      		mov r31,r25
+  89 0028 21E6      		ldi r18,lo8(97)
+  90               	.LVL3:
+  91               	.L4:
+  92               	.LBE22:
+  93               	.LBE21:
+  94               	.LBB23:
+  29:receive.c     ****   _delay_ms(5);
+  30:receive.c     ****   for(int i = 0; i < PACKET_SIZE; ++i){
+  31:receive.c     ****     data[i] = 'a' + i; 
+  95               		.loc 1 31 0 discriminator 2
+  96 002a 2193      		st Z+,r18
+  97               	.LVL4:
+  98 002c 2F5F      		subi r18,lo8(-(1))
+  30:receive.c     ****   for(int i = 0; i < PACKET_SIZE; ++i){
+  99               		.loc 1 30 0 discriminator 2
+ 100 002e 2137      		cpi r18,lo8(113)
+ 101 0030 01F4      		brne .L4
+ 102               	.LBE23:
+  32:receive.c     ****   }
+  33:receive.c     ****   setRadioTXPayload(data, PACKET_SIZE);
+ 103               		.loc 1 33 0
+ 104 0032 60E1      		ldi r22,lo8(16)
+ 105 0034 0E94 0000 		call setRadioTXPayload
+ 106               	.LVL5:
+  34:receive.c     ****   CE_HIGH;
+ 107               		.loc 1 34 0
+ 108 0038 899A      		sbi 0x11,1
+ 109               	.LVL6:
+ 110               	.LBB24:
+ 111               	.LBB25:
+ 165:/usr/lib/avr/include/util/delay.h **** 
+ 166:/usr/lib/avr/include/util/delay.h **** #else
+ 167:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 4e3) * __ms;
+ 168:/usr/lib/avr/include/util/delay.h **** 	if (__tmp < 1.0)
+ 169:/usr/lib/avr/include/util/delay.h **** 		__ticks = 1;
+ 170:/usr/lib/avr/include/util/delay.h **** 	else if (__tmp > 65535)
+ 171:/usr/lib/avr/include/util/delay.h **** 	{
+ 172:/usr/lib/avr/include/util/delay.h **** 		//	__ticks = requested delay in 1/10 ms
+ 173:/usr/lib/avr/include/util/delay.h **** 		__ticks = (uint16_t) (__ms * 10.0);
+ 174:/usr/lib/avr/include/util/delay.h **** 		while(__ticks)
+ 175:/usr/lib/avr/include/util/delay.h **** 		{
+ 176:/usr/lib/avr/include/util/delay.h **** 			// wait 1/10 ms
+ 177:/usr/lib/avr/include/util/delay.h **** 			_delay_loop_2(((F_CPU) / 4e3) / 10);
+ 178:/usr/lib/avr/include/util/delay.h **** 			__ticks --;
+ 179:/usr/lib/avr/include/util/delay.h **** 		}
+ 180:/usr/lib/avr/include/util/delay.h **** 		return;
+ 181:/usr/lib/avr/include/util/delay.h **** 	}
+ 182:/usr/lib/avr/include/util/delay.h **** 	else
+ 183:/usr/lib/avr/include/util/delay.h **** 		__ticks = (uint16_t)__tmp;
+ 184:/usr/lib/avr/include/util/delay.h **** 	_delay_loop_2(__ticks);
+ 185:/usr/lib/avr/include/util/delay.h **** #endif
+ 186:/usr/lib/avr/include/util/delay.h **** }
+ 187:/usr/lib/avr/include/util/delay.h **** 
+ 188:/usr/lib/avr/include/util/delay.h **** /**
+ 189:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 190:/usr/lib/avr/include/util/delay.h **** 
+ 191:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __us microseconds, using _delay_loop_1().
+ 192:/usr/lib/avr/include/util/delay.h **** 
+ 193:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 194:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 195:/usr/lib/avr/include/util/delay.h **** 
+ 196:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 768 us / F_CPU in MHz.
+ 197:/usr/lib/avr/include/util/delay.h **** 
+ 198:/usr/lib/avr/include/util/delay.h ****    If the user requests a delay greater than the maximal possible one,
+ 199:/usr/lib/avr/include/util/delay.h ****    _delay_us() will automatically call _delay_ms() instead.  The user
+ 200:/usr/lib/avr/include/util/delay.h ****    will not be informed about this case.
+ 201:/usr/lib/avr/include/util/delay.h **** 
+ 202:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 203:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 us/ F_CPU in MHz. For
+ 204:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflow results in
+ 205:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0us.
+ 206:/usr/lib/avr/include/util/delay.h ****   
+ 207:/usr/lib/avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 208:/usr/lib/avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 209:/usr/lib/avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 210:/usr/lib/avr/include/util/delay.h **** 
+ 211:/usr/lib/avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 212:/usr/lib/avr/include/util/delay.h ****    to round down and round to closest integer.
+ 213:/usr/lib/avr/include/util/delay.h ****  
+ 214:/usr/lib/avr/include/util/delay.h ****    Note: The new implementation of _delay_us(double __us) with 
+ 215:/usr/lib/avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible.
+ 216:/usr/lib/avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 217:/usr/lib/avr/include/util/delay.h ****    Also, the backward compatible
+ 218:/usr/lib/avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 219:/usr/lib/avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 220:/usr/lib/avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 221:/usr/lib/avr/include/util/delay.h **** 
+ 222:/usr/lib/avr/include/util/delay.h ****  */
+ 223:/usr/lib/avr/include/util/delay.h **** void
+ 224:/usr/lib/avr/include/util/delay.h **** _delay_us(double __us)
+ 225:/usr/lib/avr/include/util/delay.h **** {
+ 226:/usr/lib/avr/include/util/delay.h **** 	uint8_t __ticks;
+ 227:/usr/lib/avr/include/util/delay.h **** 	double __tmp ; 
+ 228:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 229:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 230:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 231:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 232:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 233:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e6) * __us;
+ 234:/usr/lib/avr/include/util/delay.h **** 
+ 235:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 236:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 237:/usr/lib/avr/include/util/delay.h **** 
+ 238:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 239:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 240:/usr/lib/avr/include/util/delay.h **** 
+ 241:/usr/lib/avr/include/util/delay.h **** 	#else
+ 242:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 243:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 244:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 245:/usr/lib/avr/include/util/delay.h **** 
+ 246:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 112               		.loc 2 246 0
+ 113 003a B8E2      		ldi r27,lo8(40)
+ 114 003c BA95      		1: dec r27
+ 115 003e 01F4      		brne 1b
+ 116               	.L9:
+ 117               	.LBE25:
+ 118               	.LBE24:
+  35:receive.c     ****   _delay_us(15);  // pulse CE to start transmition
+  36:receive.c     ****   CE_LOW;
+  37:receive.c     **** 
+  38:receive.c     ****   while(!(getTX_DS())){
+  39:receive.c     **** 
+  40:receive.c     ****     _delay_us(300);  //retransmit time determined by SETUP_RETR register
+  41:receive.c     **** 
+  42:receive.c     ****     if(getMAX_RT()){
+  43:receive.c     **** 
+  44:receive.c     ****       clearMAX_RT();
+  45:receive.c     ****       CE_HIGH;
+  46:receive.c     ****       _delay_us(15);
+  47:receive.c     ****       CE_LOW;
+ 119               		.loc 1 47 0
+ 120 0040 8998      		cbi 0x11,1
+ 121               	.L7:
+  38:receive.c     ****   while(!(getTX_DS())){
+ 122               		.loc 1 38 0 discriminator 1
+ 123 0042 0E94 0000 		call getTX_DS
+ 124               	.LVL7:
+ 125 0046 8111      		cpse r24,__zero_reg__
+ 126 0048 00C0      		rjmp .L11
+ 127               	.LVL8:
+ 128               	.LBB26:
+ 129               	.LBB27:
+ 130               		.loc 2 246 0
+ 131 004a E7E5      		ldi r30,lo8(599)
+ 132 004c F2E0      		ldi r31,hi8(599)
+ 133 004e 3197      		1: sbiw r30,1
+ 134 0050 01F4      		brne 1b
+ 135 0052 00C0      		rjmp .
+ 136 0054 0000      		nop
+ 137               	.LBE27:
+ 138               	.LBE26:
+  42:receive.c     ****     if(getMAX_RT()){
+ 139               		.loc 1 42 0
+ 140 0056 0E94 0000 		call getMAX_RT
+ 141               	.LVL9:
+ 142 005a 8823      		tst r24
+ 143 005c 01F0      		breq .L7
+  44:receive.c     ****       clearMAX_RT();
+ 144               		.loc 1 44 0
+ 145 005e 0E94 0000 		call clearMAX_RT
+ 146               	.LVL10:
+  45:receive.c     ****       CE_HIGH;
+ 147               		.loc 1 45 0
+ 148 0062 899A      		sbi 0x11,1
+ 149               	.LVL11:
+ 150               	.LBB28:
+ 151               	.LBB29:
+ 152               		.loc 2 246 0
+ 153 0064 F8E2      		ldi r31,lo8(40)
+ 154 0066 FA95      		1: dec r31
+ 155 0068 01F4      		brne 1b
+ 156 006a 00C0      		rjmp .L9
+ 157               	.LVL12:
+ 158               	.L11:
+ 159               	.LBE29:
+ 160               	.LBE28:
+  48:receive.c     ****     }
+  49:receive.c     ****   }
+  50:receive.c     ****   clearTX_DS();
+ 161               		.loc 1 50 0
+ 162 006c 0E94 0000 		call clearTX_DS
+ 163               	.LVL13:
+ 164               	.LBB30:
+ 165               	.LBB31:
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 166               		.loc 2 164 0
+ 167 0070 8FE0      		ldi r24,lo8(9999)
+ 168 0072 97E2      		ldi r25,hi8(9999)
+ 169 0074 0197      		1: sbiw r24,1
+ 170 0076 01F4      		brne 1b
+ 171 0078 00C0      		rjmp .
+ 172 007a 0000      		nop
+ 173               	.LBE31:
+ 174               	.LBE30:
+  51:receive.c     ****   _delay_ms(5);
+  52:receive.c     ****   mode = 'r';
+ 175               		.loc 1 52 0
+ 176 007c 82E7      		ldi r24,lo8(114)
+ 177 007e 8093 0000 		sts mode,r24
+ 178               	/* epilogue start */
+  53:receive.c     **** }
+ 179               		.loc 1 53 0
+ 180 0082 0F90      		pop __tmp_reg__
+ 181 0084 0F90      		pop __tmp_reg__
+ 182 0086 DF91      		pop r29
+ 183 0088 CF91      		pop r28
+ 184 008a 0895      		ret
+ 185               		.cfi_endproc
+ 186               	.LFE8:
+ 188               		.section	.text.receive_payload,"ax",@progbits
+ 189               	.global	receive_payload
+ 191               	receive_payload:
+ 192               	.LFB9:
+  54:receive.c     **** void receive_payload(uint8_t *data){
+ 193               		.loc 1 54 0
+ 194               		.cfi_startproc
+ 195               	.LVL14:
+ 196 0000 CF93      		push r28
+ 197               	.LCFI4:
+ 198               		.cfi_def_cfa_offset 3
+ 199               		.cfi_offset 28, -2
+ 200 0002 DF93      		push r29
+ 201               	.LCFI5:
+ 202               		.cfi_def_cfa_offset 4
+ 203               		.cfi_offset 29, -3
+ 204               	/* prologue: function */
+ 205               	/* frame size = 0 */
+ 206               	/* stack size = 2 */
+ 207               	.L__stack_usage = 2
+ 208 0004 D82F      		mov r29,r24
+ 209 0006 C92F      		mov r28,r25
+  55:receive.c     ****   
+  56:receive.c     ****   CE_HIGH;
+ 210               		.loc 1 56 0
+ 211 0008 899A      		sbi 0x11,1
+  57:receive.c     ****   initRadioRX();
+ 212               		.loc 1 57 0
+ 213 000a 0E94 0000 		call initRadioRX
+ 214               	.LVL15:
+ 215               	.LBB32:
+ 216               	.LBB33:
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 217               		.loc 2 164 0
+ 218 000e 8FE0      		ldi r24,lo8(9999)
+ 219 0010 97E2      		ldi r25,hi8(9999)
+ 220 0012 0197      		1: sbiw r24,1
+ 221 0014 01F4      		brne 1b
+ 222 0016 00C0      		rjmp .
+ 223 0018 0000      		nop
+ 224               	.LBE33:
+ 225               	.LBE32:
+  58:receive.c     ****   _delay_ms(5);
+  59:receive.c     ****   clearRX_DR();
+ 226               		.loc 1 59 0
+ 227 001a 0E94 0000 		call clearRX_DR
+ 228               	.LVL16:
+  60:receive.c     ****   getRadioRXPayload(data, PACKET_SIZE); //read payload
+ 229               		.loc 1 60 0
+ 230 001e 60E1      		ldi r22,lo8(16)
+ 231 0020 8D2F      		mov r24,r29
+ 232 0022 9C2F      		mov r25,r28
+ 233 0024 0E94 0000 		call getRadioRXPayload
+ 234               	.LVL17:
+  61:receive.c     ****   CE_LOW;
+ 235               		.loc 1 61 0
+ 236 0028 8998      		cbi 0x11,1
+ 237               	.LVL18:
+ 238 002a ED2F      		mov r30,r29
+ 239 002c FC2F      		mov r31,r28
+ 240               	.LBB34:
+  62:receive.c     **** 
+  63:receive.c     ****   for(int i = 0; i < PACKET_SIZE; i++){
+ 241               		.loc 1 63 0
+ 242 002e 80E0      		ldi r24,0
+ 243 0030 90E0      		ldi r25,0
+ 244               	.LVL19:
+ 245               	.L14:
+  64:receive.c     **** 
+  65:receive.c     ****     while(!(UCSR1A & (1 << UDRE1)));
+ 246               		.loc 1 65 0 discriminator 1
+ 247 0032 2091 C800 		lds r18,200
+ 248 0036 25FF      		sbrs r18,5
+ 249 0038 00C0      		rjmp .L14
+  66:receive.c     ****     UDR1 = data[i];
+ 250               		.loc 1 66 0
+ 251 003a 2191      		ld r18,Z+
+ 252 003c 2093 CE00 		sts 206,r18
+  63:receive.c     ****   for(int i = 0; i < PACKET_SIZE; i++){
+ 253               		.loc 1 63 0
+ 254 0040 0196      		adiw r24,1
+ 255               	.LVL20:
+ 256 0042 8031      		cpi r24,16
+ 257 0044 9105      		cpc r25,__zero_reg__
+ 258 0046 01F4      		brne .L14
+ 259               	.LBE34:
+  67:receive.c     ****   }
+  68:receive.c     ****   CE_HIGH; 
+ 260               		.loc 1 68 0
+ 261 0048 899A      		sbi 0x11,1
+ 262               	.LVL21:
+ 263               	.LBB35:
+ 264               	.LBB36:
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 265               		.loc 2 164 0
+ 266 004a 8FE0      		ldi r24,lo8(9999)
+ 267 004c 97E2      		ldi r25,hi8(9999)
+ 268 004e 0197      		1: sbiw r24,1
+ 269 0050 01F4      		brne 1b
+ 270               	.LVL22:
+ 271 0052 00C0      		rjmp .
+ 272 0054 0000      		nop
+ 273               	.LBE36:
+ 274               	.LBE35:
+  69:receive.c     ****   _delay_ms(5);
+  70:receive.c     ****   mode = 't';
+ 275               		.loc 1 70 0
+ 276 0056 84E7      		ldi r24,lo8(116)
+ 277 0058 8093 0000 		sts mode,r24
+ 278               	/* epilogue start */
+  71:receive.c     **** }
+ 279               		.loc 1 71 0
+ 280 005c DF91      		pop r29
+ 281 005e CF91      		pop r28
+ 282 0060 0895      		ret
+ 283               		.cfi_endproc
+ 284               	.LFE9:
+ 286               		.section	.text.startup.main,"ax",@progbits
+ 287               	.global	main
+ 289               	main:
+ 290               	.LFB10:
+  72:receive.c     **** int main(void){
+ 291               		.loc 1 72 0
+ 292               		.cfi_startproc
+ 293 0000 CF93      		push r28
+ 294               	.LCFI6:
+ 295               		.cfi_def_cfa_offset 3
+ 296               		.cfi_offset 28, -2
+ 297 0002 DF93      		push r29
+ 298               	.LCFI7:
+ 299               		.cfi_def_cfa_offset 4
+ 300               		.cfi_offset 29, -3
+ 301 0004 CDB7      		in r28,__SP_L__
+ 302 0006 DEB7      		in r29,__SP_H__
+ 303               	.LCFI8:
+ 304               		.cfi_def_cfa_register 28
+ 305 0008 6197      		sbiw r28,17
+ 306               	.LCFI9:
+ 307               		.cfi_def_cfa_offset 21
+ 308 000a 0FB6      		in __tmp_reg__,__SREG__
+ 309 000c F894      		cli
+ 310 000e DEBF      		out __SP_H__,r29
+ 311 0010 0FBE      		out __SREG__,__tmp_reg__
+ 312 0012 CDBF      		out __SP_L__,r28
+ 313               	/* prologue: function */
+ 314               	/* frame size = 17 */
+ 315               	/* stack size = 19 */
+ 316               	.L__stack_usage = 19
+  73:receive.c     **** 
+  74:receive.c     ****   uint8_t data[PACKET_SIZE] = {0};
+ 317               		.loc 1 74 0
+ 318 0014 FE01      		movw r30,r28
+ 319 0016 3196      		adiw r30,1
+ 320 0018 80E1      		ldi r24,lo8(16)
+ 321 001a DF01      		movw r26,r30
+ 322               		0:
+ 323 001c 1D92      		st X+,__zero_reg__
+ 324 001e 8A95      		dec r24
+ 325 0020 01F4      		brne 0b
+  75:receive.c     ****   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
+ 326               		.loc 1 75 0
+ 327 0022 80E1      		ldi r24,lo8(16)
+ 328 0024 90E0      		ldi r25,0
+ 329 0026 0E94 0000 		call malloc
+ 330               	.LVL23:
+ 331 002a 8C01      		movw r16,r24
+ 332               	.LVL24:
+  76:receive.c     **** 
+  77:receive.c     ****   CPU_PRESCALE(0x01);  // run at 8 MHz
+ 333               		.loc 1 77 0
+ 334 002c 80E8      		ldi r24,lo8(-128)
+ 335 002e 8093 6100 		sts 97,r24
+ 336 0032 81E0      		ldi r24,lo8(1)
+ 337 0034 8093 6100 		sts 97,r24
+  78:receive.c     ****   INIT_CSN;
+ 338               		.loc 1 78 0
+ 339 0038 849A      		sbi 0x10,4
+  79:receive.c     ****   INIT_CE;
+ 340               		.loc 1 79 0
+ 341 003a 819A      		sbi 0x10,1
+  80:receive.c     ****   CSN_HIGH;
+ 342               		.loc 1 80 0
+ 343 003c 8C9A      		sbi 0x11,4
+  81:receive.c     ****   initUART();
+ 344               		.loc 1 81 0
+ 345 003e 0E94 0000 		call initUART
+ 346               	.LVL25:
+  82:receive.c     ****   SPI_masterInit();
+ 347               		.loc 1 82 0
+ 348 0042 0E94 0000 		call SPI_masterInit
+ 349               	.LVL26:
+  83:receive.c     ****   initRadioRX();
+ 350               		.loc 1 83 0
+ 351 0046 0E94 0000 		call initRadioRX
+ 352               	.LVL27:
+  84:receive.c     **** 
+  85:receive.c     ****   setRadioAddressWidth(THREE_BYTES);
+ 353               		.loc 1 85 0
+ 354 004a 81E0      		ldi r24,lo8(1)
+ 355 004c 0E94 0000 		call setRadioAddressWidth
+ 356               	.LVL28:
+  86:receive.c     ****   setRadioRXAddress(0xABC123); 
+ 357               		.loc 1 86 0
+ 358 0050 63E2      		ldi r22,lo8(35)
+ 359 0052 71EC      		ldi r23,lo8(-63)
+ 360 0054 8BEA      		ldi r24,lo8(-85)
+ 361 0056 90E0      		ldi r25,0
+ 362 0058 0E94 0000 		call setRadioRXAddress
+ 363               	.LVL29:
+  87:receive.c     ****   setRadioTXAddress(0xABC123);  
+ 364               		.loc 1 87 0
+ 365 005c 63E2      		ldi r22,lo8(35)
+ 366 005e 71EC      		ldi r23,lo8(-63)
+ 367 0060 8BEA      		ldi r24,lo8(-85)
+ 368 0062 90E0      		ldi r25,0
+ 369 0064 0E94 0000 		call setRadioTXAddress
+ 370               	.LVL30:
+  88:receive.c     ****   setRadioRXPayloadSize(DATA_PIPE_0, PACKET_SIZE);
+ 371               		.loc 1 88 0
+ 372 0068 60E1      		ldi r22,lo8(16)
+ 373 006a 81E1      		ldi r24,lo8(17)
+ 374 006c 0E94 0000 		call setRadioRXPayloadSize
+ 375               	.LVL31:
+  89:receive.c     ****   setRadioFrequency(0b00000010); 
+ 376               		.loc 1 89 0
+ 377 0070 82E0      		ldi r24,lo8(2)
+ 378 0072 0E94 0000 		call setRadioFrequency
+ 379               	.LVL32:
+ 380               	.LBB37:
+ 381               	.LBB38:
+ 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 382               		.loc 2 164 0
+ 383 0076 8FE0      		ldi r24,lo8(9999)
+ 384 0078 97E2      		ldi r25,hi8(9999)
+ 385 007a 0197      		1: sbiw r24,1
+ 386 007c 01F4      		brne 1b
+ 387 007e 00C0      		rjmp .
+ 388 0080 0000      		nop
+ 389               	.LBE38:
+ 390               	.LBE37:
+ 391               	.LBB39:
+  90:receive.c     ****   _delay_ms(5);
+  91:receive.c     **** 
+  92:receive.c     ****   while(1){    
+  93:receive.c     ****   
+  94:receive.c     ****     uint8_t radioStatus = 0;
+  95:receive.c     ****     getRadioStatus(&radioStatus);
+  96:receive.c     ****     while(mode == 'r'){  
+  97:receive.c     ****       
+  98:receive.c     ****       while(!(UCSR1A & (1 << UDRE1)));
+  99:receive.c     ****       UDR1 = mode;
+ 392               		.loc 1 99 0
+ 393 0082 82E7      		ldi r24,lo8(114)
+ 394 0084 F82E      		mov r15,r24
+ 100:receive.c     ****       if(getRX_DR()){
+ 101:receive.c     ****         receive_payload(load);
+ 102:receive.c     ****       }
+ 103:receive.c     ****     }
+ 104:receive.c     ****     while(mode == 't'){
+ 105:receive.c     ****      
+ 106:receive.c     ****      while(!(UCSR1A & (1 << UDRE1)));
+ 107:receive.c     ****      UDR1 = mode;
+ 395               		.loc 1 107 0
+ 396 0086 94E7      		ldi r25,lo8(116)
+ 397 0088 E92E      		mov r14,r25
+ 398               	.L28:
+  94:receive.c     ****     uint8_t radioStatus = 0;
+ 399               		.loc 1 94 0
+ 400 008a 198A      		std Y+17,__zero_reg__
+  95:receive.c     ****     getRadioStatus(&radioStatus);
+ 401               		.loc 1 95 0
+ 402 008c CE01      		movw r24,r28
+ 403 008e 4196      		adiw r24,17
+ 404 0090 0E94 0000 		call getRadioStatus
+ 405               	.LVL33:
+ 406               	.L22:
+  96:receive.c     ****     while(mode == 'r'){  
+ 407               		.loc 1 96 0 discriminator 1
+ 408 0094 8091 0000 		lds r24,mode
+ 409 0098 8237      		cpi r24,lo8(114)
+ 410 009a 01F4      		brne .L24
+ 411               	.L20:
+  98:receive.c     ****       while(!(UCSR1A & (1 << UDRE1)));
+ 412               		.loc 1 98 0
+ 413 009c 8091 C800 		lds r24,200
+ 414 00a0 85FF      		sbrs r24,5
+ 415 00a2 00C0      		rjmp .L20
+  99:receive.c     ****       UDR1 = mode;
+ 416               		.loc 1 99 0
+ 417 00a4 F092 CE00 		sts 206,r15
+ 100:receive.c     ****       if(getRX_DR()){
+ 418               		.loc 1 100 0
+ 419 00a8 0E94 0000 		call getRX_DR
+ 420               	.LVL34:
+ 421 00ac 8823      		tst r24
+ 422 00ae 01F0      		breq .L22
+ 101:receive.c     ****         receive_payload(load);
+ 423               		.loc 1 101 0
+ 424 00b0 C801      		movw r24,r16
+ 425 00b2 0E94 0000 		call receive_payload
+ 426               	.LVL35:
+ 427 00b6 00C0      		rjmp .L22
+ 428               	.L26:
+ 106:receive.c     ****      while(!(UCSR1A & (1 << UDRE1)));
+ 429               		.loc 1 106 0
+ 430 00b8 8091 C800 		lds r24,200
+ 431 00bc 85FF      		sbrs r24,5
+ 432 00be 00C0      		rjmp .L26
+ 433               		.loc 1 107 0
+ 434 00c0 E092 CE00 		sts 206,r14
+ 108:receive.c     ****      transmit_payload(data);
+ 435               		.loc 1 108 0
+ 436 00c4 CE01      		movw r24,r28
+ 437 00c6 0196      		adiw r24,1
+ 438 00c8 0E94 0000 		call transmit_payload
+ 439               	.LVL36:
+ 440               	.L24:
+ 104:receive.c     ****     while(mode == 't'){
+ 441               		.loc 1 104 0 discriminator 1
+ 442 00cc 8091 0000 		lds r24,mode
+ 443 00d0 8437      		cpi r24,lo8(116)
+ 444 00d2 01F0      		breq .L26
+ 445 00d4 00C0      		rjmp .L28
+ 446               	.LBE39:
+ 447               		.cfi_endproc
+ 448               	.LFE10:
+ 450               	.global	mode
+ 451               		.data
+ 454               	mode:
+ 455 0000 72        		.byte	114
+ 456               		.text
+ 457               	.Letext0:
+ 458               		.file 3 "/usr/lib/avr/include/stdint.h"
+ 459               		.file 4 "/usr/lib/gcc/avr/4.8.2/include/stddef.h"
+ 460               		.file 5 "radioctl.h"
+ 461               		.file 6 "spi.h"
+ 462               		.file 7 "/usr/lib/avr/include/stdlib.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 receive.c
+     /tmp/ccGWfvMk.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccGWfvMk.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccGWfvMk.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccGWfvMk.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccGWfvMk.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccGWfvMk.s:13     .text.initUART:0000000000000000 initUART
+     /tmp/ccGWfvMk.s:43     .text.transmit_payload:0000000000000000 transmit_payload
+     /tmp/ccGWfvMk.s:454    .data:0000000000000000 mode
+     /tmp/ccGWfvMk.s:191    .text.receive_payload:0000000000000000 receive_payload
+     /tmp/ccGWfvMk.s:289    .text.startup.main:0000000000000000 main
+
+UNDEFINED SYMBOLS
+initRadioTX
+setRadioTXPayload
+getTX_DS
+getMAX_RT
+clearMAX_RT
+clearTX_DS
+initRadioRX
+clearRX_DR
+getRadioRXPayload
+malloc
+SPI_masterInit
+setRadioAddressWidth
+setRadioRXAddress
+setRadioTXAddress
+setRadioRXPayloadSize
+setRadioFrequency
+getRadioStatus
+getRX_DR
+__do_copy_data
