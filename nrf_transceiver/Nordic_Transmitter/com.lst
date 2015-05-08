@@ -590,214 +590,229 @@
  270               	.LVL22:
  271 0052 00C0      		rjmp .
  272 0054 0000      		nop
- 273               	.LBE36:
- 274               	.LBE35:
+ 273               	/* epilogue start */
+ 274               	.LBE36:
+ 275               	.LBE35:
   71:com.c         ****   _delay_ms(5); 
-  72:com.c         ****   mode = 't';
- 275               		.loc 1 72 0
- 276 0056 84E7      		ldi r24,lo8(116)
- 277 0058 8093 0000 		sts mode,r24
- 278               	/* epilogue start */
-  73:com.c         **** }
- 279               		.loc 1 73 0
- 280 005c DF91      		pop r29
- 281 005e CF91      		pop r28
- 282 0060 0895      		ret
- 283               		.cfi_endproc
- 284               	.LFE9:
- 286               		.section	.text.startup.main,"ax",@progbits
- 287               	.global	main
- 289               	main:
- 290               	.LFB10:
-  74:com.c         **** int main(void){
- 291               		.loc 1 74 0
- 292               		.cfi_startproc
- 293 0000 CF93      		push r28
- 294               	.LCFI6:
- 295               		.cfi_def_cfa_offset 3
- 296               		.cfi_offset 28, -2
- 297 0002 DF93      		push r29
- 298               	.LCFI7:
- 299               		.cfi_def_cfa_offset 4
- 300               		.cfi_offset 29, -3
- 301 0004 CDB7      		in r28,__SP_L__
- 302 0006 DEB7      		in r29,__SP_H__
- 303               	.LCFI8:
- 304               		.cfi_def_cfa_register 28
- 305 0008 6197      		sbiw r28,17
- 306               	.LCFI9:
- 307               		.cfi_def_cfa_offset 21
- 308 000a 0FB6      		in __tmp_reg__,__SREG__
- 309 000c F894      		cli
- 310 000e DEBF      		out __SP_H__,r29
- 311 0010 0FBE      		out __SREG__,__tmp_reg__
- 312 0012 CDBF      		out __SP_L__,r28
- 313               	/* prologue: function */
- 314               	/* frame size = 17 */
- 315               	/* stack size = 19 */
- 316               	.L__stack_usage = 19
-  75:com.c         **** 
-  76:com.c         ****   uint8_t data[PACKET_SIZE] = {0};
- 317               		.loc 1 76 0
- 318 0014 FE01      		movw r30,r28
- 319 0016 3196      		adiw r30,1
- 320 0018 80E1      		ldi r24,lo8(16)
- 321 001a DF01      		movw r26,r30
- 322               		0:
- 323 001c 1D92      		st X+,__zero_reg__
- 324 001e 8A95      		dec r24
- 325 0020 01F4      		brne 0b
-  77:com.c         ****   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
- 326               		.loc 1 77 0
- 327 0022 80E1      		ldi r24,lo8(16)
- 328 0024 90E0      		ldi r25,0
- 329 0026 0E94 0000 		call malloc
- 330               	.LVL23:
- 331 002a 8C01      		movw r16,r24
- 332               	.LVL24:
-  78:com.c         **** 
-  79:com.c         ****   CPU_PRESCALE(0x01);  // run at 8 MHz
- 333               		.loc 1 79 0
- 334 002c 80E8      		ldi r24,lo8(-128)
- 335 002e 8093 6100 		sts 97,r24
- 336 0032 81E0      		ldi r24,lo8(1)
- 337 0034 8093 6100 		sts 97,r24
-  80:com.c         ****   INIT_CSN;
- 338               		.loc 1 80 0
- 339 0038 849A      		sbi 0x10,4
-  81:com.c         ****   INIT_CE;
- 340               		.loc 1 81 0
- 341 003a 819A      		sbi 0x10,1
-  82:com.c         ****   CSN_HIGH;
- 342               		.loc 1 82 0
- 343 003c 8C9A      		sbi 0x11,4
-  83:com.c         ****   initUART;
-  84:com.c         ****   SPI_masterInit();
- 344               		.loc 1 84 0
- 345 003e 0E94 0000 		call SPI_masterInit
- 346               	.LVL25:
-  85:com.c         ****   
-  86:com.c         ****   initRadioRX();
- 347               		.loc 1 86 0
- 348 0042 0E94 0000 		call initRadioRX
- 349               	.LVL26:
-  87:com.c         ****   setRadioAddressWidth(THREE_BYTES);
- 350               		.loc 1 87 0
- 351 0046 81E0      		ldi r24,lo8(1)
- 352 0048 0E94 0000 		call setRadioAddressWidth
- 353               	.LVL27:
-  88:com.c         ****   setRadioTXAddress(0xABC123);        
- 354               		.loc 1 88 0
- 355 004c 63E2      		ldi r22,lo8(35)
- 356 004e 71EC      		ldi r23,lo8(-63)
- 357 0050 8BEA      		ldi r24,lo8(-85)
- 358 0052 90E0      		ldi r25,0
- 359 0054 0E94 0000 		call setRadioTXAddress
- 360               	.LVL28:
-  89:com.c         ****   setRadioRXAddress(0xABC123);
- 361               		.loc 1 89 0
- 362 0058 63E2      		ldi r22,lo8(35)
- 363 005a 71EC      		ldi r23,lo8(-63)
- 364 005c 8BEA      		ldi r24,lo8(-85)
- 365 005e 90E0      		ldi r25,0
- 366 0060 0E94 0000 		call setRadioRXAddress
- 367               	.LVL29:
-  90:com.c         ****   setRadioFrequency(0b00000010);
- 368               		.loc 1 90 0
- 369 0064 82E0      		ldi r24,lo8(2)
- 370 0066 0E94 0000 		call setRadioFrequency
- 371               	.LVL30:
-  91:com.c         ****   setRadioRXPayloadSize(DATA_PIPE_0, PACKET_SIZE);
- 372               		.loc 1 91 0
- 373 006a 60E1      		ldi r22,lo8(16)
- 374 006c 81E1      		ldi r24,lo8(17)
- 375 006e 0E94 0000 		call setRadioRXPayloadSize
- 376               	.LVL31:
+  72:com.c         **** }
+ 276               		.loc 1 72 0
+ 277 0056 DF91      		pop r29
+ 278 0058 CF91      		pop r28
+ 279 005a 0895      		ret
+ 280               		.cfi_endproc
+ 281               	.LFE9:
+ 283               		.section	.text.startup.main,"ax",@progbits
+ 284               	.global	main
+ 286               	main:
+ 287               	.LFB10:
+  73:com.c         **** int main(void){
+ 288               		.loc 1 73 0
+ 289               		.cfi_startproc
+ 290 0000 CF93      		push r28
+ 291               	.LCFI6:
+ 292               		.cfi_def_cfa_offset 3
+ 293               		.cfi_offset 28, -2
+ 294 0002 DF93      		push r29
+ 295               	.LCFI7:
+ 296               		.cfi_def_cfa_offset 4
+ 297               		.cfi_offset 29, -3
+ 298 0004 CDB7      		in r28,__SP_L__
+ 299 0006 DEB7      		in r29,__SP_H__
+ 300               	.LCFI8:
+ 301               		.cfi_def_cfa_register 28
+ 302 0008 6197      		sbiw r28,17
+ 303               	.LCFI9:
+ 304               		.cfi_def_cfa_offset 21
+ 305 000a 0FB6      		in __tmp_reg__,__SREG__
+ 306 000c F894      		cli
+ 307 000e DEBF      		out __SP_H__,r29
+ 308 0010 0FBE      		out __SREG__,__tmp_reg__
+ 309 0012 CDBF      		out __SP_L__,r28
+ 310               	/* prologue: function */
+ 311               	/* frame size = 17 */
+ 312               	/* stack size = 19 */
+ 313               	.L__stack_usage = 19
+  74:com.c         **** 
+  75:com.c         ****   uint8_t data[PACKET_SIZE] = {0};
+ 314               		.loc 1 75 0
+ 315 0014 FE01      		movw r30,r28
+ 316 0016 3196      		adiw r30,1
+ 317 0018 80E1      		ldi r24,lo8(16)
+ 318 001a DF01      		movw r26,r30
+ 319               		0:
+ 320 001c 1D92      		st X+,__zero_reg__
+ 321 001e 8A95      		dec r24
+ 322 0020 01F4      		brne 0b
+  76:com.c         ****   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
+ 323               		.loc 1 76 0
+ 324 0022 80E1      		ldi r24,lo8(16)
+ 325 0024 90E0      		ldi r25,0
+ 326 0026 0E94 0000 		call malloc
+ 327               	.LVL23:
+ 328 002a 8C01      		movw r16,r24
+ 329               	.LVL24:
+  77:com.c         **** 
+  78:com.c         ****   CPU_PRESCALE(0x01);  // run at 8 MHz
+ 330               		.loc 1 78 0
+ 331 002c 80E8      		ldi r24,lo8(-128)
+ 332 002e 8093 6100 		sts 97,r24
+ 333 0032 81E0      		ldi r24,lo8(1)
+ 334 0034 8093 6100 		sts 97,r24
+  79:com.c         ****   INIT_CSN;
+ 335               		.loc 1 79 0
+ 336 0038 849A      		sbi 0x10,4
+  80:com.c         ****   INIT_CE;
+ 337               		.loc 1 80 0
+ 338 003a 819A      		sbi 0x10,1
+  81:com.c         ****   CSN_HIGH;
+ 339               		.loc 1 81 0
+ 340 003c 8C9A      		sbi 0x11,4
+  82:com.c         ****   initUART();
+ 341               		.loc 1 82 0
+ 342 003e 0E94 0000 		call initUART
+ 343               	.LVL25:
+  83:com.c         ****   SPI_masterInit();
+ 344               		.loc 1 83 0
+ 345 0042 0E94 0000 		call SPI_masterInit
+ 346               	.LVL26:
+  84:com.c         ****   
+  85:com.c         ****   initRadioRX();
+ 347               		.loc 1 85 0
+ 348 0046 0E94 0000 		call initRadioRX
+ 349               	.LVL27:
+  86:com.c         ****   setRadioAddressWidth(THREE_BYTES);
+ 350               		.loc 1 86 0
+ 351 004a 81E0      		ldi r24,lo8(1)
+ 352 004c 0E94 0000 		call setRadioAddressWidth
+ 353               	.LVL28:
+  87:com.c         ****   setRadioTXAddress(0xABC123);        
+ 354               		.loc 1 87 0
+ 355 0050 63E2      		ldi r22,lo8(35)
+ 356 0052 71EC      		ldi r23,lo8(-63)
+ 357 0054 8BEA      		ldi r24,lo8(-85)
+ 358 0056 90E0      		ldi r25,0
+ 359 0058 0E94 0000 		call setRadioTXAddress
+ 360               	.LVL29:
+  88:com.c         ****   setRadioRXAddress(0xABC123);
+ 361               		.loc 1 88 0
+ 362 005c 63E2      		ldi r22,lo8(35)
+ 363 005e 71EC      		ldi r23,lo8(-63)
+ 364 0060 8BEA      		ldi r24,lo8(-85)
+ 365 0062 90E0      		ldi r25,0
+ 366 0064 0E94 0000 		call setRadioRXAddress
+ 367               	.LVL30:
+  89:com.c         ****   setRadioFrequency(0b00000010);
+ 368               		.loc 1 89 0
+ 369 0068 82E0      		ldi r24,lo8(2)
+ 370 006a 0E94 0000 		call setRadioFrequency
+ 371               	.LVL31:
+  90:com.c         ****   setRadioRXPayloadSize(DATA_PIPE_0, PACKET_SIZE);
+ 372               		.loc 1 90 0
+ 373 006e 60E1      		ldi r22,lo8(16)
+ 374 0070 81E1      		ldi r24,lo8(17)
+ 375 0072 0E94 0000 		call setRadioRXPayloadSize
+ 376               	.LVL32:
  377               	.LBB37:
  378               	.LBB38:
  164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
  379               		.loc 2 164 0
- 380 0072 8FE0      		ldi r24,lo8(9999)
- 381 0074 97E2      		ldi r25,hi8(9999)
- 382 0076 0197      		1: sbiw r24,1
- 383 0078 01F4      		brne 1b
- 384 007a 00C0      		rjmp .
- 385 007c 0000      		nop
- 386               	.L24:
- 387               	.LBE38:
- 388               	.LBE37:
- 389               	.LBB39:
-  92:com.c         ****   _delay_ms(5);
-  93:com.c         **** 
-  94:com.c         ****   while(1){
-  95:com.c         ****     uint8_t radioStatus = 0;
- 390               		.loc 1 95 0
- 391 007e 198A      		std Y+17,__zero_reg__
-  96:com.c         ****     getRadioStatus(&radioStatus);
- 392               		.loc 1 96 0
- 393 0080 CE01      		movw r24,r28
- 394 0082 4196      		adiw r24,17
- 395 0084 0E94 0000 		call getRadioStatus
- 396               	.LVL32:
- 397               	.L20:
-  97:com.c         ****     while(mode == 'r'){  
- 398               		.loc 1 97 0 discriminator 1
- 399 0088 8091 0000 		lds r24,mode
- 400 008c 8237      		cpi r24,lo8(114)
- 401 008e 01F4      		brne .L22
-  98:com.c         ****       if(getRX_DR()){
- 402               		.loc 1 98 0
- 403 0090 0E94 0000 		call getRX_DR
- 404               	.LVL33:
- 405 0094 8823      		tst r24
- 406 0096 01F0      		breq .L20
-  99:com.c         ****         receive_payload(load);
- 407               		.loc 1 99 0
- 408 0098 C801      		movw r24,r16
- 409 009a 0E94 0000 		call receive_payload
- 410               	.LVL34:
- 411 009e 00C0      		rjmp .L20
- 412               	.L22:
- 100:com.c         ****       } 
- 101:com.c         ****     }
- 102:com.c         ****     while(mode == 't'){
- 413               		.loc 1 102 0 discriminator 1
- 414 00a0 8091 0000 		lds r24,mode
- 415 00a4 8437      		cpi r24,lo8(116)
- 416 00a6 01F4      		brne .L24
- 103:com.c         ****       transmit_payload(data);
- 417               		.loc 1 103 0
- 418 00a8 CE01      		movw r24,r28
- 419 00aa 0196      		adiw r24,1
- 420 00ac 0E94 0000 		call transmit_payload
- 421               	.LVL35:
- 422 00b0 00C0      		rjmp .L22
- 423               	.LBE39:
- 424               		.cfi_endproc
- 425               	.LFE10:
- 427               	.global	mode
- 428               		.data
- 431               	mode:
- 432 0000 74        		.byte	116
- 433               		.text
- 434               	.Letext0:
- 435               		.file 3 "/usr/lib/avr/include/stdint.h"
- 436               		.file 4 "/usr/lib/gcc/avr/4.8.2/include/stddef.h"
- 437               		.file 5 "radioctl.h"
- 438               		.file 6 "spi.h"
- 439               		.file 7 "/usr/lib/avr/include/stdlib.h"
+ 380 0076 8FE0      		ldi r24,lo8(9999)
+ 381 0078 97E2      		ldi r25,hi8(9999)
+ 382 007a 0197      		1: sbiw r24,1
+ 383 007c 01F4      		brne 1b
+ 384 007e 00C0      		rjmp .
+ 385 0080 0000      		nop
+ 386               	.LBE38:
+ 387               	.LBE37:
+ 388               	.LBB39:
+  91:com.c         ****   _delay_ms(5);
+  92:com.c         **** 
+  93:com.c         ****   while(1){
+  94:com.c         ****     uint8_t radioStatus = 0;
+  95:com.c         ****     getRadioStatus(&radioStatus);
+  96:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
+  97:com.c         ****     UDR1 = 'a';
+ 389               		.loc 1 97 0
+ 390 0082 81E6      		ldi r24,lo8(97)
+ 391 0084 F82E      		mov r15,r24
+ 392               	.L24:
+  94:com.c         ****     uint8_t radioStatus = 0;
+ 393               		.loc 1 94 0
+ 394 0086 198A      		std Y+17,__zero_reg__
+  95:com.c         ****     getRadioStatus(&radioStatus);
+ 395               		.loc 1 95 0
+ 396 0088 CE01      		movw r24,r28
+ 397 008a 4196      		adiw r24,17
+ 398 008c 0E94 0000 		call getRadioStatus
+ 399               	.LVL33:
+ 400               	.L19:
+  96:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
+ 401               		.loc 1 96 0 discriminator 1
+ 402 0090 8091 C800 		lds r24,200
+ 403 0094 85FF      		sbrs r24,5
+ 404 0096 00C0      		rjmp .L19
+ 405               		.loc 1 97 0
+ 406 0098 F092 CE00 		sts 206,r15
+  98:com.c         ****     if(mode == 'r'){  
+ 407               		.loc 1 98 0
+ 408 009c 8091 0000 		lds r24,mode
+ 409 00a0 8237      		cpi r24,lo8(114)
+ 410 00a2 01F4      		brne .L21
+  99:com.c         ****       if(getRX_DR()){
+ 411               		.loc 1 99 0
+ 412 00a4 0E94 0000 		call getRX_DR
+ 413               	.LVL34:
+ 414 00a8 8823      		tst r24
+ 415 00aa 01F0      		breq .L21
+ 100:com.c         ****         receive_payload(load);
+ 416               		.loc 1 100 0
+ 417 00ac C801      		movw r24,r16
+ 418 00ae 0E94 0000 		call receive_payload
+ 419               	.LVL35:
+ 420               	.L21:
+ 101:com.c         ****       } 
+ 102:com.c         ****     }
+ 103:com.c         ****     if(mode == 't'){
+ 421               		.loc 1 103 0
+ 422 00b2 8091 0000 		lds r24,mode
+ 423 00b6 8437      		cpi r24,lo8(116)
+ 424 00b8 01F4      		brne .L24
+ 104:com.c         ****       transmit_payload(data);
+ 425               		.loc 1 104 0
+ 426 00ba CE01      		movw r24,r28
+ 427 00bc 0196      		adiw r24,1
+ 428 00be 0E94 0000 		call transmit_payload
+ 429               	.LVL36:
+ 430               	.LBE39:
+ 105:com.c         ****     }
+ 106:com.c         ****   }
+ 431               		.loc 1 106 0
+ 432 00c2 00C0      		rjmp .L24
+ 433               		.cfi_endproc
+ 434               	.LFE10:
+ 436               	.global	mode
+ 437               		.data
+ 440               	mode:
+ 441 0000 74        		.byte	116
+ 442               		.text
+ 443               	.Letext0:
+ 444               		.file 3 "/usr/lib/avr/include/stdint.h"
+ 445               		.file 4 "/usr/lib/gcc/avr/4.8.2/include/stddef.h"
+ 446               		.file 5 "radioctl.h"
+ 447               		.file 6 "spi.h"
+ 448               		.file 7 "/usr/lib/avr/include/stdlib.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 com.c
-     /tmp/cccfZv0N.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/cccfZv0N.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/cccfZv0N.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/cccfZv0N.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/cccfZv0N.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/cccfZv0N.s:13     .text.initUART:0000000000000000 initUART
-     /tmp/cccfZv0N.s:43     .text.transmit_payload:0000000000000000 transmit_payload
-     /tmp/cccfZv0N.s:431    .data:0000000000000000 mode
-     /tmp/cccfZv0N.s:191    .text.receive_payload:0000000000000000 receive_payload
-     /tmp/cccfZv0N.s:289    .text.startup.main:0000000000000000 main
+     /tmp/ccCALmdt.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccCALmdt.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccCALmdt.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccCALmdt.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccCALmdt.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccCALmdt.s:13     .text.initUART:0000000000000000 initUART
+     /tmp/ccCALmdt.s:43     .text.transmit_payload:0000000000000000 transmit_payload
+     /tmp/ccCALmdt.s:440    .data:0000000000000000 mode
+     /tmp/ccCALmdt.s:191    .text.receive_payload:0000000000000000 receive_payload
+     /tmp/ccCALmdt.s:286    .text.startup.main:0000000000000000 main
 
 UNDEFINED SYMBOLS
 initRadioTX

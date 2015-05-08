@@ -280,16 +280,16 @@
  225               		.file 2 "/usr/lib/avr/include/stdint.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 spi.c
-     /tmp/ccynLPPT.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccynLPPT.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccynLPPT.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccynLPPT.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccynLPPT.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccynLPPT.s:13     .text.SPI_masterInit:0000000000000000 SPI_masterInit
-     /tmp/ccynLPPT.s:35     .text.SPI_masterReceive:0000000000000000 SPI_masterReceive
-     /tmp/ccynLPPT.s:61     .text.SPI_masterTransmit:0000000000000000 SPI_masterTransmit
-     /tmp/ccynLPPT.s:88     .text.digiPotInitWiper:0000000000000000 digiPotInitWiper
-     /tmp/ccynLPPT.s:126    .text.accelerometerReceive:0000000000000000 accelerometerReceive
-     /tmp/ccynLPPT.s:195    .text.init_accel:0000000000000000 init_accel
+     /tmp/ccEMtnBv.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccEMtnBv.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccEMtnBv.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccEMtnBv.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccEMtnBv.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccEMtnBv.s:13     .text.SPI_masterInit:0000000000000000 SPI_masterInit
+     /tmp/ccEMtnBv.s:35     .text.SPI_masterReceive:0000000000000000 SPI_masterReceive
+     /tmp/ccEMtnBv.s:61     .text.SPI_masterTransmit:0000000000000000 SPI_masterTransmit
+     /tmp/ccEMtnBv.s:88     .text.digiPotInitWiper:0000000000000000 digiPotInitWiper
+     /tmp/ccEMtnBv.s:126    .text.accelerometerReceive:0000000000000000 accelerometerReceive
+     /tmp/ccEMtnBv.s:195    .text.init_accel:0000000000000000 init_accel
 
 NO UNDEFINED SYMBOLS

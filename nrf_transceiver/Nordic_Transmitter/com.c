@@ -69,7 +69,6 @@ void receive_payload(uint8_t *data){
   }
   CE_HIGH; 
   _delay_ms(5); 
-  mode = 't';
 }
 int main(void){
 
@@ -80,7 +79,7 @@ int main(void){
   INIT_CSN;
   INIT_CE;
   CSN_HIGH;
-  initUART;
+  initUART();
   SPI_masterInit();
   
   initRadioRX();
@@ -94,12 +93,14 @@ int main(void){
   while(1){
     uint8_t radioStatus = 0;
     getRadioStatus(&radioStatus);
-    while(mode == 'r'){  
+    while(!(UCSR1A & (1 << UDRE1)));
+    UDR1 = 'a';
+    if(mode == 'r'){  
       if(getRX_DR()){
         receive_payload(load);
       } 
     }
-    while(mode == 't'){
+    if(mode == 't'){
       transmit_payload(data);
     }
   }

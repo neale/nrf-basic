@@ -20,8 +20,6 @@ Discarded input sections
  .bss           0x0000000000000000        0x0 /usr/lib/gcc/avr/4.8.2/../../../avr/lib/avr5/crtm32u4.o
  .text          0x0000000000000000        0x0 com.o
  .bss           0x0000000000000000        0x0 com.o
- .text.initUART
-                0x0000000000000000       0x20 com.o
  .text          0x0000000000000000        0x0 spi.o
  .bss           0x0000000000000000        0x0 spi.o
  .text.digiPotInitWiper
@@ -210,7 +208,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x0000000000000000      0x6ae
+.text           0x0000000000000000      0x6d8
  *(.vectors)
  .vectors       0x0000000000000000       0xac /usr/lib/gcc/avr/4.8.2/../../../avr/lib/avr5/crtm32u4.o
                 0x0000000000000000                __vectors
@@ -311,87 +309,90 @@ END GROUP
                 0x00000000000000e2                __vector_42
                 0x00000000000000e4                . = ALIGN (0x2)
  *(.text.*)
+ .text.initUART
+                0x00000000000000e4       0x20 com.o
+                0x00000000000000e4                initUART
  .text.transmit_payload
-                0x00000000000000e4       0x80 com.o
-                0x00000000000000e4                transmit_payload
+                0x0000000000000104       0x80 com.o
+                0x0000000000000104                transmit_payload
  .text.receive_payload
-                0x0000000000000164       0x5c com.o
-                0x0000000000000164                receive_payload
+                0x0000000000000184       0x56 com.o
+                0x0000000000000184                receive_payload
  .text.startup.main
-                0x00000000000001c0       0x9a com.o
-                0x00000000000001c0                main
+                0x00000000000001da       0xaa com.o
+                0x00000000000001da                main
  .text.SPI_masterInit
-                0x000000000000025a        0xa spi.o
-                0x000000000000025a                SPI_masterInit
+                0x0000000000000284        0xa spi.o
+                0x0000000000000284                SPI_masterInit
  .text.SPI_masterReceive
-                0x0000000000000264        0xe spi.o
-                0x0000000000000264                SPI_masterReceive
+                0x000000000000028e        0xe spi.o
+                0x000000000000028e                SPI_masterReceive
  .text.SPI_masterTransmit
-                0x0000000000000272        0xc spi.o
-                0x0000000000000272                SPI_masterTransmit
+                0x000000000000029c        0xc spi.o
+                0x000000000000029c                SPI_masterTransmit
  .text.openPort
-                0x000000000000027e        0x4 radioctl.o
-                0x000000000000027e                openPort
+                0x00000000000002a8        0x4 radioctl.o
+                0x00000000000002a8                openPort
  .text.closePort
-                0x0000000000000282        0xe radioctl.o
-                0x0000000000000282                closePort
+                0x00000000000002ac        0xe radioctl.o
+                0x00000000000002ac                closePort
  .text.initRadioTX
-                0x0000000000000290        0xc radioctl.o
-                0x0000000000000290                initRadioTX
+                0x00000000000002ba        0xc radioctl.o
+                0x00000000000002ba                initRadioTX
  .text.initRadioRX
-                0x000000000000029c        0xc radioctl.o
-                0x000000000000029c                initRadioRX
+                0x00000000000002c6        0xc radioctl.o
+                0x00000000000002c6                initRadioRX
  .text.setRadioAddressWidth
-                0x00000000000002a8       0x12 radioctl.o
-                0x00000000000002a8                setRadioAddressWidth
+                0x00000000000002d2       0x12 radioctl.o
+                0x00000000000002d2                setRadioAddressWidth
  .text.setRadioFrequency
-                0x00000000000002ba       0x12 radioctl.o
-                0x00000000000002ba                setRadioFrequency
+                0x00000000000002e4       0x12 radioctl.o
+                0x00000000000002e4                setRadioFrequency
  .text.setRadioTXAddress
-                0x00000000000002cc       0x2e radioctl.o
-                0x00000000000002cc                setRadioTXAddress
+                0x00000000000002f6       0x2e radioctl.o
+                0x00000000000002f6                setRadioTXAddress
  .text.setRadioRXAddress
-                0x00000000000002fa       0x2e radioctl.o
-                0x00000000000002fa                setRadioRXAddress
+                0x0000000000000324       0x2e radioctl.o
+                0x0000000000000324                setRadioRXAddress
  .text.setRadioRXPayloadSize
-                0x0000000000000328       0x26 radioctl.o
-                0x0000000000000328                setRadioRXPayloadSize
+                0x0000000000000352       0x26 radioctl.o
+                0x0000000000000352                setRadioRXPayloadSize
  .text.setRadioTXPayload
-                0x000000000000034e       0x3e radioctl.o
-                0x000000000000034e                setRadioTXPayload
+                0x0000000000000378       0x3e radioctl.o
+                0x0000000000000378                setRadioTXPayload
  .text.getRadioRXPayload
-                0x000000000000038c       0x3a radioctl.o
-                0x000000000000038c                getRadioRXPayload
+                0x00000000000003b6       0x3a radioctl.o
+                0x00000000000003b6                getRadioRXPayload
  .text.getRadioStatus
-                0x00000000000003c6       0x14 radioctl.o
-                0x00000000000003c6                getRadioStatus
+                0x00000000000003f0       0x14 radioctl.o
+                0x00000000000003f0                getRadioStatus
  .text.getRX_DR
-                0x00000000000003da       0x20 radioctl.o
-                0x00000000000003da                getRX_DR
+                0x0000000000000404       0x20 radioctl.o
+                0x0000000000000404                getRX_DR
  .text.getTX_DS
-                0x00000000000003fa       0x20 radioctl.o
-                0x00000000000003fa                getTX_DS
+                0x0000000000000424       0x20 radioctl.o
+                0x0000000000000424                getTX_DS
  .text.getMAX_RT
-                0x000000000000041a       0x1e radioctl.o
-                0x000000000000041a                getMAX_RT
+                0x0000000000000444       0x1e radioctl.o
+                0x0000000000000444                getMAX_RT
  .text.clearMAX_RT
-                0x0000000000000438        0xc radioctl.o
-                0x0000000000000438                clearMAX_RT
+                0x0000000000000462        0xc radioctl.o
+                0x0000000000000462                clearMAX_RT
  .text.clearTX_DS
-                0x0000000000000444        0xc radioctl.o
-                0x0000000000000444                clearTX_DS
+                0x000000000000046e        0xc radioctl.o
+                0x000000000000046e                clearTX_DS
  .text.clearRX_DR
-                0x0000000000000450        0xc radioctl.o
-                0x0000000000000450                clearRX_DR
+                0x000000000000047a        0xc radioctl.o
+                0x000000000000047a                clearRX_DR
  .text.avr-libc
-                0x000000000000045c      0x24e /usr/lib/gcc/avr/4.8.2/../../../avr/lib/avr5/libc.a(malloc.o)
-                0x000000000000045c                malloc
-                0x000000000000058c                free
-                0x00000000000006aa                . = ALIGN (0x2)
+                0x0000000000000486      0x24e /usr/lib/gcc/avr/4.8.2/../../../avr/lib/avr5/libc.a(malloc.o)
+                0x0000000000000486                malloc
+                0x00000000000005b6                free
+                0x00000000000006d4                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000000000006aa        0x0 /usr/lib/gcc/avr/4.8.2/avr5/libgcc.a(_exit.o)
-                0x00000000000006aa                exit
-                0x00000000000006aa                _exit
+ .fini9         0x00000000000006d4        0x0 /usr/lib/gcc/avr/4.8.2/avr5/libgcc.a(_exit.o)
+                0x00000000000006d4                exit
+                0x00000000000006d4                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -410,11 +411,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000000000006aa        0x4 /usr/lib/gcc/avr/4.8.2/avr5/libgcc.a(_exit.o)
+ .fini0         0x00000000000006d4        0x4 /usr/lib/gcc/avr/4.8.2/avr5/libgcc.a(_exit.o)
  *(.fini0)
-                0x00000000000006ae                _etext = .
+                0x00000000000006d8                _etext = .
 
-.data           0x0000000000800100        0x8 load address 0x00000000000006ae
+.data           0x0000000000800100        0x8 load address 0x00000000000006d8
                 0x0000000000800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x0000000000800100        0x0 /usr/lib/gcc/avr/4.8.2/../../../avr/lib/avr5/crtm32u4.o
@@ -448,8 +449,8 @@ END GROUP
                 0x0000000000800108                __brkval
                 0x000000000080010a                __flp
                 0x000000000080010c                PROVIDE (__bss_end, .)
-                0x00000000000006ae                __data_load_start = LOADADDR (.data)
-                0x00000000000006b6                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00000000000006d8                __data_load_start = LOADADDR (.data)
+                0x00000000000006e0                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x000000000080010c        0x0
                 0x000000000080010c                PROVIDE (__noinit_start, .)
@@ -534,12 +535,12 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0x11e4
+.debug_info     0x0000000000000000     0x11ed
  *(.debug_info)
- .debug_info    0x0000000000000000      0x6d8 com.o
- .debug_info    0x00000000000006d8      0x220 spi.o
- .debug_info    0x00000000000008f8      0x7c7 radioctl.o
- .debug_info    0x00000000000010bf      0x125 i2c.o
+ .debug_info    0x0000000000000000      0x6e1 com.o
+ .debug_info    0x00000000000006e1      0x220 spi.o
+ .debug_info    0x0000000000000901      0x7c7 radioctl.o
+ .debug_info    0x00000000000010c8      0x125 i2c.o
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev   0x0000000000000000      0x575
@@ -563,16 +564,16 @@ END GROUP
  .debug_frame   0x0000000000000110      0x244 radioctl.o
  .debug_frame   0x0000000000000354       0x64 i2c.o
 
-.debug_str      0x0000000000000000      0x40f
+.debug_str      0x0000000000000000      0x419
  *(.debug_str)
- .debug_str     0x0000000000000000      0x2c2 com.o
-                                        0x30f (size before relaxing)
- .debug_str     0x00000000000002c2       0x67 spi.o
-                                        0x1ad (size before relaxing)
- .debug_str     0x0000000000000329       0x8f radioctl.o
-                                        0x2fa (size before relaxing)
- .debug_str     0x00000000000003b8       0x57 i2c.o
-                                        0x187 (size before relaxing)
+ .debug_str     0x0000000000000000      0x2cc com.o
+                                        0x319 (size before relaxing)
+ .debug_str     0x00000000000002cc       0x67 spi.o
+                                        0x1b7 (size before relaxing)
+ .debug_str     0x0000000000000333       0x8f radioctl.o
+                                        0x304 (size before relaxing)
+ .debug_str     0x00000000000003c2       0x57 i2c.o
+                                        0x191 (size before relaxing)
 
 .debug_loc      0x0000000000000000      0x952
  *(.debug_loc)

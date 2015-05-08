@@ -1,0 +1,243 @@
+   1               		.file	"uart_lib.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               		.section	.text.uart_putchar,"ax",@progbits
+  12               	uart_putchar:
+  13               	.LFB9:
+  14               		.file 1 "uart_lib.c"
+   1:uart_lib.c    **** #include "uart_lib.h"
+   2:uart_lib.c    **** static void init_uart(void){
+   3:uart_lib.c    **** 
+   4:uart_lib.c    ****   UBRR1 = 8; //38.4k
+   5:uart_lib.c    ****   UCSR1A = (1 << U2X1);
+   6:uart_lib.c    ****   UCSR1B = ((1 << RXEN1) | (1 << TXEN1));
+   7:uart_lib.c    ****   UCSR1C = ((1 << UCSZ11) | (1 << UCSZ10));
+   8:uart_lib.c    **** }
+   9:uart_lib.c    **** static void uart_putchar(char data){
+  15               		.loc 1 9 0
+  16               		.cfi_startproc
+  17               	/* prologue: function */
+  18               	/* frame size = 0 */
+  19               	/* stack size = 0 */
+  20               	.L__stack_usage = 0
+  21               	.LVL0:
+  22               	.L3:
+  10:uart_lib.c    **** 
+  11:uart_lib.c    ****   while(!(UCSR1A & (1 << UDRE1)));
+  23               		.loc 1 11 0 discriminator 1
+  24 0000 9091 C800 		lds r25,200
+  25 0004 95FF      		sbrs r25,5
+  26 0006 00C0      		rjmp .L3
+  12:uart_lib.c    ****   UDR1 = data;
+  27               		.loc 1 12 0
+  28 0008 8093 CE00 		sts 206,r24
+  29 000c 0895      		ret
+  30               		.cfi_endproc
+  31               	.LFE9:
+  33               		.section	.rodata
+  34               	.LC0:
+  35 0000 61        		.byte	97
+  36 0001 61        		.byte	97
+  37 0002 61        		.byte	97
+  38 0003 61        		.byte	97
+  39 0004 61        		.byte	97
+  40 0005 61        		.byte	97
+  41 0006 61        		.byte	97
+  42 0007 00        		.byte	0
+  43               		.section	.text.startup.main,"ax",@progbits
+  44               	.global	main
+  46               	main:
+  47               	.LFB13:
+  13:uart_lib.c    **** }
+  14:uart_lib.c    **** static void uart_putstring(char * data){
+  15:uart_lib.c    ****   
+  16:uart_lib.c    **** int i = 0;
+  17:uart_lib.c    ****   
+  18:uart_lib.c    ****   while(data[i] != '\0'){
+  19:uart_lib.c    ****    while(!(UCSR1A & (1 << UDRE1)));
+  20:uart_lib.c    ****    UDR1 = data[i];
+  21:uart_lib.c    ****    i++;
+  22:uart_lib.c    ****   }
+  23:uart_lib.c    **** }
+  24:uart_lib.c    **** static void uart_flush(void){
+  25:uart_lib.c    **** 
+  26:uart_lib.c    ****   unsigned char temp;
+  27:uart_lib.c    ****   while(UCSR1B & (1 << RXC1)); //flush buffer
+  28:uart_lib.c    ****   temp = UDR1; //turn receive back on
+  29:uart_lib.c    **** }
+  30:uart_lib.c    **** static void hex_to_ascii(uint8_t hex){
+  31:uart_lib.c    **** 
+  32:uart_lib.c    ****     hex &= 0x0F;
+  33:uart_lib.c    **** 
+  34:uart_lib.c    ****     if(hex < 10){
+  35:uart_lib.c    ****       hex = hex + '0';
+  36:uart_lib.c    ****     }
+  37:uart_lib.c    ****     else{
+  38:uart_lib.c    ****       hex = hex + 'A' - 10;
+  39:uart_lib.c    ****     }
+  40:uart_lib.c    ****     uart_putchar((char)hex);
+  41:uart_lib.c    **** }
+  42:uart_lib.c    **** uint8_t main(void){
+  48               		.loc 1 42 0
+  49               		.cfi_startproc
+  50 0000 CF93      		push r28
+  51               	.LCFI0:
+  52               		.cfi_def_cfa_offset 3
+  53               		.cfi_offset 28, -2
+  54 0002 DF93      		push r29
+  55               	.LCFI1:
+  56               		.cfi_def_cfa_offset 4
+  57               		.cfi_offset 29, -3
+  58 0004 CDB7      		in r28,__SP_L__
+  59 0006 DEB7      		in r29,__SP_H__
+  60               	.LCFI2:
+  61               		.cfi_def_cfa_register 28
+  62 0008 2897      		sbiw r28,8
+  63               	.LCFI3:
+  64               		.cfi_def_cfa_offset 12
+  65 000a 0FB6      		in __tmp_reg__,__SREG__
+  66 000c F894      		cli
+  67 000e DEBF      		out __SP_H__,r29
+  68 0010 0FBE      		out __SREG__,__tmp_reg__
+  69 0012 CDBF      		out __SP_L__,r28
+  70               	/* prologue: function */
+  71               	/* frame size = 8 */
+  72               	/* stack size = 10 */
+  73               	.L__stack_usage = 10
+  74               	.LBB10:
+  75               	.LBB11:
+   4:uart_lib.c    ****   UBRR1 = 8; //38.4k
+  76               		.loc 1 4 0
+  77 0014 88E0      		ldi r24,lo8(8)
+  78 0016 90E0      		ldi r25,0
+  79 0018 9093 CD00 		sts 204+1,r25
+  80 001c 8093 CC00 		sts 204,r24
+   5:uart_lib.c    ****   UCSR1A = (1 << U2X1);
+  81               		.loc 1 5 0
+  82 0020 82E0      		ldi r24,lo8(2)
+  83 0022 8093 C800 		sts 200,r24
+   6:uart_lib.c    ****   UCSR1B = ((1 << RXEN1) | (1 << TXEN1));
+  84               		.loc 1 6 0
+  85 0026 88E1      		ldi r24,lo8(24)
+  86 0028 8093 C900 		sts 201,r24
+   7:uart_lib.c    ****   UCSR1C = ((1 << UCSZ11) | (1 << UCSZ10));
+  87               		.loc 1 7 0
+  88 002c 86E0      		ldi r24,lo8(6)
+  89 002e 8093 CA00 		sts 202,r24
+  90               	.LBE11:
+  91               	.LBE10:
+  43:uart_lib.c    ****   
+  44:uart_lib.c    ****   init_uart();
+  45:uart_lib.c    ****   char data[8] = {'a', 'a', 'a', 'a', 'a', 'a', 'a', '\0'};
+  92               		.loc 1 45 0
+  93 0032 88E0      		ldi r24,lo8(8)
+  94 0034 E0E0      		ldi r30,lo8(.LC0)
+  95 0036 F0E0      		ldi r31,hi8(.LC0)
+  96 0038 DE01      		movw r26,r28
+  97 003a 1196      		adiw r26,1
+  98               		0:
+  99 003c 0190      		ld r0,Z+
+ 100 003e 0D92      		st X+,r0
+ 101 0040 8A95      		dec r24
+ 102 0042 01F4      		brne 0b
+ 103               	.LVL1:
+ 104               	.LBB12:
+ 105               	.LBB13:
+  40:uart_lib.c    ****     uart_putchar((char)hex);
+ 106               		.loc 1 40 0
+ 107 0044 86E4      		ldi r24,lo8(70)
+ 108 0046 0E94 0000 		call uart_putchar
+ 109               	.LVL2:
+ 110               	.LBE13:
+ 111               	.LBE12:
+  46:uart_lib.c    ****   uint8_t hex = 0x0F;
+  47:uart_lib.c    ****   uint8_t hex_string[3] = {0xFF, 0xAB, 0xBC};
+  48:uart_lib.c    ****   char ascii;
+  49:uart_lib.c    ****   hex_to_ascii(hex);
+  50:uart_lib.c    ****   uart_putchar(ascii);
+ 112               		.loc 1 50 0
+ 113 004a 80E0      		ldi r24,0
+ 114 004c 0E94 0000 		call uart_putchar
+ 115               	.LVL3:
+ 116 0050 FE01      		movw r30,r28
+ 117 0052 3196      		adiw r30,1
+ 118               	.LVL4:
+ 119               	.L6:
+ 120               	.LBB14:
+ 121               	.LBB15:
+  18:uart_lib.c    ****   while(data[i] != '\0'){
+ 122               		.loc 1 18 0
+ 123 0054 8191      		ld r24,Z+
+ 124 0056 8823      		tst r24
+ 125 0058 01F0      		breq .L12
+ 126               	.L8:
+  19:uart_lib.c    ****    while(!(UCSR1A & (1 << UDRE1)));
+ 127               		.loc 1 19 0
+ 128 005a 9091 C800 		lds r25,200
+ 129 005e 95FF      		sbrs r25,5
+ 130 0060 00C0      		rjmp .L8
+  20:uart_lib.c    ****    UDR1 = data[i];
+ 131               		.loc 1 20 0
+ 132 0062 8093 CE00 		sts 206,r24
+ 133 0066 00C0      		rjmp .L6
+ 134               	.L12:
+ 135               	.LBE15:
+ 136               	.LBE14:
+  51:uart_lib.c    ****   uart_putstring(data);
+  52:uart_lib.c    ****   uart_putchar('a');
+ 137               		.loc 1 52 0
+ 138 0068 81E6      		ldi r24,lo8(97)
+ 139 006a 0E94 0000 		call uart_putchar
+ 140               	.LVL5:
+ 141               	.L11:
+ 142               	.LBB16:
+ 143               	.LBB17:
+  27:uart_lib.c    ****   while(UCSR1B & (1 << RXC1)); //flush buffer
+ 144               		.loc 1 27 0
+ 145 006e 8091 C900 		lds r24,201
+ 146 0072 87FD      		sbrc r24,7
+ 147 0074 00C0      		rjmp .L11
+  28:uart_lib.c    ****   temp = UDR1; //turn receive back on
+ 148               		.loc 1 28 0
+ 149 0076 8091 CE00 		lds r24,206
+ 150               	.LBE17:
+ 151               	.LBE16:
+  53:uart_lib.c    ****   uart_flush();
+  54:uart_lib.c    ****    
+  55:uart_lib.c    ****   return 0;
+  56:uart_lib.c    **** }
+ 152               		.loc 1 56 0
+ 153 007a 80E0      		ldi r24,0
+ 154               	/* epilogue start */
+ 155 007c 2896      		adiw r28,8
+ 156 007e 0FB6      		in __tmp_reg__,__SREG__
+ 157 0080 F894      		cli
+ 158 0082 DEBF      		out __SP_H__,r29
+ 159 0084 0FBE      		out __SREG__,__tmp_reg__
+ 160 0086 CDBF      		out __SP_L__,r28
+ 161 0088 DF91      		pop r29
+ 162 008a CF91      		pop r28
+ 163 008c 0895      		ret
+ 164               		.cfi_endproc
+ 165               	.LFE13:
+ 167               		.text
+ 168               	.Letext0:
+ 169               		.file 2 "/usr/lib/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 uart_lib.c
+     /tmp/ccngCmdM.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccngCmdM.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccngCmdM.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccngCmdM.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccngCmdM.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccngCmdM.s:12     .text.uart_putchar:0000000000000000 uart_putchar
+     /tmp/ccngCmdM.s:46     .text.startup.main:0000000000000000 main
+
+UNDEFINED SYMBOLS
+__do_copy_data
