@@ -69,12 +69,14 @@ void receive_payload(uint8_t *data){
   }
   CE_HIGH; 
   _delay_ms(5); 
-  mode = 't';
 }
 int main(void){
 
   uint8_t data[PACKET_SIZE] = {0};
   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
+
+  DDRF &= ~(1 << PF0);
+  PORTF &= ~(1 << PF0);
 
   CPU_PRESCALE(0x01);  // run at 8 MHz
   INIT_CSN;
@@ -82,7 +84,10 @@ int main(void){
   CSN_HIGH;
   initUART;
   SPI_masterInit();
-  
+  while(!(UCSR1A & (1 << UDRE1)));
+  UDR1 = mode; 
+ 
+
   initRadioRX();
   setRadioAddressWidth(THREE_BYTES);
   setRadioTXAddress(0xABC123);        
@@ -94,12 +99,17 @@ int main(void){
   while(1){
     uint8_t radioStatus = 0;
     getRadioStatus(&radioStatus);
-    while(mode == 'r'){  
+    while(!(UCSR1A & (1 << UDRE1)));
+    UDR1 = 't'; 
+    if(1 << PF0){
+      mode =  't';
+    }
+    if(mode == 'r'){  
       if(getRX_DR()){
         receive_payload(load);
       } 
     }
-    while(mode == 't'){
+    if(mode == 't'){
       transmit_payload(data);
     }
   }

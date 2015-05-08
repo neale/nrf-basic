@@ -21,23 +21,7 @@ via UART
 #include <stdlib.h>
 #include "radioctl.h"
 
-// Teensy 2.0: LED is active high
-#if defined(__AVR_ATmega32U4__) || defined(__AVR_AT90USB1286__)
-#define LED_ON		(PORTD |= (1<<6))
-#define LED_OFF		(PORTD &= ~(1<<6))
-
-// Teensy 1.0: LED is active low
-#else
-#define LED_ON	(PORTD &= ~(1<<6))
-#define LED_OFF	(PORTD |= (1<<6))
-#endif
-
-#define ADC_PRESCALER 0
-#define LED_CONFIG	(DDRD |= (1<<6))
 #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
-#define DIT 80		/* unit time for mors e code */
-#define BAUD_RATE 38.4k
-#define F_CPU 8000000
 #define PACKET_SIZE 8
 
 void initUART(void)
@@ -48,7 +32,6 @@ void initUART(void)
   	UCSR1B = (1<<RXEN1) | (1<<TXEN1);
 	UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);  //1 stop bit
 }
-
 
 
 int main(void)

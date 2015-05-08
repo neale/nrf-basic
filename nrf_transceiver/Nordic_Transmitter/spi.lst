@@ -277,19 +277,19 @@
  221               	.LFE12:
  223               		.text
  224               	.Letext0:
- 225               		.file 2 "/usr/lib/avr/include/stdint.h"
+ 225               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
 DEFINED SYMBOLS
-                            *ABS*:0000000000000000 spi.c
-     /tmp/ccynLPPT.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccynLPPT.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccynLPPT.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccynLPPT.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccynLPPT.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccynLPPT.s:13     .text.SPI_masterInit:0000000000000000 SPI_masterInit
-     /tmp/ccynLPPT.s:35     .text.SPI_masterReceive:0000000000000000 SPI_masterReceive
-     /tmp/ccynLPPT.s:61     .text.SPI_masterTransmit:0000000000000000 SPI_masterTransmit
-     /tmp/ccynLPPT.s:88     .text.digiPotInitWiper:0000000000000000 digiPotInitWiper
-     /tmp/ccynLPPT.s:126    .text.accelerometerReceive:0000000000000000 accelerometerReceive
-     /tmp/ccynLPPT.s:195    .text.init_accel:0000000000000000 init_accel
+                            *ABS*:00000000 spi.c
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:2      *ABS*:0000003e __SP_H__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:3      *ABS*:0000003d __SP_L__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:4      *ABS*:0000003f __SREG__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:13     .text.SPI_masterInit:00000000 SPI_masterInit
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:35     .text.SPI_masterReceive:00000000 SPI_masterReceive
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:61     .text.SPI_masterTransmit:00000000 SPI_masterTransmit
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:88     .text.digiPotInitWiper:00000000 digiPotInitWiper
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:126    .text.accelerometerReceive:00000000 accelerometerReceive
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:195    .text.init_accel:00000000 init_accel
 
 NO UNDEFINED SYMBOLS
