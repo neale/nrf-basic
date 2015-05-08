@@ -279,6 +279,7 @@
  224               	.Letext0:
  225               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
 DEFINED SYMBOLS
+<<<<<<< HEAD
                             *ABS*:00000000 spi.c
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:2      *ABS*:0000003e __SP_H__
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:3      *ABS*:0000003d __SP_L__
@@ -291,5 +292,19 @@ DEFINED SYMBOLS
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:88     .text.digiPotInitWiper:00000000 digiPotInitWiper
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:126    .text.accelerometerReceive:00000000 accelerometerReceive
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccZ1XMIZ.s:195    .text.init_accel:00000000 init_accel
+=======
+                            *ABS*:0000000000000000 spi.c
+     /tmp/ccEMtnBv.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccEMtnBv.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccEMtnBv.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccEMtnBv.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccEMtnBv.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccEMtnBv.s:13     .text.SPI_masterInit:0000000000000000 SPI_masterInit
+     /tmp/ccEMtnBv.s:35     .text.SPI_masterReceive:0000000000000000 SPI_masterReceive
+     /tmp/ccEMtnBv.s:61     .text.SPI_masterTransmit:0000000000000000 SPI_masterTransmit
+     /tmp/ccEMtnBv.s:88     .text.digiPotInitWiper:0000000000000000 digiPotInitWiper
+     /tmp/ccEMtnBv.s:126    .text.accelerometerReceive:0000000000000000 accelerometerReceive
+     /tmp/ccEMtnBv.s:195    .text.init_accel:0000000000000000 init_accel
+>>>>>>> 8cb15b05cd5fe5ea33883cf5bd3761d73eb3e7f9
 
 NO UNDEFINED SYMBOLS

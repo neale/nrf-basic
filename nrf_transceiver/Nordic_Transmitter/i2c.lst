@@ -384,6 +384,7 @@
  233               	.Letext0:
  234               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
 DEFINED SYMBOLS
+<<<<<<< HEAD
                             *ABS*:00000000 i2c.c
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccRcRxOk.s:2      *ABS*:0000003e __SP_H__
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccRcRxOk.s:3      *ABS*:0000003d __SP_L__
@@ -395,5 +396,18 @@ DEFINED SYMBOLS
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccRcRxOk.s:45     .text.initI2C:00000000 initI2C
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccRcRxOk.s:68     .text.batteryICI2C:00000000 batteryICI2C
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccRcRxOk.s:136    .text.I2C_receive_batteryIC:00000000 I2C_receive_batteryIC
+=======
+                            *ABS*:0000000000000000 i2c.c
+     /tmp/ccuts1MB.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccuts1MB.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccuts1MB.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccuts1MB.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccuts1MB.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccuts1MB.s:13     .text.ERROR1:0000000000000000 ERROR1
+     /tmp/ccuts1MB.s:30     .text.ERROR2:0000000000000000 ERROR2
+     /tmp/ccuts1MB.s:45     .text.initI2C:0000000000000000 initI2C
+     /tmp/ccuts1MB.s:68     .text.batteryICI2C:0000000000000000 batteryICI2C
+     /tmp/ccuts1MB.s:136    .text.I2C_receive_batteryIC:0000000000000000 I2C_receive_batteryIC
+>>>>>>> 8cb15b05cd5fe5ea33883cf5bd3761d73eb3e7f9
 
 NO UNDEFINED SYMBOLS

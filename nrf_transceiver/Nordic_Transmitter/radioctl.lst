@@ -1028,6 +1028,7 @@
  868               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
  869               		.file 3 "spi.h"
 DEFINED SYMBOLS
+<<<<<<< HEAD
                             *ABS*:00000000 radioctl.c
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccrj69K4.s:2      *ABS*:0000003e __SP_H__
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccrj69K4.s:3      *ABS*:0000003d __SP_L__
@@ -1054,6 +1055,34 @@ DEFINED SYMBOLS
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccrj69K4.s:782    .text.clearMAX_RT:00000000 clearMAX_RT
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccrj69K4.s:811    .text.clearTX_DS:00000000 clearTX_DS
 /var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccrj69K4.s:840    .text.clearRX_DR:00000000 clearRX_DR
+=======
+                            *ABS*:0000000000000000 radioctl.c
+     /tmp/ccI54R3w.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccI54R3w.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccI54R3w.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccI54R3w.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccI54R3w.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccI54R3w.s:13     .text.openPort:0000000000000000 openPort
+     /tmp/ccI54R3w.s:31     .text.closePort:0000000000000000 closePort
+     /tmp/ccI54R3w.s:57     .text.initRadioTX:0000000000000000 initRadioTX
+     /tmp/ccI54R3w.s:85     .text.initRadioRX:0000000000000000 initRadioRX
+     /tmp/ccI54R3w.s:113    .text.activateFeatures:0000000000000000 activateFeatures
+     /tmp/ccI54R3w.s:141    .text.setRadioAddressWidth:0000000000000000 setRadioAddressWidth
+     /tmp/ccI54R3w.s:179    .text.setRadioFrequency:0000000000000000 setRadioFrequency
+     /tmp/ccI54R3w.s:217    .text.setRadioTXAddress:0000000000000000 setRadioTXAddress
+     /tmp/ccI54R3w.s:280    .text.setRadioRXAddress:0000000000000000 setRadioRXAddress
+     /tmp/ccI54R3w.s:343    .text.setRadioRXPayloadSize:0000000000000000 setRadioRXPayloadSize
+     /tmp/ccI54R3w.s:397    .text.setRadioTXPayload:0000000000000000 setRadioTXPayload
+     /tmp/ccI54R3w.s:482    .text.getRadioRXPayload:0000000000000000 getRadioRXPayload
+     /tmp/ccI54R3w.s:565    .text.getRadioStatus:0000000000000000 getRadioStatus
+     /tmp/ccI54R3w.s:605    .text.getRX_DR:0000000000000000 getRX_DR
+     /tmp/ccI54R3w.s:650    .text.getTX_DS:0000000000000000 getTX_DS
+     /tmp/ccI54R3w.s:695    .text.getMAX_RT:0000000000000000 getMAX_RT
+     /tmp/ccI54R3w.s:739    .text.getTX_FULL:0000000000000000 getTX_FULL
+     /tmp/ccI54R3w.s:782    .text.clearMAX_RT:0000000000000000 clearMAX_RT
+     /tmp/ccI54R3w.s:811    .text.clearTX_DS:0000000000000000 clearTX_DS
+     /tmp/ccI54R3w.s:840    .text.clearRX_DR:0000000000000000 clearRX_DR
+>>>>>>> 8cb15b05cd5fe5ea33883cf5bd3761d73eb3e7f9
 
 UNDEFINED SYMBOLS
 SPI_masterTransmit
