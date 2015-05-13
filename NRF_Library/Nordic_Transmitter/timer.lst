@@ -10,7 +10,7 @@
   10               		.section	.text.setupTimer,"ax",@progbits
   11               	.global	setupTimer
   13               	setupTimer:
-  14               	.LFB0:
+  14               	.LFB4:
   15               		.file 1 "timer.c"
    1:timer.c       **** /*
    2:timer.c       ****  * timer.c
@@ -64,17 +64,17 @@
   40 0024 8093 8800 		sts 136,r24
   41 0028 0895      		ret
   42               		.cfi_endproc
-  43               	.LFE0:
+  43               	.LFE4:
   45               		.text
   46               	.Letext0:
-  47               		.file 2 "/usr/lib/avr/include/stdint.h"
+  47               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
 DEFINED SYMBOLS
-                            *ABS*:0000000000000000 timer.c
-     /tmp/cccqTxjO.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/cccqTxjO.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/cccqTxjO.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/cccqTxjO.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/cccqTxjO.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/cccqTxjO.s:13     .text.setupTimer:0000000000000000 setupTimer
+                            *ABS*:00000000 timer.c
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccHYxABB.s:2      *ABS*:0000003e __SP_H__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccHYxABB.s:3      *ABS*:0000003d __SP_L__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccHYxABB.s:4      *ABS*:0000003f __SREG__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccHYxABB.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccHYxABB.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccHYxABB.s:13     .text.setupTimer:00000000 setupTimer
 
 NO UNDEFINED SYMBOLS

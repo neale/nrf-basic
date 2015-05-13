@@ -13,8 +13,6 @@
 #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
 #define PACKET_SIZE 16
 
-char mode = 'r';
-
 void initUART(void){
 
   UBRR1 = 25;  //38.4k baud
@@ -25,16 +23,19 @@ void initUART(void){
 void transmit_payload(uint8_t *data){
   
   CE_HIGH;
+  SPI_masterInit();
   initRadioTX();
   _delay_ms(5);
   for(int i = 0; i < PACKET_SIZE; ++i){
-    data[i] = 'a' + i; 
+    data[i] = 1 + i; 
   }
   setRadioTXPayload(data, PACKET_SIZE);
   CE_HIGH;
   _delay_us(15);  // pulse CE to start transmition
   CE_LOW;
-
+  while(!(UCSR1A & (1 << UDRE1)));
+  UDR1 = 's';
+ 
   while(!(getTX_DS())){
 
     _delay_us(300);  //retransmit time determined by SETUP_RETR register
@@ -46,15 +47,20 @@ void transmit_payload(uint8_t *data){
       _delay_us(15);
       CE_LOW;
     }
-  }
+  }    
+  while(!(UCSR1A & (1 << UDRE1)));
+  UDR1 = 'y';
+ 
   clearTX_DS();
   _delay_ms(5);
-  mode = 'r';
 }
 void receive_payload(uint8_t *data){
-  
+  while(!(UCSR1A & (1 << UDRE1)));
+  UDR1 = 'd';
+
   CE_HIGH;
-  initRadioRX();
+//  SPI_masterInit();
+//  initRadioRX();
   _delay_ms(5);
   clearRX_DR();
   getRadioRXPayload(data, PACKET_SIZE); //read payload
@@ -67,7 +73,6 @@ void receive_payload(uint8_t *data){
   }
   CE_HIGH; 
   _delay_ms(5);
-  mode = 't';
 }
 int main(void){
 
@@ -82,6 +87,7 @@ int main(void){
   SPI_masterInit();
   initRadioRX();
 
+  DDRB |= (0 << PB6);
   setRadioAddressWidth(THREE_BYTES);
   setRadioRXAddress(0xABC123); 
   setRadioTXAddress(0xABC123);  
@@ -93,20 +99,16 @@ int main(void){
   
     uint8_t radioStatus = 0;
     getRadioStatus(&radioStatus);
-    while(mode == 'r'){  
-      
-      while(!(UCSR1A & (1 << UDRE1)));
-      UDR1 = mode;
-      if(getRX_DR()){
-        receive_payload(load);
-      }
+    if(PINB & (1 << 6)){
+      transmit_payload(data);
     }
-    while(mode == 't'){
-     
-     while(!(UCSR1A & (1 << UDRE1)));
-     UDR1 = mode;
-     transmit_payload(data);
+    initRadioRX();
+    _delay_ms(5); 
+    if(getRX_DR()){
+      receive_payload(load);
     }
+    while(!(UCSR1A & (1 << UDRE1)));
+    UDR1 = 'n'; 
   }
   free(load);
 }

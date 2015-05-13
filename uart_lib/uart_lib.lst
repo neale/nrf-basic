@@ -9,7 +9,7 @@
    9               		.cfi_sections	.debug_frame
   10               		.section	.text.uart_putchar,"ax",@progbits
   12               	uart_putchar:
-  13               	.LFB9:
+  13               	.LFB13:
   14               		.file 1 "uart_lib.c"
    1:uart_lib.c    **** #include "uart_lib.h"
    2:uart_lib.c    **** static void init_uart(void){
@@ -39,7 +39,7 @@
   28 0008 8093 CE00 		sts 206,r24
   29 000c 0895      		ret
   30               		.cfi_endproc
-  31               	.LFE9:
+  31               	.LFE13:
   33               		.section	.rodata
   34               	.LC0:
   35 0000 61        		.byte	97
@@ -53,7 +53,7 @@
   43               		.section	.text.startup.main,"ax",@progbits
   44               	.global	main
   46               	main:
-  47               	.LFB13:
+  47               	.LFB17:
   13:uart_lib.c    **** }
   14:uart_lib.c    **** static void uart_putstring(char * data){
   15:uart_lib.c    ****   
@@ -225,19 +225,19 @@
  162 008a CF91      		pop r28
  163 008c 0895      		ret
  164               		.cfi_endproc
- 165               	.LFE13:
+ 165               	.LFE17:
  167               		.text
  168               	.Letext0:
- 169               		.file 2 "/usr/lib/avr/include/stdint.h"
+ 169               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
 DEFINED SYMBOLS
-                            *ABS*:0000000000000000 uart_lib.c
-     /tmp/ccngCmdM.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccngCmdM.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccngCmdM.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccngCmdM.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccngCmdM.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccngCmdM.s:12     .text.uart_putchar:0000000000000000 uart_putchar
-     /tmp/ccngCmdM.s:46     .text.startup.main:0000000000000000 main
+                            *ABS*:00000000 uart_lib.c
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:2      *ABS*:0000003e __SP_H__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:3      *ABS*:0000003d __SP_L__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:4      *ABS*:0000003f __SREG__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:12     .text.uart_putchar:00000000 uart_putchar
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//cc1ivsjx.s:46     .text.startup.main:00000000 main
 
 UNDEFINED SYMBOLS
 __do_copy_data

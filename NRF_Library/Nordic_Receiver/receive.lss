@@ -9,27 +9,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
   2 .bss          00000004  00800106  00800106  000005b4  2**0
                   ALLOC
-  3 .stab         00000fa8  00000000  00000000  000005b4  2**2
-                  CONTENTS, READONLY, DEBUGGING
-  4 .stabstr      00000d67  00000000  00000000  0000155c  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  5 .comment      00000011  00000000  00000000  000022c3  2**0
+  3 .comment      00000011  00000000  00000000  000005b4  2**0
                   CONTENTS, READONLY
-  6 .debug_aranges 00000128  00000000  00000000  000022d4  2**0
+  4 .debug_aranges 00000188  00000000  00000000  000005c8  2**3
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_info   00000d22  00000000  00000000  000023fc  2**0
+  5 .debug_info   00000f4c  00000000  00000000  00000750  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_abbrev 00000465  00000000  00000000  0000311e  2**0
+  6 .debug_abbrev 0000049a  00000000  00000000  0000169c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_line   000003c5  00000000  00000000  00003583  2**0
+  7 .debug_line   0000055d  00000000  00000000  00001b36  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_frame  00000314  00000000  00000000  00003948  2**2
+  8 .debug_frame  00000314  00000000  00000000  00002094  2**2
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_str    0000037a  00000000  00000000  00003c5c  2**0
+  9 .debug_str    0000037d  00000000  00000000  000023a8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_loc    00000778  00000000  00000000  00003fd6  2**0
+ 10 .debug_loc    00000778  00000000  00000000  00002725  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 000000f8  00000000  00000000  0000474e  2**0
+ 11 .debug_ranges 000000f8  00000000  00000000  00002e9d  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -144,7 +140,7 @@ Disassembly of section .text:
   cc:	d9 f7       	brne	.-10     	; 0xc4 <__do_copy_data+0xc>
 
 000000ce <__do_clear_bss>:
-  ce:	11 e0       	ldi	r17, 0x01	; 1
+  ce:	21 e0       	ldi	r18, 0x01	; 1
   d0:	a6 e0       	ldi	r26, 0x06	; 6
   d2:	b1 e0       	ldi	r27, 0x01	; 1
   d4:	01 c0       	rjmp	.+2      	; 0xd8 <.do_clear_bss_start>
@@ -154,7 +150,7 @@ Disassembly of section .text:
 
 000000d8 <.do_clear_bss_start>:
   d8:	aa 30       	cpi	r26, 0x0A	; 10
-  da:	b1 07       	cpc	r27, r17
+  da:	b2 07       	cpc	r27, r18
   dc:	e1 f7       	brne	.-8      	; 0xd6 <.do_clear_bss_loop>
   de:	12 d0       	rcall	.+36     	; 0x104 <main>
   e0:	1a c2       	rjmp	.+1076   	; 0x516 <_exit>
@@ -186,7 +182,6 @@ void initUART(void)
 
 00000104 <main>:
 }
-
 
 
 int main(void)

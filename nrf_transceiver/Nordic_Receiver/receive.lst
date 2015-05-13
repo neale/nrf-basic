@@ -1,4 +1,4 @@
-   1               		.file	"com.c"
+   1               		.file	"receive.c"
    2               	__SP_H__ = 0x3e
    3               	__SP_L__ = 0x3d
    4               	__SREG__ = 0x3f
@@ -11,50 +11,46 @@
   11               	.global	initUART
   13               	initUART:
   14               	.LFB11:
-  15               		.file 1 "com.c"
-   1:com.c         **** #define F_CPU 8000000
-   2:com.c         **** 
-   3:com.c         **** #include <avr/io.h>
-   4:com.c         **** #include <avr/pgmspace.h>
-   5:com.c         **** #include <avr/interrupt.h>
-   6:com.c         **** #include <util/delay.h>
-   7:com.c         **** #include <avr/eeprom.h>
-   8:com.c         **** #include <avr/cpufunc.h>
-   9:com.c         **** #include "spi.h"
-  10:com.c         **** #include <stdlib.h>
-  11:com.c         **** #include "radioctl.h"
-  12:com.c         **** #include "i2c.h"
-  13:com.c         **** 
-  14:com.c         **** #define ADC_PRESCALER 0
-  15:com.c         **** #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
-  16:com.c         **** #define PACKET_SIZE 16
-  17:com.c         **** 
-  18:com.c         **** char mode = 't';
-  19:com.c         **** 
-  20:com.c         **** void initUART(void){
-  16               		.loc 1 20 0
+  15               		.file 1 "receive.c"
+   1:receive.c     **** #define F_CPU 8000000
+   2:receive.c     **** 
+   3:receive.c     **** #include <avr/io.h>
+   4:receive.c     **** #include <avr/pgmspace.h>
+   5:receive.c     **** #include <avr/interrupt.h>
+   6:receive.c     **** #include <util/delay.h>
+   7:receive.c     **** #include <avr/cpufunc.h>
+   8:receive.c     **** #include "spi.h"
+   9:receive.c     **** #include <stdlib.h>
+  10:receive.c     **** #include "radioctl.h"
+  11:receive.c     **** 
+  12:receive.c     **** #define ADC_PRESCALER 0
+  13:receive.c     **** #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
+  14:receive.c     **** #define PACKET_SIZE 16
+  15:receive.c     **** 
+  16:receive.c     **** void initUART(void){
+  16               		.loc 1 16 0
   17               		.cfi_startproc
   18               	/* prologue: function */
   19               	/* frame size = 0 */
   20               	/* stack size = 0 */
   21               	.L__stack_usage = 0
-  21:com.c         **** 
-  22:com.c         ****   UBRR1 = 25;  //38.4k baud
-  22               		.loc 1 22 0
+  17:receive.c     **** 
+  18:receive.c     ****   UBRR1 = 25;  //38.4k baud
+  22               		.loc 1 18 0
   23 0000 89E1      		ldi r24,lo8(25)
   24 0002 90E0      		ldi r25,0
   25 0004 9093 CD00 		sts 204+1,r25
   26 0008 8093 CC00 		sts 204,r24
-  23:com.c         ****   UCSR1A = (1<<U2X1);
-  27               		.loc 1 23 0
+  19:receive.c     ****   UCSR1A = (1<<U2X1);
+  27               		.loc 1 19 0
   28 000c 82E0      		ldi r24,lo8(2)
   29 000e 8093 C800 		sts 200,r24
-  24:com.c         ****   UCSR1B = (1<<RXEN1) | (1<<TXEN1);
-  30               		.loc 1 24 0
+  20:receive.c     ****   UCSR1B = (1<<RXEN1) | (1<<TXEN1);
+  30               		.loc 1 20 0
   31 0012 88E1      		ldi r24,lo8(24)
   32 0014 8093 C900 		sts 201,r24
-  25:com.c         ****   UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);  //1 stop bit
-  33               		.loc 1 25 0
+  21:receive.c     ****   UCSR1C = (1<<UCSZ11) | (1<<UCSZ10);  //1 stop bit
+  33               		.loc 1 21 0
   34 0018 86E0      		ldi r24,lo8(6)
   35 001a 8093 CA00 		sts 202,r24
   36 001e 0895      		ret
@@ -64,9 +60,9 @@
   41               	.global	transmit_payload
   43               	transmit_payload:
   44               	.LFB12:
-  26:com.c         **** }
-  27:com.c         **** void transmit_payload(uint8_t *data){
-  45               		.loc 1 27 0
+  22:receive.c     **** }
+  23:receive.c     **** void transmit_payload(uint8_t *data){
+  45               		.loc 1 23 0
   46               		.cfi_startproc
   47               	.LVL0:
   48 0000 CF93      		push r28
@@ -88,19 +84,23 @@
   64               	/* frame size = 2 */
   65               	/* stack size = 4 */
   66               	.L__stack_usage = 4
-  28:com.c         ****  
-  29:com.c         ****   CE_HIGH;
-  67               		.loc 1 29 0
+  24:receive.c     ****   
+  25:receive.c     ****   CE_HIGH;
+  67               		.loc 1 25 0
   68 000a 899A      		sbi 0x11,1
-  30:com.c         ****   initRadioTX();
-  69               		.loc 1 30 0
+  26:receive.c     ****   SPI_masterInit();
+  69               		.loc 1 26 0
   70 000c 8983      		std Y+1,r24
   71 000e 9A83      		std Y+2,r25
-  72 0010 0E94 0000 		call initRadioTX
+  72 0010 0E94 0000 		call SPI_masterInit
   73               	.LVL1:
-  74               	.LBB21:
-  75               	.LBB22:
-  76               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h"
+  27:receive.c     ****   initRadioTX();
+  74               		.loc 1 27 0
+  75 0014 0E94 0000 		call initRadioTX
+  76               	.LVL2:
+  77               	.LBB23:
+  78               	.LBB24:
+  79               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h"
    1:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
    3:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
@@ -264,48 +264,48 @@
  161:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	#endif
  162:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
  163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
-  77               		.loc 2 163 0
-  78 0014 AFE0      		ldi r26,lo8(9999)
-  79 0016 B7E2      		ldi r27,hi8(9999)
-  80 0018 1197      		1: sbiw r26,1
-  81 001a 01F4      		brne 1b
-  82 001c 00C0      		rjmp .
-  83 001e 0000      		nop
-  84               	.LVL2:
-  85 0020 8981      		ldd r24,Y+1
-  86 0022 E82F      		mov r30,r24
-  87 0024 9A81      		ldd r25,Y+2
-  88 0026 F92F      		mov r31,r25
-  89 0028 21E6      		ldi r18,lo8(97)
-  90               	.LVL3:
-  91               	.L4:
-  92               	.LBE22:
-  93               	.LBE21:
-  94               	.LBB23:
-  31:com.c         ****   _delay_ms(5);
-  32:com.c         ****   for(int i = 0; i < PACKET_SIZE; ++i){
-  33:com.c         ****     data[i] = 'a' + i; 
-  95               		.loc 1 33 0 discriminator 2
-  96 002a 2193      		st Z+,r18
-  97               	.LVL4:
-  98 002c 2F5F      		subi r18,lo8(-(1))
-  32:com.c         ****   for(int i = 0; i < PACKET_SIZE; ++i){
-  99               		.loc 1 32 0 discriminator 2
- 100 002e 2137      		cpi r18,lo8(113)
- 101 0030 01F4      		brne .L4
- 102               	.LBE23:
-  34:com.c         ****   }
-  35:com.c         ****   setRadioTXPayload(data, PACKET_SIZE);
- 103               		.loc 1 35 0
- 104 0032 60E1      		ldi r22,lo8(16)
- 105 0034 0E94 0000 		call setRadioTXPayload
- 106               	.LVL5:
-  36:com.c         ****   CE_HIGH;
- 107               		.loc 1 36 0
- 108 0038 899A      		sbi 0x11,1
+  80               		.loc 2 163 0
+  81 0018 AFE0      		ldi r26,lo8(9999)
+  82 001a B7E2      		ldi r27,hi8(9999)
+  83 001c 1197      		1: sbiw r26,1
+  84 001e 01F4      		brne 1b
+  85 0020 00C0      		rjmp .
+  86 0022 0000      		nop
+  87               	.LVL3:
+  88 0024 8981      		ldd r24,Y+1
+  89 0026 E82F      		mov r30,r24
+  90 0028 9A81      		ldd r25,Y+2
+  91 002a F92F      		mov r31,r25
+  92 002c 21E0      		ldi r18,lo8(1)
+  93               	.LVL4:
+  94               	.L4:
+  95               	.LBE24:
+  96               	.LBE23:
+  97               	.LBB25:
+  28:receive.c     ****   _delay_ms(5);
+  29:receive.c     ****   for(int i = 0; i < PACKET_SIZE; ++i){
+  30:receive.c     ****     data[i] = 1 + i; 
+  98               		.loc 1 30 0 discriminator 2
+  99 002e 2193      		st Z+,r18
+ 100               	.LVL5:
+ 101 0030 2F5F      		subi r18,lo8(-(1))
+  29:receive.c     ****   for(int i = 0; i < PACKET_SIZE; ++i){
+ 102               		.loc 1 29 0 discriminator 2
+ 103 0032 2131      		cpi r18,lo8(17)
+ 104 0034 01F4      		brne .L4
+ 105               	.LBE25:
+  31:receive.c     ****   }
+  32:receive.c     ****   setRadioTXPayload(data, PACKET_SIZE);
+ 106               		.loc 1 32 0
+ 107 0036 60E1      		ldi r22,lo8(16)
+ 108 0038 0E94 0000 		call setRadioTXPayload
  109               	.LVL6:
- 110               	.LBB24:
- 111               	.LBB25:
+  33:receive.c     ****   CE_HIGH;
+ 110               		.loc 1 33 0
+ 111 003c 899A      		sbi 0x11,1
+ 112               	.LVL7:
+ 113               	.LBB26:
+ 114               	.LBB27:
  164:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
  165:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** #else
  166:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	uint16_t __ticks;
@@ -388,628 +388,485 @@
  243:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	#endif
  244:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 
  245:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 112               		.loc 2 245 0
- 113 003a B8E2      		ldi r27,lo8(40)
- 114 003c BA95      		1: dec r27
- 115 003e 01F4      		brne 1b
- 116               	.L9:
- 117               	.LBE25:
- 118               	.LBE24:
-  37:com.c         ****   _delay_us(15);  // pulse CE to start transmition
-  38:com.c         ****   CE_LOW;
-  39:com.c         **** 
-  40:com.c         ****   while(!(getTX_DS())){
-  41:com.c         **** 
-  42:com.c         ****     _delay_us(300);  //retransmit time determined by SETUP_RETR register
-  43:com.c         **** 
-  44:com.c         ****     if(getMAX_RT()){
-  45:com.c         **** 
-  46:com.c         ****       clearMAX_RT();
-  47:com.c         ****       CE_HIGH;
-  48:com.c         ****       _delay_us(15);
-  49:com.c         ****       CE_LOW;
- 119               		.loc 1 49 0
- 120 0040 8998      		cbi 0x11,1
- 121               	.L7:
-  40:com.c         ****   while(!(getTX_DS())){
- 122               		.loc 1 40 0 discriminator 1
- 123 0042 0E94 0000 		call getTX_DS
- 124               	.LVL7:
- 125 0046 8111      		cpse r24,__zero_reg__
- 126 0048 00C0      		rjmp .L11
- 127               	.LVL8:
- 128               	.LBB26:
- 129               	.LBB27:
- 130               		.loc 2 245 0
- 131 004a E7E5      		ldi r30,lo8(599)
- 132 004c F2E0      		ldi r31,hi8(599)
- 133 004e 3197      		1: sbiw r30,1
- 134 0050 01F4      		brne 1b
- 135 0052 00C0      		rjmp .
- 136 0054 0000      		nop
- 137               	.LBE27:
- 138               	.LBE26:
-  44:com.c         ****     if(getMAX_RT()){
- 139               		.loc 1 44 0
- 140 0056 0E94 0000 		call getMAX_RT
- 141               	.LVL9:
- 142 005a 8823      		tst r24
- 143 005c 01F0      		breq .L7
-  46:com.c         ****       clearMAX_RT();
- 144               		.loc 1 46 0
- 145 005e 0E94 0000 		call clearMAX_RT
- 146               	.LVL10:
-  47:com.c         ****       CE_HIGH;
- 147               		.loc 1 47 0
- 148 0062 899A      		sbi 0x11,1
- 149               	.LVL11:
- 150               	.LBB28:
- 151               	.LBB29:
- 152               		.loc 2 245 0
- 153 0064 F8E2      		ldi r31,lo8(40)
- 154 0066 FA95      		1: dec r31
- 155 0068 01F4      		brne 1b
- 156 006a 00C0      		rjmp .L9
- 157               	.LVL12:
- 158               	.L11:
- 159               	.LBE29:
- 160               	.LBE28:
-  50:com.c         ****     }
-  51:com.c         ****   }
-  52:com.c         ****   clearTX_DS();
- 161               		.loc 1 52 0
- 162 006c 0E94 0000 		call clearTX_DS
- 163               	.LVL13:
- 164               	.LBB30:
- 165               	.LBB31:
+ 115               		.loc 2 245 0
+ 116 003e B8E2      		ldi r27,lo8(40)
+ 117 0040 BA95      		1: dec r27
+ 118 0042 01F4      		brne 1b
+ 119               	.LBE27:
+ 120               	.LBE26:
+  34:receive.c     ****   _delay_us(15);  // pulse CE to start transmition
+  35:receive.c     ****   CE_LOW;
+ 121               		.loc 1 35 0
+ 122 0044 8998      		cbi 0x11,1
+ 123               	.L6:
+  36:receive.c     ****   while(!(UCSR1A & (1 << UDRE1)));
+ 124               		.loc 1 36 0 discriminator 1
+ 125 0046 8091 C800 		lds r24,200
+ 126 004a 85FF      		sbrs r24,5
+ 127 004c 00C0      		rjmp .L6
+  37:receive.c     ****   UDR1 = 's';
+ 128               		.loc 1 37 0
+ 129 004e 83E7      		ldi r24,lo8(115)
+ 130 0050 8093 CE00 		sts 206,r24
+ 131               	.L9:
+  38:receive.c     ****  
+  39:receive.c     ****   while(!(getTX_DS())){
+ 132               		.loc 1 39 0 discriminator 1
+ 133 0054 0E94 0000 		call getTX_DS
+ 134               	.LVL8:
+ 135 0058 8111      		cpse r24,__zero_reg__
+ 136 005a 00C0      		rjmp .L12
+ 137               	.LVL9:
+ 138               	.LBB28:
+ 139               	.LBB29:
+ 140               		.loc 2 245 0
+ 141 005c E7E5      		ldi r30,lo8(599)
+ 142 005e F2E0      		ldi r31,hi8(599)
+ 143 0060 3197      		1: sbiw r30,1
+ 144 0062 01F4      		brne 1b
+ 145 0064 00C0      		rjmp .
+ 146 0066 0000      		nop
+ 147               	.LBE29:
+ 148               	.LBE28:
+  40:receive.c     **** 
+  41:receive.c     ****     _delay_us(300);  //retransmit time determined by SETUP_RETR register
+  42:receive.c     **** 
+  43:receive.c     ****     if(getMAX_RT()){
+ 149               		.loc 1 43 0
+ 150 0068 0E94 0000 		call getMAX_RT
+ 151               	.LVL10:
+ 152 006c 8823      		tst r24
+ 153 006e 01F0      		breq .L9
+  44:receive.c     **** 
+  45:receive.c     ****       clearMAX_RT();
+ 154               		.loc 1 45 0
+ 155 0070 0E94 0000 		call clearMAX_RT
+ 156               	.LVL11:
+  46:receive.c     ****       CE_HIGH;
+ 157               		.loc 1 46 0
+ 158 0074 899A      		sbi 0x11,1
+ 159               	.LVL12:
+ 160               	.LBB30:
+ 161               	.LBB31:
+ 162               		.loc 2 245 0
+ 163 0076 F8E2      		ldi r31,lo8(40)
+ 164 0078 FA95      		1: dec r31
+ 165 007a 01F4      		brne 1b
+ 166               	.LBE31:
+ 167               	.LBE30:
+  47:receive.c     ****       _delay_us(15);
+  48:receive.c     ****       CE_LOW;
+ 168               		.loc 1 48 0
+ 169 007c 8998      		cbi 0x11,1
+ 170 007e 00C0      		rjmp .L9
+ 171               	.LVL13:
+ 172               	.L12:
+  49:receive.c     ****     }
+  50:receive.c     ****   }    
+  51:receive.c     ****   while(!(UCSR1A & (1 << UDRE1)));
+ 173               		.loc 1 51 0
+ 174 0080 8091 C800 		lds r24,200
+ 175 0084 85FF      		sbrs r24,5
+ 176 0086 00C0      		rjmp .L12
+  52:receive.c     ****   UDR1 = 'y';
+ 177               		.loc 1 52 0
+ 178 0088 89E7      		ldi r24,lo8(121)
+ 179 008a 8093 CE00 		sts 206,r24
+  53:receive.c     ****  
+  54:receive.c     ****   clearTX_DS();
+ 180               		.loc 1 54 0
+ 181 008e 0E94 0000 		call clearTX_DS
+ 182               	.LVL14:
+ 183               	.LBB32:
+ 184               	.LBB33:
  163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 166               		.loc 2 163 0
- 167 0070 8FE0      		ldi r24,lo8(9999)
- 168 0072 97E2      		ldi r25,hi8(9999)
- 169 0074 0197      		1: sbiw r24,1
- 170 0076 01F4      		brne 1b
- 171 0078 00C0      		rjmp .
- 172 007a 0000      		nop
- 173               	.LBE31:
- 174               	.LBE30:
-  53:com.c         ****   _delay_ms(5);
-  54:com.c         ****   mode = 'r';
- 175               		.loc 1 54 0
- 176 007c 82E7      		ldi r24,lo8(114)
- 177 007e 8093 0000 		sts mode,r24
- 178               	/* epilogue start */
-  55:com.c         **** }
- 179               		.loc 1 55 0
- 180 0082 0F90      		pop __tmp_reg__
- 181 0084 0F90      		pop __tmp_reg__
- 182 0086 DF91      		pop r29
- 183 0088 CF91      		pop r28
- 184 008a 0895      		ret
- 185               		.cfi_endproc
- 186               	.LFE12:
- 188               		.section	.text.receive_payload,"ax",@progbits
- 189               	.global	receive_payload
- 191               	receive_payload:
- 192               	.LFB13:
-  56:com.c         **** void receive_payload(uint8_t *data){
- 193               		.loc 1 56 0
- 194               		.cfi_startproc
- 195               	.LVL14:
- 196 0000 CF93      		push r28
- 197               	.LCFI4:
- 198               		.cfi_def_cfa_offset 3
- 199               		.cfi_offset 28, -2
- 200 0002 DF93      		push r29
- 201               	.LCFI5:
- 202               		.cfi_def_cfa_offset 4
- 203               		.cfi_offset 29, -3
- 204               	/* prologue: function */
- 205               	/* frame size = 0 */
- 206               	/* stack size = 2 */
- 207               	.L__stack_usage = 2
- 208 0004 D82F      		mov r29,r24
- 209 0006 C92F      		mov r28,r25
-  57:com.c         ****  
-  58:com.c         ****   CE_HIGH;
- 210               		.loc 1 58 0
- 211 0008 899A      		sbi 0x11,1
-  59:com.c         ****   initRadioRX();
- 212               		.loc 1 59 0
- 213 000a 0E94 0000 		call initRadioRX
- 214               	.LVL15:
- 215               	.LBB32:
- 216               	.LBB33:
+ 185               		.loc 2 163 0
+ 186 0092 8FE0      		ldi r24,lo8(9999)
+ 187 0094 97E2      		ldi r25,hi8(9999)
+ 188 0096 0197      		1: sbiw r24,1
+ 189 0098 01F4      		brne 1b
+ 190 009a 00C0      		rjmp .
+ 191 009c 0000      		nop
+ 192               	/* epilogue start */
+ 193               	.LBE33:
+ 194               	.LBE32:
+  55:receive.c     ****   _delay_ms(5);
+  56:receive.c     **** }
+ 195               		.loc 1 56 0
+ 196 009e 0F90      		pop __tmp_reg__
+ 197 00a0 0F90      		pop __tmp_reg__
+ 198 00a2 DF91      		pop r29
+ 199 00a4 CF91      		pop r28
+ 200 00a6 0895      		ret
+ 201               		.cfi_endproc
+ 202               	.LFE12:
+ 204               		.section	.text.receive_payload,"ax",@progbits
+ 205               	.global	receive_payload
+ 207               	receive_payload:
+ 208               	.LFB13:
+  57:receive.c     **** void receive_payload(uint8_t *data){
+ 209               		.loc 1 57 0
+ 210               		.cfi_startproc
+ 211               	.LVL15:
+ 212 0000 CF93      		push r28
+ 213               	.LCFI4:
+ 214               		.cfi_def_cfa_offset 3
+ 215               		.cfi_offset 28, -2
+ 216 0002 DF93      		push r29
+ 217               	.LCFI5:
+ 218               		.cfi_def_cfa_offset 4
+ 219               		.cfi_offset 29, -3
+ 220               	/* prologue: function */
+ 221               	/* frame size = 0 */
+ 222               	/* stack size = 2 */
+ 223               	.L__stack_usage = 2
+ 224 0004 D82F      		mov r29,r24
+ 225 0006 C92F      		mov r28,r25
+ 226               	.LVL16:
+ 227               	.L16:
+  58:receive.c     ****   while(!(UCSR1A & (1 << UDRE1)));
+ 228               		.loc 1 58 0 discriminator 1
+ 229 0008 8091 C800 		lds r24,200
+ 230 000c 85FF      		sbrs r24,5
+ 231 000e 00C0      		rjmp .L16
+  59:receive.c     ****   UDR1 = 'd';
+ 232               		.loc 1 59 0
+ 233 0010 84E6      		ldi r24,lo8(100)
+ 234 0012 8093 CE00 		sts 206,r24
+  60:receive.c     **** 
+  61:receive.c     ****   CE_HIGH;
+ 235               		.loc 1 61 0
+ 236 0016 899A      		sbi 0x11,1
+ 237               	.LVL17:
+ 238               	.LBB34:
+ 239               	.LBB35:
  163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 217               		.loc 2 163 0
- 218 000e 8FE0      		ldi r24,lo8(9999)
- 219 0010 97E2      		ldi r25,hi8(9999)
- 220 0012 0197      		1: sbiw r24,1
- 221 0014 01F4      		brne 1b
- 222 0016 00C0      		rjmp .
- 223 0018 0000      		nop
- 224               	.LBE33:
- 225               	.LBE32:
-  60:com.c         ****   _delay_ms(5);  
-  61:com.c         ****   clearRX_DR();
- 226               		.loc 1 61 0
- 227 001a 0E94 0000 		call clearRX_DR
- 228               	.LVL16:
-  62:com.c         ****   getRadioRXPayload(data, PACKET_SIZE); //read payload
- 229               		.loc 1 62 0
- 230 001e 60E1      		ldi r22,lo8(16)
- 231 0020 8D2F      		mov r24,r29
- 232 0022 9C2F      		mov r25,r28
- 233 0024 0E94 0000 		call getRadioRXPayload
- 234               	.LVL17:
-  63:com.c         ****   CE_LOW;
- 235               		.loc 1 63 0
- 236 0028 8998      		cbi 0x11,1
- 237               	.LVL18:
- 238 002a ED2F      		mov r30,r29
- 239 002c FC2F      		mov r31,r28
- 240               	.LBB34:
-  64:com.c         **** 
-  65:com.c         ****   for(int i = 0; i < PACKET_SIZE; i++){
- 241               		.loc 1 65 0
- 242 002e 80E0      		ldi r24,0
- 243 0030 90E0      		ldi r25,0
- 244               	.LVL19:
- 245               	.L14:
-  66:com.c         **** 
-  67:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
- 246               		.loc 1 67 0 discriminator 1
- 247 0032 2091 C800 		lds r18,200
- 248 0036 25FF      		sbrs r18,5
- 249 0038 00C0      		rjmp .L14
-  68:com.c         ****     UDR1 = data[i];
- 250               		.loc 1 68 0
- 251 003a 2191      		ld r18,Z+
- 252 003c 2093 CE00 		sts 206,r18
-  65:com.c         ****   for(int i = 0; i < PACKET_SIZE; i++){
- 253               		.loc 1 65 0
- 254 0040 0196      		adiw r24,1
- 255               	.LVL20:
- 256 0042 8031      		cpi r24,16
- 257 0044 9105      		cpc r25,__zero_reg__
- 258 0046 01F4      		brne .L14
- 259               	.LBE34:
-  69:com.c         ****   }
-  70:com.c         ****   CE_HIGH; 
- 260               		.loc 1 70 0
- 261 0048 899A      		sbi 0x11,1
- 262               	.LVL21:
- 263               	.LBB35:
- 264               	.LBB36:
+ 240               		.loc 2 163 0
+ 241 0018 8FE0      		ldi r24,lo8(9999)
+ 242 001a 97E2      		ldi r25,hi8(9999)
+ 243 001c 0197      		1: sbiw r24,1
+ 244 001e 01F4      		brne 1b
+ 245 0020 00C0      		rjmp .
+ 246 0022 0000      		nop
+ 247               	.LBE35:
+ 248               	.LBE34:
+  62:receive.c     **** //  SPI_masterInit();
+  63:receive.c     **** //  initRadioRX();
+  64:receive.c     ****   _delay_ms(5);
+  65:receive.c     ****   clearRX_DR();
+ 249               		.loc 1 65 0
+ 250 0024 0E94 0000 		call clearRX_DR
+ 251               	.LVL18:
+  66:receive.c     ****   getRadioRXPayload(data, PACKET_SIZE); //read payload
+ 252               		.loc 1 66 0
+ 253 0028 60E1      		ldi r22,lo8(16)
+ 254 002a 8D2F      		mov r24,r29
+ 255 002c 9C2F      		mov r25,r28
+ 256 002e 0E94 0000 		call getRadioRXPayload
+ 257               	.LVL19:
+  67:receive.c     ****   CE_LOW;
+ 258               		.loc 1 67 0
+ 259 0032 8998      		cbi 0x11,1
+ 260               	.LVL20:
+ 261 0034 ED2F      		mov r30,r29
+ 262 0036 FC2F      		mov r31,r28
+ 263               	.LBB36:
+  68:receive.c     **** 
+  69:receive.c     ****   for(int i = 0; i < PACKET_SIZE; i++){
+ 264               		.loc 1 69 0
+ 265 0038 80E0      		ldi r24,0
+ 266 003a 90E0      		ldi r25,0
+ 267               	.LVL21:
+ 268               	.L18:
+  70:receive.c     **** 
+  71:receive.c     ****     while(!(UCSR1A & (1 << UDRE1)));
+ 269               		.loc 1 71 0 discriminator 1
+ 270 003c 2091 C800 		lds r18,200
+ 271 0040 25FF      		sbrs r18,5
+ 272 0042 00C0      		rjmp .L18
+  72:receive.c     ****     UDR1 = data[i];
+ 273               		.loc 1 72 0
+ 274 0044 2191      		ld r18,Z+
+ 275 0046 2093 CE00 		sts 206,r18
+  69:receive.c     ****   for(int i = 0; i < PACKET_SIZE; i++){
+ 276               		.loc 1 69 0
+ 277 004a 0196      		adiw r24,1
+ 278               	.LVL22:
+ 279 004c 8031      		cpi r24,16
+ 280 004e 9105      		cpc r25,__zero_reg__
+ 281 0050 01F4      		brne .L18
+ 282               	.LBE36:
+  73:receive.c     ****   }
+  74:receive.c     ****   CE_HIGH; 
+ 283               		.loc 1 74 0
+ 284 0052 899A      		sbi 0x11,1
+ 285               	.LVL23:
+ 286               	.LBB37:
+ 287               	.LBB38:
  163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 265               		.loc 2 163 0
- 266 004a 8FE0      		ldi r24,lo8(9999)
- 267 004c 97E2      		ldi r25,hi8(9999)
- 268 004e 0197      		1: sbiw r24,1
- 269 0050 01F4      		brne 1b
- 270               	.LVL22:
- 271 0052 00C0      		rjmp .
- 272 0054 0000      		nop
- 273               	/* epilogue start */
- 274               	.LBE36:
- 275               	.LBE35:
-  71:com.c         ****   _delay_ms(5); 
-  72:com.c         **** }
- 276               		.loc 1 72 0
- 277 0056 DF91      		pop r29
- 278 0058 CF91      		pop r28
- 279 005a 0895      		ret
- 280               		.cfi_endproc
-<<<<<<< HEAD
- 281               	.LFE13:
- 283               		.section	.text.startup.main,"ax",@progbits
- 284               	.global	main
- 286               	main:
- 287               	.LFB14:
-=======
- 281               	.LFE9:
- 283               		.section	.text.startup.main,"ax",@progbits
- 284               	.global	main
- 286               	main:
- 287               	.LFB10:
->>>>>>> 8cb15b05cd5fe5ea33883cf5bd3761d73eb3e7f9
-  73:com.c         **** int main(void){
- 288               		.loc 1 73 0
- 289               		.cfi_startproc
- 290 0000 CF93      		push r28
- 291               	.LCFI6:
- 292               		.cfi_def_cfa_offset 3
- 293               		.cfi_offset 28, -2
- 294 0002 DF93      		push r29
- 295               	.LCFI7:
- 296               		.cfi_def_cfa_offset 4
- 297               		.cfi_offset 29, -3
- 298 0004 CDB7      		in r28,__SP_L__
- 299 0006 DEB7      		in r29,__SP_H__
- 300               	.LCFI8:
- 301               		.cfi_def_cfa_register 28
- 302 0008 6197      		sbiw r28,17
- 303               	.LCFI9:
- 304               		.cfi_def_cfa_offset 21
- 305 000a 0FB6      		in __tmp_reg__,__SREG__
- 306 000c F894      		cli
- 307 000e DEBF      		out __SP_H__,r29
- 308 0010 0FBE      		out __SREG__,__tmp_reg__
- 309 0012 CDBF      		out __SP_L__,r28
- 310               	/* prologue: function */
- 311               	/* frame size = 17 */
- 312               	/* stack size = 19 */
- 313               	.L__stack_usage = 19
-  74:com.c         **** 
-  75:com.c         ****   uint8_t data[PACKET_SIZE] = {0};
- 314               		.loc 1 75 0
-<<<<<<< HEAD
- 315 0014 8E01      		movw r16,r28
- 316 0016 0F5F      		subi r16,-1
- 317 0018 1F4F      		sbci r17,-1
- 318 001a 80E1      		ldi r24,lo8(16)
- 319 001c F801      		movw r30,r16
- 320               		0:
- 321 001e 1192      		st Z+,__zero_reg__
- 322 0020 8A95      		dec r24
- 323 0022 01F4      		brne 0b
-  76:com.c         ****   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
-  77:com.c         **** 
-  78:com.c         ****   DDRF &= ~(1 << PF0);
- 324               		.loc 1 78 0
- 325 0024 8098      		cbi 0x10,0
-  79:com.c         ****   PORTF &= ~(1 << PF0);
- 326               		.loc 1 79 0
- 327 0026 8898      		cbi 0x11,0
-  80:com.c         **** 
-  81:com.c         ****   CPU_PRESCALE(0x01);  // run at 8 MHz
- 328               		.loc 1 81 0
- 329 0028 80E8      		ldi r24,lo8(-128)
- 330 002a 8093 6100 		sts 97,r24
- 331 002e 81E0      		ldi r24,lo8(1)
- 332 0030 8093 6100 		sts 97,r24
-  82:com.c         ****   INIT_CSN;
- 333               		.loc 1 82 0
- 334 0034 849A      		sbi 0x10,4
-  83:com.c         ****   INIT_CE;
- 335               		.loc 1 83 0
- 336 0036 819A      		sbi 0x10,1
-  84:com.c         ****   CSN_HIGH;
- 337               		.loc 1 84 0
- 338 0038 8C9A      		sbi 0x11,4
-  85:com.c         ****   initUART;
-  86:com.c         ****   SPI_masterInit();
- 339               		.loc 1 86 0
- 340 003a 0E94 0000 		call SPI_masterInit
- 341               	.LVL23:
- 342               	.L19:
-  87:com.c         ****   while(!(UCSR1A & (1 << UDRE1)));
- 343               		.loc 1 87 0 discriminator 1
- 344 003e 8091 C800 		lds r24,200
- 345 0042 85FF      		sbrs r24,5
- 346 0044 00C0      		rjmp .L19
-  88:com.c         ****   UDR1 = mode; 
- 347               		.loc 1 88 0
- 348 0046 8091 0000 		lds r24,mode
- 349 004a 8093 CE00 		sts 206,r24
-  89:com.c         ****  
-  90:com.c         **** 
-  91:com.c         ****   initRadioRX();
- 350               		.loc 1 91 0
- 351 004e 0E94 0000 		call initRadioRX
- 352               	.LVL24:
-  92:com.c         ****   setRadioAddressWidth(THREE_BYTES);
- 353               		.loc 1 92 0
- 354 0052 81E0      		ldi r24,lo8(1)
- 355 0054 0E94 0000 		call setRadioAddressWidth
- 356               	.LVL25:
-  93:com.c         ****   setRadioTXAddress(0xABC123);        
- 357               		.loc 1 93 0
- 358 0058 63E2      		ldi r22,lo8(35)
- 359 005a 71EC      		ldi r23,lo8(-63)
- 360 005c 8BEA      		ldi r24,lo8(-85)
- 361 005e 90E0      		ldi r25,0
- 362 0060 0E94 0000 		call setRadioTXAddress
- 363               	.LVL26:
-  94:com.c         ****   setRadioRXAddress(0xABC123);
- 364               		.loc 1 94 0
- 365 0064 63E2      		ldi r22,lo8(35)
- 366 0066 71EC      		ldi r23,lo8(-63)
- 367 0068 8BEA      		ldi r24,lo8(-85)
- 368 006a 90E0      		ldi r25,0
- 369 006c 0E94 0000 		call setRadioRXAddress
- 370               	.LVL27:
-  95:com.c         ****   setRadioFrequency(0b00000010);
- 371               		.loc 1 95 0
- 372 0070 82E0      		ldi r24,lo8(2)
- 373 0072 0E94 0000 		call setRadioFrequency
- 374               	.LVL28:
-  96:com.c         ****   setRadioRXPayloadSize(DATA_PIPE_0, PACKET_SIZE);
- 375               		.loc 1 96 0
- 376 0076 60E1      		ldi r22,lo8(16)
- 377 0078 81E1      		ldi r24,lo8(17)
- 378 007a 0E94 0000 		call setRadioRXPayloadSize
- 379               	.LVL29:
- 380               	.LBB37:
- 381               	.LBB38:
+ 288               		.loc 2 163 0
+ 289 0054 8FE0      		ldi r24,lo8(9999)
+ 290 0056 97E2      		ldi r25,hi8(9999)
+ 291 0058 0197      		1: sbiw r24,1
+ 292 005a 01F4      		brne 1b
+ 293               	.LVL24:
+ 294 005c 00C0      		rjmp .
+ 295 005e 0000      		nop
+ 296               	/* epilogue start */
+ 297               	.LBE38:
+ 298               	.LBE37:
+  75:receive.c     ****   _delay_ms(5);
+  76:receive.c     **** }
+ 299               		.loc 1 76 0
+ 300 0060 DF91      		pop r29
+ 301 0062 CF91      		pop r28
+ 302 0064 0895      		ret
+ 303               		.cfi_endproc
+ 304               	.LFE13:
+ 306               		.section	.text.startup.main,"ax",@progbits
+ 307               	.global	main
+ 309               	main:
+ 310               	.LFB14:
+  77:receive.c     **** int main(void){
+ 311               		.loc 1 77 0
+ 312               		.cfi_startproc
+ 313 0000 CF93      		push r28
+ 314               	.LCFI6:
+ 315               		.cfi_def_cfa_offset 3
+ 316               		.cfi_offset 28, -2
+ 317 0002 DF93      		push r29
+ 318               	.LCFI7:
+ 319               		.cfi_def_cfa_offset 4
+ 320               		.cfi_offset 29, -3
+ 321 0004 CDB7      		in r28,__SP_L__
+ 322 0006 DEB7      		in r29,__SP_H__
+ 323               	.LCFI8:
+ 324               		.cfi_def_cfa_register 28
+ 325 0008 6197      		sbiw r28,17
+ 326               	.LCFI9:
+ 327               		.cfi_def_cfa_offset 21
+ 328 000a 0FB6      		in __tmp_reg__,__SREG__
+ 329 000c F894      		cli
+ 330 000e DEBF      		out __SP_H__,r29
+ 331 0010 0FBE      		out __SREG__,__tmp_reg__
+ 332 0012 CDBF      		out __SP_L__,r28
+ 333               	/* prologue: function */
+ 334               	/* frame size = 17 */
+ 335               	/* stack size = 19 */
+ 336               	.L__stack_usage = 19
+  78:receive.c     **** 
+  79:receive.c     ****   uint8_t data[PACKET_SIZE] = {0};
+ 337               		.loc 1 79 0
+ 338 0014 FE01      		movw r30,r28
+ 339 0016 3196      		adiw r30,1
+ 340 0018 80E1      		ldi r24,lo8(16)
+ 341 001a DF01      		movw r26,r30
+ 342               		0:
+ 343 001c 1D92      		st X+,__zero_reg__
+ 344 001e 8A95      		dec r24
+ 345 0020 01F4      		brne 0b
+  80:receive.c     ****   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
+ 346               		.loc 1 80 0
+ 347 0022 80E1      		ldi r24,lo8(16)
+ 348 0024 90E0      		ldi r25,0
+ 349 0026 0E94 0000 		call malloc
+ 350               	.LVL25:
+ 351 002a 8C01      		movw r16,r24
+ 352               	.LVL26:
+  81:receive.c     **** 
+  82:receive.c     ****   CPU_PRESCALE(0x01);  // run at 8 MHz
+ 353               		.loc 1 82 0
+ 354 002c 80E8      		ldi r24,lo8(-128)
+ 355 002e 8093 6100 		sts 97,r24
+ 356 0032 81E0      		ldi r24,lo8(1)
+ 357 0034 8093 6100 		sts 97,r24
+  83:receive.c     ****   INIT_CSN;
+ 358               		.loc 1 83 0
+ 359 0038 849A      		sbi 0x10,4
+  84:receive.c     ****   INIT_CE;
+ 360               		.loc 1 84 0
+ 361 003a 819A      		sbi 0x10,1
+  85:receive.c     ****   CSN_HIGH;
+ 362               		.loc 1 85 0
+ 363 003c 8C9A      		sbi 0x11,4
+  86:receive.c     ****   initUART();
+ 364               		.loc 1 86 0
+ 365 003e 0E94 0000 		call initUART
+ 366               	.LVL27:
+  87:receive.c     ****   SPI_masterInit();
+ 367               		.loc 1 87 0
+ 368 0042 0E94 0000 		call SPI_masterInit
+ 369               	.LVL28:
+  88:receive.c     ****   initRadioRX();
+ 370               		.loc 1 88 0
+ 371 0046 0E94 0000 		call initRadioRX
+ 372               	.LVL29:
+  89:receive.c     **** 
+  90:receive.c     ****   DDRB |= (0 << PB6);
+ 373               		.loc 1 90 0
+ 374 004a 84B1      		in r24,0x4
+ 375 004c 84B9      		out 0x4,r24
+  91:receive.c     ****   setRadioAddressWidth(THREE_BYTES);
+ 376               		.loc 1 91 0
+ 377 004e 81E0      		ldi r24,lo8(1)
+ 378 0050 0E94 0000 		call setRadioAddressWidth
+ 379               	.LVL30:
+  92:receive.c     ****   setRadioRXAddress(0xABC123); 
+ 380               		.loc 1 92 0
+ 381 0054 63E2      		ldi r22,lo8(35)
+ 382 0056 71EC      		ldi r23,lo8(-63)
+ 383 0058 8BEA      		ldi r24,lo8(-85)
+ 384 005a 90E0      		ldi r25,0
+ 385 005c 0E94 0000 		call setRadioRXAddress
+ 386               	.LVL31:
+  93:receive.c     ****   setRadioTXAddress(0xABC123);  
+ 387               		.loc 1 93 0
+ 388 0060 63E2      		ldi r22,lo8(35)
+ 389 0062 71EC      		ldi r23,lo8(-63)
+ 390 0064 8BEA      		ldi r24,lo8(-85)
+ 391 0066 90E0      		ldi r25,0
+ 392 0068 0E94 0000 		call setRadioTXAddress
+ 393               	.LVL32:
+  94:receive.c     ****   setRadioRXPayloadSize(DATA_PIPE_0, PACKET_SIZE);
+ 394               		.loc 1 94 0
+ 395 006c 60E1      		ldi r22,lo8(16)
+ 396 006e 81E1      		ldi r24,lo8(17)
+ 397 0070 0E94 0000 		call setRadioRXPayloadSize
+ 398               	.LVL33:
+  95:receive.c     ****   setRadioFrequency(0b00000010); 
+ 399               		.loc 1 95 0
+ 400 0074 82E0      		ldi r24,lo8(2)
+ 401 0076 0E94 0000 		call setRadioFrequency
+ 402               	.LVL34:
+ 403               	.LBB39:
+ 404               	.LBB40:
  163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 382               		.loc 2 163 0
- 383 007e 8FE0      		ldi r24,lo8(9999)
- 384 0080 97E2      		ldi r25,hi8(9999)
- 385 0082 0197      		1: sbiw r24,1
- 386 0084 01F4      		brne 1b
- 387 0086 00C0      		rjmp .
- 388 0088 0000      		nop
- 389               	.LBE38:
- 390               	.LBE37:
- 391               	.LBB39:
-  97:com.c         ****   _delay_ms(5);
-  98:com.c         **** 
-  99:com.c         ****   while(1){
- 100:com.c         ****     uint8_t radioStatus = 0;
- 101:com.c         ****     getRadioStatus(&radioStatus);
- 102:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
- 103:com.c         ****     UDR1 = 't'; 
- 392               		.loc 1 103 0
- 393 008a 84E7      		ldi r24,lo8(116)
- 394 008c F82E      		mov r15,r24
- 395               	.L22:
- 100:com.c         ****     uint8_t radioStatus = 0;
- 396               		.loc 1 100 0
- 397 008e 198A      		std Y+17,__zero_reg__
- 101:com.c         ****     getRadioStatus(&radioStatus);
- 398               		.loc 1 101 0
- 399 0090 CE01      		movw r24,r28
- 400 0092 4196      		adiw r24,17
- 401 0094 0E94 0000 		call getRadioStatus
- 402               	.LVL30:
- 403               	.L21:
- 102:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
- 404               		.loc 1 102 0 discriminator 1
- 405 0098 8091 C800 		lds r24,200
- 406 009c 85FF      		sbrs r24,5
- 407 009e 00C0      		rjmp .L21
- 408               		.loc 1 103 0
- 409 00a0 F092 CE00 		sts 206,r15
- 104:com.c         ****     if(1 << PF0){
- 105:com.c         ****       mode =  't';
- 410               		.loc 1 105 0
- 411 00a4 F092 0000 		sts mode,r15
- 106:com.c         ****     }
- 107:com.c         ****     if(mode == 'r'){  
- 108:com.c         ****       if(getRX_DR()){
- 109:com.c         ****         receive_payload(load);
- 110:com.c         ****       } 
- 111:com.c         ****     }
- 112:com.c         ****     if(mode == 't'){
- 113:com.c         ****       transmit_payload(data);
- 412               		.loc 1 113 0
- 413 00a8 C801      		movw r24,r16
- 414 00aa 0E94 0000 		call transmit_payload
- 415               	.LVL31:
- 416               	.LBE39:
- 114:com.c         ****     }
- 115:com.c         ****   }
- 417               		.loc 1 115 0
- 418 00ae 00C0      		rjmp .L22
- 419               		.cfi_endproc
- 420               	.LFE14:
- 422               	.global	mode
- 423               		.data
- 426               	mode:
- 427 0000 74        		.byte	116
- 428               		.text
- 429               	.Letext0:
- 430               		.file 3 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
- 431               		.file 4 "radioctl.h"
- 432               		.file 5 "spi.h"
+ 405               		.loc 2 163 0
+ 406 007a 8FE0      		ldi r24,lo8(9999)
+ 407 007c 97E2      		ldi r25,hi8(9999)
+ 408 007e 0197      		1: sbiw r24,1
+ 409 0080 01F4      		brne 1b
+ 410 0082 00C0      		rjmp .
+ 411 0084 0000      		nop
+ 412               	.LBE40:
+ 413               	.LBE39:
+ 414               	.LBB41:
+  96:receive.c     ****   _delay_ms(5);
+  97:receive.c     **** 
+  98:receive.c     ****   while(1){    
+  99:receive.c     ****   
+ 100:receive.c     ****     uint8_t radioStatus = 0;
+ 101:receive.c     ****     getRadioStatus(&radioStatus);
+ 102:receive.c     ****     if(PINB & (1 << 6)){
+ 103:receive.c     ****       transmit_payload(data);
+ 104:receive.c     ****     }
+ 105:receive.c     ****     initRadioRX();
+ 106:receive.c     ****     _delay_ms(5); 
+ 107:receive.c     ****     if(getRX_DR()){
+ 108:receive.c     ****       receive_payload(load);
+ 109:receive.c     ****     }
+ 110:receive.c     ****     while(!(UCSR1A & (1 << UDRE1)));
+ 111:receive.c     ****     UDR1 = 'n'; 
+ 415               		.loc 1 111 0
+ 416 0086 8EE6      		ldi r24,lo8(110)
+ 417 0088 F82E      		mov r15,r24
+ 418               	.L26:
+ 100:receive.c     ****     uint8_t radioStatus = 0;
+ 419               		.loc 1 100 0
+ 420 008a 198A      		std Y+17,__zero_reg__
+ 101:receive.c     ****     getRadioStatus(&radioStatus);
+ 421               		.loc 1 101 0
+ 422 008c CE01      		movw r24,r28
+ 423 008e 4196      		adiw r24,17
+ 424 0090 0E94 0000 		call getRadioStatus
+ 425               	.LVL35:
+ 102:receive.c     ****     if(PINB & (1 << 6)){
+ 426               		.loc 1 102 0
+ 427 0094 1E9B      		sbis 0x3,6
+ 428 0096 00C0      		rjmp .L22
+ 103:receive.c     ****       transmit_payload(data);
+ 429               		.loc 1 103 0
+ 430 0098 CE01      		movw r24,r28
+ 431 009a 0196      		adiw r24,1
+ 432 009c 0E94 0000 		call transmit_payload
+ 433               	.LVL36:
+ 434               	.L22:
+ 105:receive.c     ****     initRadioRX();
+ 435               		.loc 1 105 0
+ 436 00a0 0E94 0000 		call initRadioRX
+ 437               	.LVL37:
+ 438               	.LBB42:
+ 439               	.LBB43:
+ 163:/usr/local/CrossPack-AVR-20131216/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 440               		.loc 2 163 0
+ 441 00a4 AFE0      		ldi r26,lo8(9999)
+ 442 00a6 B7E2      		ldi r27,hi8(9999)
+ 443 00a8 1197      		1: sbiw r26,1
+ 444 00aa 01F4      		brne 1b
+ 445 00ac 00C0      		rjmp .
+ 446 00ae 0000      		nop
+ 447               	.LBE43:
+ 448               	.LBE42:
+ 107:receive.c     ****     if(getRX_DR()){
+ 449               		.loc 1 107 0
+ 450 00b0 0E94 0000 		call getRX_DR
+ 451               	.LVL38:
+ 452 00b4 8823      		tst r24
+ 453 00b6 01F0      		breq .L25
+ 108:receive.c     ****       receive_payload(load);
+ 454               		.loc 1 108 0
+ 455 00b8 C801      		movw r24,r16
+ 456 00ba 0E94 0000 		call receive_payload
+ 457               	.LVL39:
+ 458               	.L25:
+ 110:receive.c     ****     while(!(UCSR1A & (1 << UDRE1)));
+ 459               		.loc 1 110 0 discriminator 1
+ 460 00be 8091 C800 		lds r24,200
+ 461 00c2 85FF      		sbrs r24,5
+ 462 00c4 00C0      		rjmp .L25
+ 463               		.loc 1 111 0
+ 464 00c6 F092 CE00 		sts 206,r15
+ 465               	.LBE41:
+ 112:receive.c     ****   }
+ 466               		.loc 1 112 0
+ 467 00ca 00C0      		rjmp .L26
+ 468               		.cfi_endproc
+ 469               	.LFE14:
+ 471               		.text
+ 472               	.Letext0:
+ 473               		.file 3 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
+ 474               		.file 4 "/usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/include/stddef.h"
+ 475               		.file 5 "spi.h"
+ 476               		.file 6 "radioctl.h"
+ 477               		.file 7 "/usr/local/CrossPack-AVR-20131216/avr/include/stdlib.h"
 DEFINED SYMBOLS
-                            *ABS*:00000000 com.c
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:2      *ABS*:0000003e __SP_H__
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:3      *ABS*:0000003d __SP_L__
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:4      *ABS*:0000003f __SREG__
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:5      *ABS*:00000000 __tmp_reg__
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:6      *ABS*:00000001 __zero_reg__
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:13     .text.initUART:00000000 initUART
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:43     .text.transmit_payload:00000000 transmit_payload
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:426    .data:00000000 mode
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:191    .text.receive_payload:00000000 receive_payload
-/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfr2g5R.s:286    .text.startup.main:00000000 main
-=======
- 315 0014 FE01      		movw r30,r28
- 316 0016 3196      		adiw r30,1
- 317 0018 80E1      		ldi r24,lo8(16)
- 318 001a DF01      		movw r26,r30
- 319               		0:
- 320 001c 1D92      		st X+,__zero_reg__
- 321 001e 8A95      		dec r24
- 322 0020 01F4      		brne 0b
-  76:com.c         ****   uint8_t *load = (uint8_t *)malloc(PACKET_SIZE*sizeof(uint8_t));
- 323               		.loc 1 76 0
- 324 0022 80E1      		ldi r24,lo8(16)
- 325 0024 90E0      		ldi r25,0
- 326 0026 0E94 0000 		call malloc
- 327               	.LVL23:
- 328 002a 8C01      		movw r16,r24
- 329               	.LVL24:
-  77:com.c         **** 
-  78:com.c         ****   CPU_PRESCALE(0x01);  // run at 8 MHz
- 330               		.loc 1 78 0
- 331 002c 80E8      		ldi r24,lo8(-128)
- 332 002e 8093 6100 		sts 97,r24
- 333 0032 81E0      		ldi r24,lo8(1)
- 334 0034 8093 6100 		sts 97,r24
-  79:com.c         ****   INIT_CSN;
- 335               		.loc 1 79 0
- 336 0038 849A      		sbi 0x10,4
-  80:com.c         ****   INIT_CE;
- 337               		.loc 1 80 0
- 338 003a 819A      		sbi 0x10,1
-  81:com.c         ****   CSN_HIGH;
- 339               		.loc 1 81 0
- 340 003c 8C9A      		sbi 0x11,4
-  82:com.c         ****   initUART();
- 341               		.loc 1 82 0
- 342 003e 0E94 0000 		call initUART
- 343               	.LVL25:
-  83:com.c         ****   SPI_masterInit();
- 344               		.loc 1 83 0
- 345 0042 0E94 0000 		call SPI_masterInit
- 346               	.LVL26:
-  84:com.c         ****   
-  85:com.c         ****   initRadioRX();
- 347               		.loc 1 85 0
- 348 0046 0E94 0000 		call initRadioRX
- 349               	.LVL27:
-  86:com.c         ****   setRadioAddressWidth(THREE_BYTES);
- 350               		.loc 1 86 0
- 351 004a 81E0      		ldi r24,lo8(1)
- 352 004c 0E94 0000 		call setRadioAddressWidth
- 353               	.LVL28:
-  87:com.c         ****   setRadioTXAddress(0xABC123);        
- 354               		.loc 1 87 0
- 355 0050 63E2      		ldi r22,lo8(35)
- 356 0052 71EC      		ldi r23,lo8(-63)
- 357 0054 8BEA      		ldi r24,lo8(-85)
- 358 0056 90E0      		ldi r25,0
- 359 0058 0E94 0000 		call setRadioTXAddress
- 360               	.LVL29:
-  88:com.c         ****   setRadioRXAddress(0xABC123);
- 361               		.loc 1 88 0
- 362 005c 63E2      		ldi r22,lo8(35)
- 363 005e 71EC      		ldi r23,lo8(-63)
- 364 0060 8BEA      		ldi r24,lo8(-85)
- 365 0062 90E0      		ldi r25,0
- 366 0064 0E94 0000 		call setRadioRXAddress
- 367               	.LVL30:
-  89:com.c         ****   setRadioFrequency(0b00000010);
- 368               		.loc 1 89 0
- 369 0068 82E0      		ldi r24,lo8(2)
- 370 006a 0E94 0000 		call setRadioFrequency
- 371               	.LVL31:
-  90:com.c         ****   setRadioRXPayloadSize(DATA_PIPE_0, PACKET_SIZE);
- 372               		.loc 1 90 0
- 373 006e 60E1      		ldi r22,lo8(16)
- 374 0070 81E1      		ldi r24,lo8(17)
- 375 0072 0E94 0000 		call setRadioRXPayloadSize
- 376               	.LVL32:
- 377               	.LBB37:
- 378               	.LBB38:
- 164:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
- 379               		.loc 2 164 0
- 380 0076 8FE0      		ldi r24,lo8(9999)
- 381 0078 97E2      		ldi r25,hi8(9999)
- 382 007a 0197      		1: sbiw r24,1
- 383 007c 01F4      		brne 1b
- 384 007e 00C0      		rjmp .
- 385 0080 0000      		nop
- 386               	.LBE38:
- 387               	.LBE37:
- 388               	.LBB39:
-  91:com.c         ****   _delay_ms(5);
-  92:com.c         **** 
-  93:com.c         ****   while(1){
-  94:com.c         ****     uint8_t radioStatus = 0;
-  95:com.c         ****     getRadioStatus(&radioStatus);
-  96:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
-  97:com.c         ****     UDR1 = 'a';
- 389               		.loc 1 97 0
- 390 0082 81E6      		ldi r24,lo8(97)
- 391 0084 F82E      		mov r15,r24
- 392               	.L24:
-  94:com.c         ****     uint8_t radioStatus = 0;
- 393               		.loc 1 94 0
- 394 0086 198A      		std Y+17,__zero_reg__
-  95:com.c         ****     getRadioStatus(&radioStatus);
- 395               		.loc 1 95 0
- 396 0088 CE01      		movw r24,r28
- 397 008a 4196      		adiw r24,17
- 398 008c 0E94 0000 		call getRadioStatus
- 399               	.LVL33:
- 400               	.L19:
-  96:com.c         ****     while(!(UCSR1A & (1 << UDRE1)));
- 401               		.loc 1 96 0 discriminator 1
- 402 0090 8091 C800 		lds r24,200
- 403 0094 85FF      		sbrs r24,5
- 404 0096 00C0      		rjmp .L19
- 405               		.loc 1 97 0
- 406 0098 F092 CE00 		sts 206,r15
-  98:com.c         ****     if(mode == 'r'){  
- 407               		.loc 1 98 0
- 408 009c 8091 0000 		lds r24,mode
- 409 00a0 8237      		cpi r24,lo8(114)
- 410 00a2 01F4      		brne .L21
-  99:com.c         ****       if(getRX_DR()){
- 411               		.loc 1 99 0
- 412 00a4 0E94 0000 		call getRX_DR
- 413               	.LVL34:
- 414 00a8 8823      		tst r24
- 415 00aa 01F0      		breq .L21
- 100:com.c         ****         receive_payload(load);
- 416               		.loc 1 100 0
- 417 00ac C801      		movw r24,r16
- 418 00ae 0E94 0000 		call receive_payload
- 419               	.LVL35:
- 420               	.L21:
- 101:com.c         ****       } 
- 102:com.c         ****     }
- 103:com.c         ****     if(mode == 't'){
- 421               		.loc 1 103 0
- 422 00b2 8091 0000 		lds r24,mode
- 423 00b6 8437      		cpi r24,lo8(116)
- 424 00b8 01F4      		brne .L24
- 104:com.c         ****       transmit_payload(data);
- 425               		.loc 1 104 0
- 426 00ba CE01      		movw r24,r28
- 427 00bc 0196      		adiw r24,1
- 428 00be 0E94 0000 		call transmit_payload
- 429               	.LVL36:
- 430               	.LBE39:
- 105:com.c         ****     }
- 106:com.c         ****   }
- 431               		.loc 1 106 0
- 432 00c2 00C0      		rjmp .L24
- 433               		.cfi_endproc
- 434               	.LFE10:
- 436               	.global	mode
- 437               		.data
- 440               	mode:
- 441 0000 74        		.byte	116
- 442               		.text
- 443               	.Letext0:
- 444               		.file 3 "/usr/lib/avr/include/stdint.h"
- 445               		.file 4 "/usr/lib/gcc/avr/4.8.2/include/stddef.h"
- 446               		.file 5 "radioctl.h"
- 447               		.file 6 "spi.h"
- 448               		.file 7 "/usr/lib/avr/include/stdlib.h"
-DEFINED SYMBOLS
-                            *ABS*:0000000000000000 com.c
-     /tmp/ccCALmdt.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccCALmdt.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccCALmdt.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccCALmdt.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccCALmdt.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccCALmdt.s:13     .text.initUART:0000000000000000 initUART
-     /tmp/ccCALmdt.s:43     .text.transmit_payload:0000000000000000 transmit_payload
-     /tmp/ccCALmdt.s:440    .data:0000000000000000 mode
-     /tmp/ccCALmdt.s:191    .text.receive_payload:0000000000000000 receive_payload
-     /tmp/ccCALmdt.s:286    .text.startup.main:0000000000000000 main
->>>>>>> 8cb15b05cd5fe5ea33883cf5bd3761d73eb3e7f9
+                            *ABS*:00000000 receive.c
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:2      *ABS*:0000003e __SP_H__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:3      *ABS*:0000003d __SP_L__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:4      *ABS*:0000003f __SREG__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:13     .text.initUART:00000000 initUART
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:43     .text.transmit_payload:00000000 transmit_payload
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:207    .text.receive_payload:00000000 receive_payload
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccmHqFcF.s:309    .text.startup.main:00000000 main
 
 UNDEFINED SYMBOLS
+SPI_masterInit
 initRadioTX
 setRadioTXPayload
 getTX_DS
 getMAX_RT
 clearMAX_RT
 clearTX_DS
-initRadioRX
 clearRX_DR
 getRadioRXPayload
-SPI_masterInit
+malloc
+initRadioRX
 setRadioAddressWidth
-setRadioTXAddress
 setRadioRXAddress
-setRadioFrequency
+setRadioTXAddress
 setRadioRXPayloadSize
+setRadioFrequency
 getRadioStatus
-__do_copy_data
+getRX_DR

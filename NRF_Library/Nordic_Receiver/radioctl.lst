@@ -10,7 +10,7 @@
   10               		.section	.text.openPort,"ax",@progbits
   11               	.global	openPort
   13               	openPort:
-  14               	.LFB7:
+  14               	.LFB11:
   15               		.file 1 "radioctl.c"
    1:radioctl.c    **** #include "radioctl.h"
    2:radioctl.c    **** #include "spi.h"
@@ -35,11 +35,11 @@
   23 0000 8C98      		cbi 0x11,4
   24 0002 0895      		ret
   25               		.cfi_endproc
-  26               	.LFE7:
+  26               	.LFE11:
   28               		.section	.text.closePort,"ax",@progbits
   29               	.global	closePort
   31               	closePort:
-  32               	.LFB8:
+  32               	.LFB12:
   14:radioctl.c    **** }
   15:radioctl.c    **** 
   16:radioctl.c    **** void closePort()
@@ -67,11 +67,11 @@
   49               		.loc 1 21 0
   50 000c 0895      		ret
   51               		.cfi_endproc
-  52               	.LFE8:
+  52               	.LFE12:
   54               		.section	.text.initRadioTX,"ax",@progbits
   55               	.global	initRadioTX
   57               	initRadioTX:
-  58               	.LFB9:
+  58               	.LFB13:
   22:radioctl.c    **** 
   23:radioctl.c    **** 
   24:radioctl.c    **** 
@@ -107,11 +107,11 @@
   77 0010 0C94 0000 		jmp closePort
   78               	.LVL3:
   79               		.cfi_endproc
-  80               	.LFE9:
+  80               	.LFE13:
   82               		.section	.text.initRadioRX,"ax",@progbits
   83               	.global	initRadioRX
   85               	initRadioRX:
-  86               	.LFB10:
+  86               	.LFB14:
   36:radioctl.c    **** }
   37:radioctl.c    **** 
   38:radioctl.c    **** void initRadioRX()
@@ -141,11 +141,11 @@
  105 0010 0C94 0000 		jmp closePort
  106               	.LVL7:
  107               		.cfi_endproc
- 108               	.LFE10:
+ 108               	.LFE14:
  110               		.section	.text.activateFeatures,"ax",@progbits
  111               	.global	activateFeatures
  113               	activateFeatures:
- 114               	.LFB11:
+ 114               	.LFB15:
   44:radioctl.c    **** }
   45:radioctl.c    **** 
   46:radioctl.c    **** 
@@ -186,11 +186,11 @@
  133 0010 0C94 0000 		jmp closePort
  134               	.LVL11:
  135               		.cfi_endproc
- 136               	.LFE11:
+ 136               	.LFE15:
  138               		.section	.text.setRadioAddressWidth,"ax",@progbits
  139               	.global	setRadioAddressWidth
  141               	setRadioAddressWidth:
- 142               	.LFB12:
+ 142               	.LFB16:
   63:radioctl.c    **** }
   64:radioctl.c    **** 
   65:radioctl.c    **** /*************************************************************/
@@ -239,11 +239,11 @@
  171 0016 0C94 0000 		jmp closePort
  172               	.LVL17:
  173               		.cfi_endproc
- 174               	.LFE12:
+ 174               	.LFE16:
  176               		.section	.text.setRadioFrequency,"ax",@progbits
  177               	.global	setRadioFrequency
  179               	setRadioFrequency:
- 180               	.LFB13:
+ 180               	.LFB17:
   79:radioctl.c    **** 
   80:radioctl.c    **** void setRadioFrequency(uint8_t frequency)
   81:radioctl.c    **** {
@@ -284,11 +284,11 @@
  209 0016 0C94 0000 		jmp closePort
  210               	.LVL23:
  211               		.cfi_endproc
- 212               	.LFE13:
+ 212               	.LFE17:
  214               		.section	.text.setRadioTXAddress,"ax",@progbits
  215               	.global	setRadioTXAddress
  217               	setRadioTXAddress:
- 218               	.LFB14:
+ 218               	.LFB18:
   87:radioctl.c    **** 
   88:radioctl.c    **** void setRadioTXAddress(uint32_t address)
   89:radioctl.c    **** {
@@ -361,11 +361,11 @@
  272 0036 0C94 0000 		jmp closePort
  273               	.LVL31:
  274               		.cfi_endproc
- 275               	.LFE14:
+ 275               	.LFE18:
  277               		.section	.text.setRadioRXAddress,"ax",@progbits
  278               	.global	setRadioRXAddress
  280               	setRadioRXAddress:
- 281               	.LFB15:
+ 281               	.LFB19:
  102:radioctl.c    **** 
  103:radioctl.c    **** void setRadioRXAddress(int32_t address)
  104:radioctl.c    **** {
@@ -438,11 +438,11 @@
  335 0036 0C94 0000 		jmp closePort
  336               	.LVL39:
  337               		.cfi_endproc
- 338               	.LFE15:
+ 338               	.LFE19:
  340               		.section	.text.setRadioRXPayloadSize,"ax",@progbits
  341               	.global	setRadioRXPayloadSize
  343               	setRadioRXPayloadSize:
- 344               	.LFB16:
+ 344               	.LFB20:
  117:radioctl.c    **** 
  118:radioctl.c    **** 
  119:radioctl.c    **** /***********************************************************
@@ -505,11 +505,11 @@
  389 002a 0C94 0000 		jmp closePort
  390               	.LVL44:
  391               		.cfi_endproc
- 392               	.LFE16:
+ 392               	.LFE20:
  394               		.section	.text.setRadioTXPayload,"ax",@progbits
  395               	.global	setRadioTXPayload
  397               	setRadioTXPayload:
- 398               	.LFB17:
+ 398               	.LFB21:
  131:radioctl.c    **** 
  132:radioctl.c    **** void setRadioTXPayload(int8_t* frame, int8_t payloadSize)
  133:radioctl.c    **** {
@@ -600,11 +600,11 @@
  474 0042 0C94 0000 		jmp closePort
  475               	.LVL54:
  476               		.cfi_endproc
- 477               	.LFE17:
+ 477               	.LFE21:
  479               		.section	.text.getRadioRXPayload,"ax",@progbits
  480               	.global	getRadioRXPayload
  482               	getRadioRXPayload:
- 483               	.LFB18:
+ 483               	.LFB22:
  142:radioctl.c    **** 
  143:radioctl.c    **** 
  144:radioctl.c    **** void getRadioRXPayload(uint8_t* payload, uint8_t payloadSize)
@@ -695,11 +695,11 @@
  557 003e 0C94 0000 		jmp closePort
  558               	.LVL64:
  559               		.cfi_endproc
- 560               	.LFE18:
+ 560               	.LFE22:
  562               		.section	.text.getRadioStatus,"ax",@progbits
  563               	.global	getRadioStatus
  565               	getRadioStatus:
- 566               	.LFB19:
+ 566               	.LFB23:
  155:radioctl.c    **** 
  156:radioctl.c    **** 
  157:radioctl.c    **** void getRadioStatus(uint8_t* status)
@@ -742,11 +742,11 @@
  597 0016 0C94 0000 		jmp closePort
  598               	.LVL69:
  599               		.cfi_endproc
- 600               	.LFE19:
+ 600               	.LFE23:
  602               		.section	.text.getRX_DR,"ax",@progbits
  603               	.global	getRX_DR
  605               	getRX_DR:
- 606               	.LFB20:
+ 606               	.LFB24:
  163:radioctl.c    **** 
  164:radioctl.c    **** 
  165:radioctl.c    **** 
@@ -808,11 +808,11 @@
  642 001e CF91      		pop r28
  643 0020 0895      		ret
  644               		.cfi_endproc
- 645               	.LFE20:
+ 645               	.LFE24:
  647               		.section	.text.getTX_DS,"ax",@progbits
  648               	.global	getTX_DS
  650               	getTX_DS:
- 651               	.LFB21:
+ 651               	.LFB25:
  186:radioctl.c    **** 
  187:radioctl.c    **** uint8_t getTX_DS()
  188:radioctl.c    **** {
@@ -861,11 +861,11 @@
  687 001e CF91      		pop r28
  688 0020 0895      		ret
  689               		.cfi_endproc
- 690               	.LFE21:
+ 690               	.LFE25:
  692               		.section	.text.getMAX_RT,"ax",@progbits
  693               	.global	getMAX_RT
  695               	getMAX_RT:
- 696               	.LFB22:
+ 696               	.LFB26:
  196:radioctl.c    **** 
  197:radioctl.c    **** uint8_t getMAX_RT()
  198:radioctl.c    **** {
@@ -913,11 +913,11 @@
  731 001c CF91      		pop r28
  732 001e 0895      		ret
  733               		.cfi_endproc
- 734               	.LFE22:
+ 734               	.LFE26:
  736               		.section	.text.getTX_FULL,"ax",@progbits
  737               	.global	getTX_FULL
  739               	getTX_FULL:
- 740               	.LFB23:
+ 740               	.LFB27:
  206:radioctl.c    **** 
  207:radioctl.c    **** uint8_t getTX_FULL()
  208:radioctl.c    **** {
@@ -964,11 +964,11 @@
  774 001a CF91      		pop r28
  775 001c 0895      		ret
  776               		.cfi_endproc
- 777               	.LFE23:
+ 777               	.LFE27:
  779               		.section	.text.clearMAX_RT,"ax",@progbits
  780               	.global	clearMAX_RT
  782               	clearMAX_RT:
- 783               	.LFB24:
+ 783               	.LFB28:
  216:radioctl.c    **** 
  217:radioctl.c    **** 
  218:radioctl.c    **** 
@@ -1007,11 +1007,11 @@
  803 0010 0C94 0000 		jmp closePort
  804               	.LVL78:
  805               		.cfi_endproc
- 806               	.LFE24:
+ 806               	.LFE28:
  808               		.section	.text.clearTX_DS,"ax",@progbits
  809               	.global	clearTX_DS
  811               	clearTX_DS:
- 812               	.LFB25:
+ 812               	.LFB29:
  232:radioctl.c    **** }
  233:radioctl.c    **** 
  234:radioctl.c    **** void clearTX_DS()
@@ -1043,11 +1043,11 @@
  832 0010 0C94 0000 		jmp closePort
  833               	.LVL83:
  834               		.cfi_endproc
- 835               	.LFE25:
+ 835               	.LFE29:
  837               		.section	.text.clearRX_DR,"ax",@progbits
  838               	.global	clearRX_DR
  840               	clearRX_DR:
- 841               	.LFB26:
+ 841               	.LFB30:
  241:radioctl.c    **** }
  242:radioctl.c    **** 
  243:radioctl.c    **** void clearRX_DR()
@@ -1079,38 +1079,38 @@
  861 0010 0C94 0000 		jmp closePort
  862               	.LVL88:
  863               		.cfi_endproc
- 864               	.LFE26:
+ 864               	.LFE30:
  866               		.text
  867               	.Letext0:
- 868               		.file 2 "/usr/lib/avr/include/stdint.h"
+ 868               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
  869               		.file 3 "spi.h"
 DEFINED SYMBOLS
-                            *ABS*:0000000000000000 radioctl.c
-     /tmp/ccFbewrX.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccFbewrX.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccFbewrX.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccFbewrX.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccFbewrX.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccFbewrX.s:13     .text.openPort:0000000000000000 openPort
-     /tmp/ccFbewrX.s:31     .text.closePort:0000000000000000 closePort
-     /tmp/ccFbewrX.s:57     .text.initRadioTX:0000000000000000 initRadioTX
-     /tmp/ccFbewrX.s:85     .text.initRadioRX:0000000000000000 initRadioRX
-     /tmp/ccFbewrX.s:113    .text.activateFeatures:0000000000000000 activateFeatures
-     /tmp/ccFbewrX.s:141    .text.setRadioAddressWidth:0000000000000000 setRadioAddressWidth
-     /tmp/ccFbewrX.s:179    .text.setRadioFrequency:0000000000000000 setRadioFrequency
-     /tmp/ccFbewrX.s:217    .text.setRadioTXAddress:0000000000000000 setRadioTXAddress
-     /tmp/ccFbewrX.s:280    .text.setRadioRXAddress:0000000000000000 setRadioRXAddress
-     /tmp/ccFbewrX.s:343    .text.setRadioRXPayloadSize:0000000000000000 setRadioRXPayloadSize
-     /tmp/ccFbewrX.s:397    .text.setRadioTXPayload:0000000000000000 setRadioTXPayload
-     /tmp/ccFbewrX.s:482    .text.getRadioRXPayload:0000000000000000 getRadioRXPayload
-     /tmp/ccFbewrX.s:565    .text.getRadioStatus:0000000000000000 getRadioStatus
-     /tmp/ccFbewrX.s:605    .text.getRX_DR:0000000000000000 getRX_DR
-     /tmp/ccFbewrX.s:650    .text.getTX_DS:0000000000000000 getTX_DS
-     /tmp/ccFbewrX.s:695    .text.getMAX_RT:0000000000000000 getMAX_RT
-     /tmp/ccFbewrX.s:739    .text.getTX_FULL:0000000000000000 getTX_FULL
-     /tmp/ccFbewrX.s:782    .text.clearMAX_RT:0000000000000000 clearMAX_RT
-     /tmp/ccFbewrX.s:811    .text.clearTX_DS:0000000000000000 clearTX_DS
-     /tmp/ccFbewrX.s:840    .text.clearRX_DR:0000000000000000 clearRX_DR
+                            *ABS*:00000000 radioctl.c
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:2      *ABS*:0000003e __SP_H__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:3      *ABS*:0000003d __SP_L__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:4      *ABS*:0000003f __SREG__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:13     .text.openPort:00000000 openPort
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:31     .text.closePort:00000000 closePort
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:57     .text.initRadioTX:00000000 initRadioTX
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:85     .text.initRadioRX:00000000 initRadioRX
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:113    .text.activateFeatures:00000000 activateFeatures
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:141    .text.setRadioAddressWidth:00000000 setRadioAddressWidth
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:179    .text.setRadioFrequency:00000000 setRadioFrequency
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:217    .text.setRadioTXAddress:00000000 setRadioTXAddress
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:280    .text.setRadioRXAddress:00000000 setRadioRXAddress
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:343    .text.setRadioRXPayloadSize:00000000 setRadioRXPayloadSize
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:397    .text.setRadioTXPayload:00000000 setRadioTXPayload
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:482    .text.getRadioRXPayload:00000000 getRadioRXPayload
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:565    .text.getRadioStatus:00000000 getRadioStatus
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:605    .text.getRX_DR:00000000 getRX_DR
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:650    .text.getTX_DS:00000000 getTX_DS
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:695    .text.getMAX_RT:00000000 getMAX_RT
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:739    .text.getTX_FULL:00000000 getTX_FULL
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:782    .text.clearMAX_RT:00000000 clearMAX_RT
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:811    .text.clearTX_DS:00000000 clearTX_DS
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccgudnC7.s:840    .text.clearRX_DR:00000000 clearRX_DR
 
 UNDEFINED SYMBOLS
 SPI_masterTransmit

@@ -506,7 +506,7 @@
  122 000e 2093 E900 		sts 233,r18
  267:usb_debug_only.c **** 	if (previous_timeout) {
  123               		.loc 1 267 0
- 124 0012 2091 0000 		lds r18,previous_timeout.1693
+ 124 0012 2091 0000 		lds r18,previous_timeout.1662
  125 0016 2223      		tst r18
  126 0018 01F0      		breq .L12
  268:usb_debug_only.c **** 		if (!(UEINTX & (1<<RWAL))) {
@@ -527,7 +527,7 @@
  139               	.L13:
  272:usb_debug_only.c **** 		previous_timeout = 0;
  140               		.loc 1 272 0
- 141 0028 1092 0000 		sts previous_timeout.1693,__zero_reg__
+ 141 0028 1092 0000 		sts previous_timeout.1662,__zero_reg__
  142               	.L12:
  275:usb_debug_only.c **** 	timeout = UDFNUML + 4;
  143               		.loc 1 275 0
@@ -556,7 +556,7 @@
  161               		.loc 1 282 0
  162 0046 81E0      		ldi r24,lo8(1)
  163               	.LVL6:
- 164 0048 8093 0000 		sts previous_timeout.1693,r24
+ 164 0048 8093 0000 		sts previous_timeout.1662,r24
  165               	.LVL7:
  166 004c 00C0      		rjmp .L26
  167               	.LVL8:
@@ -1316,510 +1316,508 @@
  771 0150 2D5F      		subi r18,-3
  772 0152 3F4F      		sbci r19,-1
  773               	.LVL70:
- 774 0154 FC01      		movw r30,r24
+ 774 0154 3196      		adiw r30,1
  775               	.LVL71:
- 776 0156 3296      		adiw r30,2
- 777               	.LVL72:
- 778               	/* #APP */
- 779               	 ;  478 "usb_debug_only.c" 1
- 780 0158 8491      		lpm r24, Z
- 781               		
- 782               	 ;  0 "" 2
- 783               	.LVL73:
- 784               	/* #NOAPP */
- 785               	.LBE38:
- 786 015a 8093 ED00 		sts 237,r24
- 787               	.LVL74:
- 788               	.L76:
+ 776               	/* #APP */
+ 777               	 ;  478 "usb_debug_only.c" 1
+ 778 0156 8491      		lpm r24, Z
+ 779               		
+ 780               	 ;  0 "" 2
+ 781               	.LVL72:
+ 782               	/* #NOAPP */
+ 783               	.LBE38:
+ 784 0158 8093 ED00 		sts 237,r24
+ 785               	.LVL73:
+ 786               	.L76:
  472:usb_debug_only.c **** 			for (i=1; i<5; i++) {
- 789               		.loc 1 472 0
- 790 015e 4F5F      		subi r20,lo8(-(1))
- 791               	.LVL75:
- 792 0160 4530      		cpi r20,lo8(5)
- 793 0162 01F0      		breq .L77
- 794 0164 C901      		movw r24,r18
- 795 0166 00C0      		rjmp .L78
- 796               	.L77:
+ 787               		.loc 1 472 0
+ 788 015c 4F5F      		subi r20,lo8(-(1))
+ 789               	.LVL74:
+ 790 015e 4530      		cpi r20,lo8(5)
+ 791 0160 01F0      		breq .L77
+ 792 0162 C901      		movw r24,r18
+ 793 0164 00C0      		rjmp .L78
+ 794               	.L77:
  479:usb_debug_only.c **** 				}
  480:usb_debug_only.c **** 			}
  481:usb_debug_only.c ****         		UERST = 0x1E;
- 797               		.loc 1 481 0
- 798 0168 8EE1      		ldi r24,lo8(30)
- 799 016a 00C0      		rjmp .L105
- 800               	.LVL76:
- 801               	.L74:
+ 795               		.loc 1 481 0
+ 796 0166 8EE1      		ldi r24,lo8(30)
+ 797 0168 00C0      		rjmp .L105
+ 798               	.LVL75:
+ 799               	.L74:
  482:usb_debug_only.c ****         		UERST = 0;
  483:usb_debug_only.c **** 			return;
  484:usb_debug_only.c **** 		}
  485:usb_debug_only.c **** 		if (bRequest == GET_CONFIGURATION && bmRequestType == 0x80) {
- 802               		.loc 1 485 0
- 803 016c 8830      		cpi r24,lo8(8)
- 804 016e 01F4      		brne .L79
- 805               		.loc 1 485 0 is_stmt 0 discriminator 1
- 806 0170 9038      		cpi r25,lo8(-128)
- 807 0172 01F0      		breq .+2
- 808 0174 00C0      		rjmp .L53
+ 800               		.loc 1 485 0
+ 801 016a 8830      		cpi r24,lo8(8)
+ 802 016c 01F4      		brne .L79
+ 803               		.loc 1 485 0 is_stmt 0 discriminator 1
+ 804 016e 9038      		cpi r25,lo8(-128)
+ 805 0170 01F0      		breq .+2
+ 806 0172 00C0      		rjmp .L53
  486:usb_debug_only.c **** 			usb_wait_in_ready();
- 809               		.loc 1 486 0 is_stmt 1
- 810 0176 0E94 0000 		call usb_wait_in_ready
- 811               	.LVL77:
+ 807               		.loc 1 486 0 is_stmt 1
+ 808 0174 0E94 0000 		call usb_wait_in_ready
+ 809               	.LVL76:
  487:usb_debug_only.c **** 			UEDATX = usb_configuration;
- 812               		.loc 1 487 0
- 813 017a 8091 0000 		lds r24,usb_configuration
- 814 017e 8093 F100 		sts 241,r24
- 815 0182 00C0      		rjmp .L106
- 816               	.LVL78:
- 817               	.L79:
+ 810               		.loc 1 487 0
+ 811 0178 8091 0000 		lds r24,usb_configuration
+ 812 017c 8093 F100 		sts 241,r24
+ 813 0180 00C0      		rjmp .L106
+ 814               	.LVL77:
+ 815               	.L79:
  488:usb_debug_only.c **** 			usb_send_in();
  489:usb_debug_only.c **** 			return;
  490:usb_debug_only.c **** 		}
  491:usb_debug_only.c **** 
  492:usb_debug_only.c **** 		if (bRequest == GET_STATUS) {
- 818               		.loc 1 492 0
- 819 0184 8111      		cpse r24,__zero_reg__
- 820 0186 00C0      		rjmp .L75
+ 816               		.loc 1 492 0
+ 817 0182 8111      		cpse r24,__zero_reg__
+ 818 0184 00C0      		rjmp .L75
  493:usb_debug_only.c **** 			usb_wait_in_ready();
- 821               		.loc 1 493 0
- 822 0188 9983      		std Y+1,r25
- 823 018a 0E94 0000 		call usb_wait_in_ready
- 824               	.LVL79:
+ 819               		.loc 1 493 0
+ 820 0186 9983      		std Y+1,r25
+ 821 0188 0E94 0000 		call usb_wait_in_ready
+ 822               	.LVL78:
  494:usb_debug_only.c **** 			i = 0;
  495:usb_debug_only.c **** 			#ifdef SUPPORT_ENDPOINT_HALT
  496:usb_debug_only.c **** 			if (bmRequestType == 0x82) {
- 825               		.loc 1 496 0
- 826 018e 9981      		ldd r25,Y+1
- 827 0190 9238      		cpi r25,lo8(-126)
- 828 0192 01F4      		brne .L90
+ 823               		.loc 1 496 0
+ 824 018c 9981      		ldd r25,Y+1
+ 825 018e 9238      		cpi r25,lo8(-126)
+ 826 0190 01F4      		brne .L90
  497:usb_debug_only.c **** 				UENUM = wIndex;
- 829               		.loc 1 497 0
- 830 0194 E092 E900 		sts 233,r14
+ 827               		.loc 1 497 0
+ 828 0192 E092 E900 		sts 233,r14
  498:usb_debug_only.c **** 				if (UECONX & (1<<STALLRQ)) i = 1;
- 831               		.loc 1 498 0
- 832 0198 8091 EB00 		lds r24,235
- 833 019c 85FB      		bst r24,5
- 834 019e 8827      		clr r24
- 835 01a0 80F9      		bld r24,0
- 836               	.LVL80:
+ 829               		.loc 1 498 0
+ 830 0196 8091 EB00 		lds r24,235
+ 831 019a 85FB      		bst r24,5
+ 832 019c 8827      		clr r24
+ 833 019e 80F9      		bld r24,0
+ 834               	.LVL79:
  499:usb_debug_only.c **** 				UENUM = 0;
- 837               		.loc 1 499 0
- 838 01a2 1092 E900 		sts 233,__zero_reg__
- 839 01a6 00C0      		rjmp .L80
- 840               	.LVL81:
- 841               	.L90:
+ 835               		.loc 1 499 0
+ 836 01a0 1092 E900 		sts 233,__zero_reg__
+ 837 01a4 00C0      		rjmp .L80
+ 838               	.LVL80:
+ 839               	.L90:
  494:usb_debug_only.c **** 			i = 0;
- 842               		.loc 1 494 0
- 843 01a8 80E0      		ldi r24,0
- 844               	.LVL82:
- 845               	.L80:
+ 840               		.loc 1 494 0
+ 841 01a6 80E0      		ldi r24,0
+ 842               	.LVL81:
+ 843               	.L80:
  500:usb_debug_only.c **** 			}
  501:usb_debug_only.c **** 			#endif
  502:usb_debug_only.c **** 			UEDATX = i;
- 846               		.loc 1 502 0
- 847 01aa 8093 F100 		sts 241,r24
+ 844               		.loc 1 502 0
+ 845 01a8 8093 F100 		sts 241,r24
  503:usb_debug_only.c **** 			UEDATX = 0;
- 848               		.loc 1 503 0
- 849 01ae 1092 F100 		sts 241,__zero_reg__
- 850               	.LVL83:
- 851               	.L106:
- 852               	.LBB39:
- 853               	.LBB40:
+ 846               		.loc 1 503 0
+ 847 01ac 1092 F100 		sts 241,__zero_reg__
+ 848               	.LVL82:
+ 849               	.L106:
+ 850               	.LBB39:
+ 851               	.LBB40:
  376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
- 854               		.loc 1 376 0
- 855 01b2 8EEF      		ldi r24,lo8(-2)
- 856 01b4 8093 E800 		sts 232,r24
- 857 01b8 00C0      		rjmp .L52
- 858               	.LVL84:
- 859               	.L75:
- 860               	.LBE40:
- 861               	.LBE39:
+ 852               		.loc 1 376 0
+ 853 01b0 8EEF      		ldi r24,lo8(-2)
+ 854 01b2 8093 E800 		sts 232,r24
+ 855 01b6 00C0      		rjmp .L52
+ 856               	.LVL83:
+ 857               	.L75:
+ 858               	.LBE40:
+ 859               	.LBE39:
  504:usb_debug_only.c **** 			usb_send_in();
  505:usb_debug_only.c **** 			return;
  506:usb_debug_only.c **** 		}
  507:usb_debug_only.c **** 		#ifdef SUPPORT_ENDPOINT_HALT
  508:usb_debug_only.c **** 		if ((bRequest == CLEAR_FEATURE || bRequest == SET_FEATURE)
- 862               		.loc 1 508 0
- 863 01ba 482F      		mov r20,r24
- 864 01bc 4D7F      		andi r20,lo8(-3)
- 865 01be 4130      		cpi r20,lo8(1)
- 866 01c0 01F0      		breq .+2
- 867 01c2 00C0      		rjmp .L53
+ 860               		.loc 1 508 0
+ 861 01b8 482F      		mov r20,r24
+ 862 01ba 4D7F      		andi r20,lo8(-3)
+ 863 01bc 4130      		cpi r20,lo8(1)
+ 864 01be 01F0      		breq .+2
+ 865 01c0 00C0      		rjmp .L53
  509:usb_debug_only.c **** 		  && bmRequestType == 0x02 && wValue == 0) {
- 868               		.loc 1 509 0
- 869 01c4 9230      		cpi r25,lo8(2)
- 870 01c6 01F4      		brne .L81
- 871               		.loc 1 509 0 is_stmt 0 discriminator 1
- 872 01c8 012B      		or r16,r17
- 873 01ca 01F4      		brne .L53
+ 866               		.loc 1 509 0
+ 867 01c2 9230      		cpi r25,lo8(2)
+ 868 01c4 01F4      		brne .L81
+ 869               		.loc 1 509 0 is_stmt 0 discriminator 1
+ 870 01c6 012B      		or r16,r17
+ 871 01c8 01F4      		brne .L53
  510:usb_debug_only.c **** 			i = wIndex & 0x7F;
- 874               		.loc 1 510 0 is_stmt 1
- 875 01cc 2E2D      		mov r18,r14
- 876 01ce 2F77      		andi r18,lo8(127)
- 877               	.LVL85:
+ 872               		.loc 1 510 0 is_stmt 1
+ 873 01ca 2E2D      		mov r18,r14
+ 874 01cc 2F77      		andi r18,lo8(127)
+ 875               	.LVL84:
  511:usb_debug_only.c **** 			if (i >= 1 && i <= MAX_ENDPOINT) {
- 878               		.loc 1 511 0
- 879 01d0 9FEF      		ldi r25,lo8(-1)
- 880               	.LVL86:
- 881 01d2 920F      		add r25,r18
- 882 01d4 9430      		cpi r25,lo8(4)
- 883 01d6 00F4      		brsh .L53
- 884               	.LBB41:
- 885               	.LBB42:
+ 876               		.loc 1 511 0
+ 877 01ce 9FEF      		ldi r25,lo8(-1)
+ 878               	.LVL85:
+ 879 01d0 920F      		add r25,r18
+ 880 01d2 9430      		cpi r25,lo8(4)
+ 881 01d4 00F4      		brsh .L53
+ 882               	.LBB41:
+ 883               	.LBB42:
  376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
- 886               		.loc 1 376 0
- 887 01d8 9EEF      		ldi r25,lo8(-2)
- 888 01da 9093 E800 		sts 232,r25
- 889               	.LBE42:
- 890               	.LBE41:
+ 884               		.loc 1 376 0
+ 885 01d6 9EEF      		ldi r25,lo8(-2)
+ 886 01d8 9093 E800 		sts 232,r25
+ 887               	.LBE42:
+ 888               	.LBE41:
  512:usb_debug_only.c **** 				usb_send_in();
  513:usb_debug_only.c **** 				UENUM = i;
- 891               		.loc 1 513 0
- 892 01de 2093 E900 		sts 233,r18
+ 889               		.loc 1 513 0
+ 890 01dc 2093 E900 		sts 233,r18
  514:usb_debug_only.c **** 				if (bRequest == SET_FEATURE) {
- 893               		.loc 1 514 0
- 894 01e2 8330      		cpi r24,lo8(3)
- 895 01e4 01F0      		breq .L53
+ 891               		.loc 1 514 0
+ 892 01e0 8330      		cpi r24,lo8(3)
+ 893 01e2 01F0      		breq .L53
  515:usb_debug_only.c **** 					UECONX = (1<<STALLRQ)|(1<<EPEN);
  516:usb_debug_only.c **** 				} else {
  517:usb_debug_only.c **** 					UECONX = (1<<STALLRQC)|(1<<RSTDT)|(1<<EPEN);
- 896               		.loc 1 517 0
- 897 01e6 89E1      		ldi r24,lo8(25)
- 898               	.LVL87:
- 899 01e8 8093 EB00 		sts 235,r24
+ 894               		.loc 1 517 0
+ 895 01e4 89E1      		ldi r24,lo8(25)
+ 896               	.LVL86:
+ 897 01e6 8093 EB00 		sts 235,r24
  518:usb_debug_only.c **** 					UERST = (1 << i);
- 900               		.loc 1 518 0
- 901 01ec 81E0      		ldi r24,lo8(1)
- 902 01ee 90E0      		ldi r25,0
- 903 01f0 022E      		mov r0,r18
- 904 01f2 00C0      		rjmp 2f
- 905               		1:
- 906 01f4 880F      		lsl r24
- 907               		2:
- 908 01f6 0A94      		dec r0
- 909 01f8 02F4      		brpl 1b
- 910               	.LVL88:
- 911               	.L105:
- 912 01fa 8093 EA00 		sts 234,r24
+ 898               		.loc 1 518 0
+ 899 01ea 81E0      		ldi r24,lo8(1)
+ 900 01ec 90E0      		ldi r25,0
+ 901 01ee 022E      		mov r0,r18
+ 902 01f0 00C0      		rjmp 2f
+ 903               		1:
+ 904 01f2 880F      		lsl r24
+ 905               		2:
+ 906 01f4 0A94      		dec r0
+ 907 01f6 02F4      		brpl 1b
+ 908               	.LVL87:
+ 909               	.L105:
+ 910 01f8 8093 EA00 		sts 234,r24
  519:usb_debug_only.c **** 					UERST = 0;
- 913               		.loc 1 519 0
- 914 01fe 1092 EA00 		sts 234,__zero_reg__
- 915 0202 00C0      		rjmp .L52
- 916               	.LVL89:
- 917               	.L81:
+ 911               		.loc 1 519 0
+ 912 01fc 1092 EA00 		sts 234,__zero_reg__
+ 913 0200 00C0      		rjmp .L52
+ 914               	.LVL88:
+ 915               	.L81:
  520:usb_debug_only.c **** 				}
  521:usb_debug_only.c **** 				return;
  522:usb_debug_only.c **** 			}
  523:usb_debug_only.c **** 		}
  524:usb_debug_only.c **** 		#endif
  525:usb_debug_only.c **** 		if (bRequest == HID_GET_REPORT && bmRequestType == 0xA1) {
- 918               		.loc 1 525 0
- 919 0204 8130      		cpi r24,lo8(1)
- 920 0206 01F4      		brne .L53
- 921               		.loc 1 525 0 is_stmt 0 discriminator 1
- 922 0208 913A      		cpi r25,lo8(-95)
- 923 020a 01F4      		brne .L53
+ 916               		.loc 1 525 0
+ 917 0202 8130      		cpi r24,lo8(1)
+ 918 0204 01F4      		brne .L53
+ 919               		.loc 1 525 0 is_stmt 0 discriminator 1
+ 920 0206 913A      		cpi r25,lo8(-95)
+ 921 0208 01F4      		brne .L53
  526:usb_debug_only.c **** 			if (wIndex == 0) {
- 924               		.loc 1 526 0 is_stmt 1
- 925 020c EF28      		or r14,r15
- 926 020e 01F4      		brne .L53
- 927               	.LBB43:
- 928               	.LBB44:
+ 922               		.loc 1 526 0 is_stmt 1
+ 923 020a EF28      		or r14,r15
+ 924 020c 01F4      		brne .L53
+ 925               	.LBB43:
+ 926               	.LBB44:
  376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
- 929               		.loc 1 376 0
- 930 0210 3EEF      		ldi r19,lo8(-2)
- 931               	.LVL90:
- 932               	.L85:
- 933               	.LBE44:
- 934               	.LBE43:
+ 927               		.loc 1 376 0
+ 928 020e 3EEF      		ldi r19,lo8(-2)
+ 929               	.LVL89:
+ 930               	.L85:
+ 931               	.LBE44:
+ 932               	.LBE43:
  527:usb_debug_only.c **** 				len = wLength;
  528:usb_debug_only.c **** 				do {
  529:usb_debug_only.c **** 					// wait for host ready for IN packet
  530:usb_debug_only.c **** 					do {
  531:usb_debug_only.c **** 						i = UEINTX;
- 935               		.loc 1 531 0 discriminator 1
- 936 0212 8091 E800 		lds r24,232
- 937               	.LVL91:
+ 933               		.loc 1 531 0 discriminator 1
+ 934 0210 8091 E800 		lds r24,232
+ 935               	.LVL90:
  532:usb_debug_only.c **** 					} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
- 938               		.loc 1 532 0 discriminator 1
- 939 0216 982F      		mov r25,r24
- 940 0218 9570      		andi r25,lo8(5)
- 941 021a 01F0      		breq .L85
+ 936               		.loc 1 532 0 discriminator 1
+ 937 0214 982F      		mov r25,r24
+ 938 0216 9570      		andi r25,lo8(5)
+ 939 0218 01F0      		breq .L85
  533:usb_debug_only.c **** 					if (i & (1<<RXOUTI)) return;	// abort
- 942               		.loc 1 533 0
- 943 021c 82FD      		sbrc r24,2
- 944 021e 00C0      		rjmp .L52
+ 940               		.loc 1 533 0
+ 941 021a 82FD      		sbrc r24,2
+ 942 021c 00C0      		rjmp .L52
  534:usb_debug_only.c **** 					// send IN packet
  535:usb_debug_only.c **** 					n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
- 945               		.loc 1 535 0
- 946 0220 822F      		mov r24,r18
- 947               	.LVL92:
- 948 0222 2132      		cpi r18,lo8(33)
- 949 0224 00F0      		brlo .L86
- 950 0226 80E2      		ldi r24,lo8(32)
- 951               	.L86:
- 952               	.LVL93:
+ 943               		.loc 1 535 0
+ 944 021e 822F      		mov r24,r18
+ 945               	.LVL91:
+ 946 0220 2132      		cpi r18,lo8(33)
+ 947 0222 00F0      		brlo .L86
+ 948 0224 80E2      		ldi r24,lo8(32)
+ 949               	.L86:
+ 950               	.LVL92:
  536:usb_debug_only.c **** 					for (i = n; i; i--) {
- 953               		.loc 1 536 0
- 954 0228 982F      		mov r25,r24
- 955               	.LVL94:
- 956               	.L87:
- 957               		.loc 1 536 0 is_stmt 0 discriminator 1
- 958 022a 9923      		tst r25
- 959 022c 01F0      		breq .L108
+ 951               		.loc 1 536 0
+ 952 0226 982F      		mov r25,r24
+ 953               	.LVL93:
+ 954               	.L87:
+ 955               		.loc 1 536 0 is_stmt 0 discriminator 1
+ 956 0228 9923      		tst r25
+ 957 022a 01F0      		breq .L108
  537:usb_debug_only.c **** 						UEDATX = 0;
- 960               		.loc 1 537 0 is_stmt 1 discriminator 2
- 961 022e 1092 F100 		sts 241,__zero_reg__
+ 958               		.loc 1 537 0 is_stmt 1 discriminator 2
+ 959 022c 1092 F100 		sts 241,__zero_reg__
  536:usb_debug_only.c **** 					for (i = n; i; i--) {
- 962               		.loc 1 536 0 discriminator 2
- 963 0232 9150      		subi r25,lo8(-(-1))
- 964               	.LVL95:
- 965 0234 00C0      		rjmp .L87
- 966               	.L108:
+ 960               		.loc 1 536 0 discriminator 2
+ 961 0230 9150      		subi r25,lo8(-(-1))
+ 962               	.LVL94:
+ 963 0232 00C0      		rjmp .L87
+ 964               	.L108:
  538:usb_debug_only.c **** 					}
  539:usb_debug_only.c **** 					len -= n;
- 967               		.loc 1 539 0
- 968 0236 281B      		sub r18,r24
- 969               	.LVL96:
- 970               	.LBB46:
- 971               	.LBB45:
+ 965               		.loc 1 539 0
+ 966 0234 281B      		sub r18,r24
+ 967               	.LVL95:
+ 968               	.LBB46:
+ 969               	.LBB45:
  376:usb_debug_only.c **** 	UEINTX = ~(1<<TXINI);
- 972               		.loc 1 376 0
- 973 0238 3093 E800 		sts 232,r19
- 974               	.LBE45:
- 975               	.LBE46:
+ 970               		.loc 1 376 0
+ 971 0236 3093 E800 		sts 232,r19
+ 972               	.LBE45:
+ 973               	.LBE46:
  540:usb_debug_only.c **** 					usb_send_in();
  541:usb_debug_only.c **** 				} while (len || n == ENDPOINT0_SIZE);
- 976               		.loc 1 541 0
- 977 023c 2111      		cpse r18,__zero_reg__
- 978 023e 00C0      		rjmp .L85
- 979               		.loc 1 541 0 is_stmt 0 discriminator 1
- 980 0240 8032      		cpi r24,lo8(32)
- 981 0242 01F0      		breq .L85
- 982 0244 00C0      		rjmp .L52
- 983               	.LVL97:
- 984               	.L53:
+ 974               		.loc 1 541 0
+ 975 023a 2111      		cpse r18,__zero_reg__
+ 976 023c 00C0      		rjmp .L85
+ 977               		.loc 1 541 0 is_stmt 0 discriminator 1
+ 978 023e 8032      		cpi r24,lo8(32)
+ 979 0240 01F0      		breq .L85
+ 980 0242 00C0      		rjmp .L52
+ 981               	.LVL96:
+ 982               	.L53:
  542:usb_debug_only.c **** 				return;
  543:usb_debug_only.c **** 			}
  544:usb_debug_only.c **** 		}
  545:usb_debug_only.c ****         }
  546:usb_debug_only.c **** 	UECONX = (1<<STALLRQ) | (1<<EPEN);	// stall
- 985               		.loc 1 546 0 is_stmt 1
- 986 0246 81E2      		ldi r24,lo8(33)
- 987 0248 8093 EB00 		sts 235,r24
- 988               	.L52:
- 989               	/* epilogue start */
+ 983               		.loc 1 546 0 is_stmt 1
+ 984 0244 81E2      		ldi r24,lo8(33)
+ 985 0246 8093 EB00 		sts 235,r24
+ 986               	.L52:
+ 987               	/* epilogue start */
  547:usb_debug_only.c **** }
- 990               		.loc 1 547 0
- 991 024c 0F90      		pop __tmp_reg__
- 992 024e DF91      		pop r29
- 993 0250 CF91      		pop r28
- 994 0252 FF91      		pop r31
- 995 0254 EF91      		pop r30
- 996 0256 BF91      		pop r27
- 997 0258 AF91      		pop r26
- 998 025a 9F91      		pop r25
- 999 025c 8F91      		pop r24
- 1000 025e 7F91      		pop r23
- 1001 0260 6F91      		pop r22
- 1002 0262 5F91      		pop r21
- 1003 0264 4F91      		pop r20
- 1004 0266 3F91      		pop r19
- 1005 0268 2F91      		pop r18
- 1006 026a 1F91      		pop r17
- 1007 026c 0F91      		pop r16
- 1008 026e FF90      		pop r15
- 1009 0270 EF90      		pop r14
- 1010 0272 0F90      		pop r0
- 1011 0274 0FBE      		out __SREG__,r0
- 1012 0276 0F90      		pop r0
- 1013 0278 1F90      		pop r1
- 1014 027a 1895      		reti
- 1015               		.cfi_endproc
- 1016               	.LFE10:
- 1018               		.local	previous_timeout.1693
- 1019               		.comm	previous_timeout.1693,1,1
- 1020               		.local	debug_flush_timer
- 1021               		.comm	debug_flush_timer,1,1
- 1022               		.local	usb_configuration
- 1023               		.comm	usb_configuration,1,1
- 1024               		.section	.progmem.data,"a",@progbits
- 1027               	descriptor_list:
- 1028 0000 0001      		.word	256
- 1029 0002 0000      		.word	0
- 1030 0004 0000      		.word	device_descriptor
- 1031 0006 12        		.byte	18
- 1032 0007 0002      		.word	512
- 1033 0009 0000      		.word	0
- 1034 000b 0000      		.word	config1_descriptor
- 1035 000d 22        		.byte	34
- 1036 000e 0022      		.word	8704
- 1037 0010 0000      		.word	0
- 1038 0012 0000      		.word	hid_report_descriptor
- 1039 0014 15        		.byte	21
- 1040 0015 0021      		.word	8448
- 1041 0017 0000      		.word	0
- 1042 0019 0000      		.word	config1_descriptor+18
- 1043 001b 09        		.byte	9
- 1044 001c 0003      		.word	768
- 1045 001e 0000      		.word	0
- 1046 0020 0000      		.word	string0
- 1047 0022 04        		.byte	4
- 1048 0023 0103      		.word	769
- 1049 0025 0904      		.word	1033
- 1050 0027 0000      		.word	string1
- 1051 0029 14        		.byte	20
- 1052 002a 0203      		.word	770
- 1053 002c 0904      		.word	1033
- 1054 002e 0000      		.word	string2
- 1055 0030 20        		.byte	32
- 1058               	string2:
- 1059 0031 20        		.byte	32
- 1060 0032 03        		.byte	3
- 1061 0033 5900      		.string	"Y"
- 1062 0035 6F00      		.string	"o"
- 1063 0037 7500      		.string	"u"
- 1064 0039 7200      		.string	"r"
- 1065 003b 2000      		.string	" "
- 1066 003d 5500      		.string	"U"
- 1067 003f 5300      		.string	"S"
- 1068 0041 4200      		.string	"B"
- 1069 0043 2000      		.string	" "
- 1070 0045 4400      		.string	"D"
- 1071 0047 6500      		.string	"e"
- 1072 0049 7600      		.string	"v"
- 1073 004b 6900      		.string	"i"
- 1074 004d 6300      		.string	"c"
- 1075 004f 6500      		.string	"e"
- 1076 0051 00        		.string	""
- 1077 0052 00        		.string	""
- 1080               	string1:
- 1081 0053 14        		.byte	20
- 1082 0054 03        		.byte	3
- 1083 0055 5900      		.string	"Y"
- 1084 0057 6F00      		.string	"o"
- 1085 0059 7500      		.string	"u"
- 1086 005b 7200      		.string	"r"
- 1087 005d 2000      		.string	" "
- 1088 005f 4E00      		.string	"N"
- 1089 0061 6100      		.string	"a"
- 1090 0063 6D00      		.string	"m"
- 1091 0065 6500      		.string	"e"
- 1092 0067 00        		.string	""
- 1093 0068 00        		.string	""
- 1096               	string0:
- 1097 0069 04        		.byte	4
- 1098 006a 03        		.byte	3
- 1099 006b 0904      		.word	1033
- 1102               	config1_descriptor:
- 1103 006d 09        		.byte	9
- 1104 006e 02        		.byte	2
- 1105 006f 22        		.byte	34
- 1106 0070 00        		.byte	0
- 1107 0071 01        		.byte	1
- 1108 0072 01        		.byte	1
- 1109 0073 00        		.byte	0
- 1110 0074 C0        		.byte	-64
- 1111 0075 32        		.byte	50
- 1112 0076 09        		.byte	9
- 1113 0077 04        		.byte	4
- 1114 0078 00        		.byte	0
- 1115 0079 00        		.byte	0
- 1116 007a 01        		.byte	1
- 1117 007b 03        		.byte	3
- 1118 007c 00        		.byte	0
- 1119 007d 00        		.byte	0
- 1120 007e 00        		.byte	0
- 1121 007f 09        		.byte	9
- 1122 0080 21        		.byte	33
- 1123 0081 11        		.byte	17
- 1124 0082 01        		.byte	1
- 1125 0083 00        		.byte	0
- 1126 0084 01        		.byte	1
- 1127 0085 22        		.byte	34
- 1128 0086 15        		.byte	21
- 1129 0087 00        		.byte	0
- 1130 0088 07        		.byte	7
- 1131 0089 05        		.byte	5
- 1132 008a 83        		.byte	-125
- 1133 008b 03        		.byte	3
- 1134 008c 20        		.byte	32
- 1135 008d 00        		.byte	0
- 1136 008e 01        		.byte	1
- 1139               	hid_report_descriptor:
- 1140 008f 06        		.byte	6
- 1141 0090 31        		.byte	49
- 1142 0091 FF        		.byte	-1
- 1143 0092 09        		.byte	9
- 1144 0093 74        		.byte	116
- 1145 0094 A1        		.byte	-95
- 1146 0095 53        		.byte	83
- 1147 0096 75        		.byte	117
- 1148 0097 08        		.byte	8
- 1149 0098 15        		.byte	21
- 1150 0099 00        		.byte	0
- 1151 009a 26        		.byte	38
- 1152 009b FF        		.byte	-1
- 1153 009c 00        		.byte	0
- 1154 009d 95        		.byte	-107
- 1155 009e 20        		.byte	32
- 1156 009f 09        		.byte	9
- 1157 00a0 75        		.byte	117
- 1158 00a1 81        		.byte	-127
- 1159 00a2 02        		.byte	2
- 1160 00a3 C0        		.byte	-64
- 1163               	device_descriptor:
- 1164 00a4 12        		.byte	18
- 1165 00a5 01        		.byte	1
- 1166 00a6 00        		.byte	0
- 1167 00a7 02        		.byte	2
- 1168 00a8 00        		.byte	0
- 1169 00a9 00        		.byte	0
- 1170 00aa 00        		.byte	0
- 1171 00ab 20        		.byte	32
- 1172 00ac C0        		.byte	-64
- 1173 00ad 16        		.byte	22
- 1174 00ae 79        		.byte	121
- 1175 00af 04        		.byte	4
- 1176 00b0 00        		.byte	0
- 1177 00b1 01        		.byte	1
- 1178 00b2 01        		.byte	1
- 1179 00b3 02        		.byte	2
- 1180 00b4 00        		.byte	0
- 1181 00b5 01        		.byte	1
- 1184               	endpoint_config_table:
- 1185 00b6 00        		.byte	0
- 1186 00b7 00        		.byte	0
- 1187 00b8 01        		.byte	1
- 1188 00b9 C1        		.byte	-63
- 1189 00ba 26        		.byte	38
- 1190 00bb 00        		.byte	0
- 1191               		.text
- 1192               	.Letext0:
- 1193               		.file 2 "/usr/lib/avr/include/stdint.h"
+ 988               		.loc 1 547 0
+ 989 024a 0F90      		pop __tmp_reg__
+ 990 024c DF91      		pop r29
+ 991 024e CF91      		pop r28
+ 992 0250 FF91      		pop r31
+ 993 0252 EF91      		pop r30
+ 994 0254 BF91      		pop r27
+ 995 0256 AF91      		pop r26
+ 996 0258 9F91      		pop r25
+ 997 025a 8F91      		pop r24
+ 998 025c 7F91      		pop r23
+ 999 025e 6F91      		pop r22
+ 1000 0260 5F91      		pop r21
+ 1001 0262 4F91      		pop r20
+ 1002 0264 3F91      		pop r19
+ 1003 0266 2F91      		pop r18
+ 1004 0268 1F91      		pop r17
+ 1005 026a 0F91      		pop r16
+ 1006 026c FF90      		pop r15
+ 1007 026e EF90      		pop r14
+ 1008 0270 0F90      		pop r0
+ 1009 0272 0FBE      		out __SREG__,r0
+ 1010 0274 0F90      		pop r0
+ 1011 0276 1F90      		pop r1
+ 1012 0278 1895      		reti
+ 1013               		.cfi_endproc
+ 1014               	.LFE10:
+ 1016               		.local	previous_timeout.1662
+ 1017               		.comm	previous_timeout.1662,1,1
+ 1018               		.local	debug_flush_timer
+ 1019               		.comm	debug_flush_timer,1,1
+ 1020               		.local	usb_configuration
+ 1021               		.comm	usb_configuration,1,1
+ 1022               		.section	.progmem.data,"a",@progbits
+ 1025               	descriptor_list:
+ 1026 0000 0001      		.word	256
+ 1027 0002 0000      		.word	0
+ 1028 0004 0000      		.word	device_descriptor
+ 1029 0006 12        		.byte	18
+ 1030 0007 0002      		.word	512
+ 1031 0009 0000      		.word	0
+ 1032 000b 0000      		.word	config1_descriptor
+ 1033 000d 22        		.byte	34
+ 1034 000e 0022      		.word	8704
+ 1035 0010 0000      		.word	0
+ 1036 0012 0000      		.word	hid_report_descriptor
+ 1037 0014 15        		.byte	21
+ 1038 0015 0021      		.word	8448
+ 1039 0017 0000      		.word	0
+ 1040 0019 0000      		.word	config1_descriptor+18
+ 1041 001b 09        		.byte	9
+ 1042 001c 0003      		.word	768
+ 1043 001e 0000      		.word	0
+ 1044 0020 0000      		.word	string0
+ 1045 0022 04        		.byte	4
+ 1046 0023 0103      		.word	769
+ 1047 0025 0904      		.word	1033
+ 1048 0027 0000      		.word	string1
+ 1049 0029 14        		.byte	20
+ 1050 002a 0203      		.word	770
+ 1051 002c 0904      		.word	1033
+ 1052 002e 0000      		.word	string2
+ 1053 0030 20        		.byte	32
+ 1056               	string2:
+ 1057 0031 20        		.byte	32
+ 1058 0032 03        		.byte	3
+ 1059 0033 5900      		.string	"Y"
+ 1060 0035 6F00      		.string	"o"
+ 1061 0037 7500      		.string	"u"
+ 1062 0039 7200      		.string	"r"
+ 1063 003b 2000      		.string	" "
+ 1064 003d 5500      		.string	"U"
+ 1065 003f 5300      		.string	"S"
+ 1066 0041 4200      		.string	"B"
+ 1067 0043 2000      		.string	" "
+ 1068 0045 4400      		.string	"D"
+ 1069 0047 6500      		.string	"e"
+ 1070 0049 7600      		.string	"v"
+ 1071 004b 6900      		.string	"i"
+ 1072 004d 6300      		.string	"c"
+ 1073 004f 6500      		.string	"e"
+ 1074 0051 00        		.string	""
+ 1075 0052 00        		.string	""
+ 1078               	string1:
+ 1079 0053 14        		.byte	20
+ 1080 0054 03        		.byte	3
+ 1081 0055 5900      		.string	"Y"
+ 1082 0057 6F00      		.string	"o"
+ 1083 0059 7500      		.string	"u"
+ 1084 005b 7200      		.string	"r"
+ 1085 005d 2000      		.string	" "
+ 1086 005f 4E00      		.string	"N"
+ 1087 0061 6100      		.string	"a"
+ 1088 0063 6D00      		.string	"m"
+ 1089 0065 6500      		.string	"e"
+ 1090 0067 00        		.string	""
+ 1091 0068 00        		.string	""
+ 1094               	string0:
+ 1095 0069 04        		.byte	4
+ 1096 006a 03        		.byte	3
+ 1097 006b 0904      		.word	1033
+ 1100               	config1_descriptor:
+ 1101 006d 09        		.byte	9
+ 1102 006e 02        		.byte	2
+ 1103 006f 22        		.byte	34
+ 1104 0070 00        		.byte	0
+ 1105 0071 01        		.byte	1
+ 1106 0072 01        		.byte	1
+ 1107 0073 00        		.byte	0
+ 1108 0074 C0        		.byte	-64
+ 1109 0075 32        		.byte	50
+ 1110 0076 09        		.byte	9
+ 1111 0077 04        		.byte	4
+ 1112 0078 00        		.byte	0
+ 1113 0079 00        		.byte	0
+ 1114 007a 01        		.byte	1
+ 1115 007b 03        		.byte	3
+ 1116 007c 00        		.byte	0
+ 1117 007d 00        		.byte	0
+ 1118 007e 00        		.byte	0
+ 1119 007f 09        		.byte	9
+ 1120 0080 21        		.byte	33
+ 1121 0081 11        		.byte	17
+ 1122 0082 01        		.byte	1
+ 1123 0083 00        		.byte	0
+ 1124 0084 01        		.byte	1
+ 1125 0085 22        		.byte	34
+ 1126 0086 15        		.byte	21
+ 1127 0087 00        		.byte	0
+ 1128 0088 07        		.byte	7
+ 1129 0089 05        		.byte	5
+ 1130 008a 83        		.byte	-125
+ 1131 008b 03        		.byte	3
+ 1132 008c 20        		.byte	32
+ 1133 008d 00        		.byte	0
+ 1134 008e 01        		.byte	1
+ 1137               	hid_report_descriptor:
+ 1138 008f 06        		.byte	6
+ 1139 0090 31        		.byte	49
+ 1140 0091 FF        		.byte	-1
+ 1141 0092 09        		.byte	9
+ 1142 0093 74        		.byte	116
+ 1143 0094 A1        		.byte	-95
+ 1144 0095 53        		.byte	83
+ 1145 0096 75        		.byte	117
+ 1146 0097 08        		.byte	8
+ 1147 0098 15        		.byte	21
+ 1148 0099 00        		.byte	0
+ 1149 009a 26        		.byte	38
+ 1150 009b FF        		.byte	-1
+ 1151 009c 00        		.byte	0
+ 1152 009d 95        		.byte	-107
+ 1153 009e 20        		.byte	32
+ 1154 009f 09        		.byte	9
+ 1155 00a0 75        		.byte	117
+ 1156 00a1 81        		.byte	-127
+ 1157 00a2 02        		.byte	2
+ 1158 00a3 C0        		.byte	-64
+ 1161               	device_descriptor:
+ 1162 00a4 12        		.byte	18
+ 1163 00a5 01        		.byte	1
+ 1164 00a6 00        		.byte	0
+ 1165 00a7 02        		.byte	2
+ 1166 00a8 00        		.byte	0
+ 1167 00a9 00        		.byte	0
+ 1168 00aa 00        		.byte	0
+ 1169 00ab 20        		.byte	32
+ 1170 00ac C0        		.byte	-64
+ 1171 00ad 16        		.byte	22
+ 1172 00ae 79        		.byte	121
+ 1173 00af 04        		.byte	4
+ 1174 00b0 00        		.byte	0
+ 1175 00b1 01        		.byte	1
+ 1176 00b2 01        		.byte	1
+ 1177 00b3 02        		.byte	2
+ 1178 00b4 00        		.byte	0
+ 1179 00b5 01        		.byte	1
+ 1182               	endpoint_config_table:
+ 1183 00b6 00        		.byte	0
+ 1184 00b7 00        		.byte	0
+ 1185 00b8 01        		.byte	1
+ 1186 00b9 C1        		.byte	-63
+ 1187 00ba 26        		.byte	38
+ 1188 00bb 00        		.byte	0
+ 1189               		.text
+ 1190               	.Letext0:
+ 1191               		.file 2 "/usr/local/CrossPack-AVR-20131216/avr/include/stdint.h"
 DEFINED SYMBOLS
-                            *ABS*:0000000000000000 usb_debug_only.c
-     /tmp/ccqIUoBG.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccqIUoBG.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccqIUoBG.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccqIUoBG.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccqIUoBG.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccqIUoBG.s:12     .text.usb_wait_in_ready:0000000000000000 usb_wait_in_ready
-     /tmp/ccqIUoBG.s:35     .text.usb_init:0000000000000000 usb_init
-     /tmp/ccqIUoBG.s:1021   .bss:0000000000000002 usb_configuration
-     /tmp/ccqIUoBG.s:80     .text.usb_configured:0000000000000000 usb_configured
-     /tmp/ccqIUoBG.s:98     .text.usb_debug_putchar:0000000000000000 usb_debug_putchar
-                             .bss:0000000000000000 previous_timeout.1693
-     /tmp/ccqIUoBG.s:1019   .bss:0000000000000001 debug_flush_timer
-     /tmp/ccqIUoBG.s:220    .text.usb_debug_flush_output:0000000000000000 usb_debug_flush_output
-     /tmp/ccqIUoBG.s:268    .text.__vector_10:0000000000000000 __vector_10
-     /tmp/ccqIUoBG.s:373    .text.__vector_11:0000000000000000 __vector_11
-     /tmp/ccqIUoBG.s:1027   .progmem.data:0000000000000000 descriptor_list
-     /tmp/ccqIUoBG.s:1184   .progmem.data:00000000000000b6 endpoint_config_table
-     /tmp/ccqIUoBG.s:1163   .progmem.data:00000000000000a4 device_descriptor
-     /tmp/ccqIUoBG.s:1102   .progmem.data:000000000000006d config1_descriptor
-     /tmp/ccqIUoBG.s:1139   .progmem.data:000000000000008f hid_report_descriptor
-     /tmp/ccqIUoBG.s:1096   .progmem.data:0000000000000069 string0
-     /tmp/ccqIUoBG.s:1080   .progmem.data:0000000000000053 string1
-     /tmp/ccqIUoBG.s:1058   .progmem.data:0000000000000031 string2
+                            *ABS*:00000000 usb_debug_only.c
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:2      *ABS*:0000003e __SP_H__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:3      *ABS*:0000003d __SP_L__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:4      *ABS*:0000003f __SREG__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:12     .text.usb_wait_in_ready:00000000 usb_wait_in_ready
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:35     .text.usb_init:00000000 usb_init
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1019   .bss:00000002 usb_configuration
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:80     .text.usb_configured:00000000 usb_configured
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:98     .text.usb_debug_putchar:00000000 usb_debug_putchar
+                             .bss:00000000 previous_timeout.1662
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1017   .bss:00000001 debug_flush_timer
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:220    .text.usb_debug_flush_output:00000000 usb_debug_flush_output
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:268    .text.__vector_10:00000000 __vector_10
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:373    .text.__vector_11:00000000 __vector_11
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1025   .progmem.data:00000000 descriptor_list
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1182   .progmem.data:000000b6 endpoint_config_table
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1161   .progmem.data:000000a4 device_descriptor
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1100   .progmem.data:0000006d config1_descriptor
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1137   .progmem.data:0000008f hid_report_descriptor
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1094   .progmem.data:00000069 string0
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1078   .progmem.data:00000053 string1
+/var/folders/1g/520f1v114mg60_f7ygfzhttw0000gn/T//ccfSkze1.s:1056   .progmem.data:00000031 string2
 
 UNDEFINED SYMBOLS
 __do_clear_bss

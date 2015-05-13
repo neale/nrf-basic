@@ -15,7 +15,7 @@
 #define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
 #define PACKET_SIZE 16
 
-char mode = 't';
+char mode = 'r';
 
 void initUART(void){
 
@@ -84,10 +84,7 @@ int main(void){
   CSN_HIGH;
   initUART();
   SPI_masterInit();
-  while(!(UCSR1A & (1 << UDRE1)));
-  UDR1 = mode; 
  
-
   initRadioRX();
   setRadioAddressWidth(THREE_BYTES);
   setRadioTXAddress(0xABC123);        
@@ -99,15 +96,9 @@ int main(void){
   while(1){
     uint8_t radioStatus = 0;
     getRadioStatus(&radioStatus);
-    while(!(UCSR1A & (1 << UDRE1)));
-<<<<<<< HEAD
-    UDR1 = 't'; 
     if(1 << PF0){
       mode =  't';
     }
-=======
-    UDR1 = 'a';
->>>>>>> 8cb15b05cd5fe5ea33883cf5bd3761d73eb3e7f9
     if(mode == 'r'){  
       if(getRX_DR()){
         receive_payload(load);

@@ -7,27 +7,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   1 .text         0000016e  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .stab         000006cc  00000000  00000000  000001ec  2**2
-                  CONTENTS, READONLY, DEBUGGING
-  3 .stabstr      00000054  00000000  00000000  000008b8  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  4 .comment      00000011  00000000  00000000  0000090c  2**0
+  2 .comment      00000011  00000000  00000000  000001ea  2**0
                   CONTENTS, READONLY
-  5 .debug_aranges 00000028  00000000  00000000  0000091d  2**0
+  3 .debug_aranges 00000068  00000000  00000000  00000200  2**3
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000238  00000000  00000000  00000945  2**0
+  4 .debug_info   000003b4  00000000  00000000  00000268  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 0000017f  00000000  00000000  00000b7d  2**0
+  5 .debug_abbrev 000001a7  00000000  00000000  0000061c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000087  00000000  00000000  00000cfc  2**0
+  6 .debug_line   00000159  00000000  00000000  000007c3  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000048  00000000  00000000  00000d84  2**2
+  7 .debug_frame  00000048  00000000  00000000  0000091c  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000161  00000000  00000000  00000dcc  2**0
+  8 .debug_str    00000162  00000000  00000000  00000964  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    0000005b  00000000  00000000  00000f2d  2**0
+  9 .debug_loc    0000005b  00000000  00000000  00000ac6  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000018  00000000  00000000  00000f88  2**0
+ 10 .debug_ranges 00000018  00000000  00000000  00000b21  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:

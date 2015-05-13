@@ -3,33 +3,29 @@ com.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00000746  000007da  2**0
+  0 .data         00000000  00800100  00000744  000007d8  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000746  00000000  00000000  00000094  2**1
+  1 .text         00000744  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          0000006f  00800100  00800100  000007da  2**0
+  2 .bss          0000006f  00800100  00800100  000007d8  2**0
                   ALLOC
-  3 .stab         000006cc  00000000  00000000  000007dc  2**2
-                  CONTENTS, READONLY, DEBUGGING
-  4 .stabstr      00000054  00000000  00000000  00000ea8  2**0
-                  CONTENTS, READONLY, DEBUGGING
-  5 .comment      00000011  00000000  00000000  00000efc  2**0
+  3 .comment      00000011  00000000  00000000  000007d8  2**0
                   CONTENTS, READONLY
-  6 .debug_aranges 00000258  00000000  00000000  00000f0d  2**0
+  4 .debug_aranges 000002b8  00000000  00000000  000007f0  2**3
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_info   00001a0b  00000000  00000000  00001165  2**0
+  5 .debug_info   00001c17  00000000  00000000  00000aa8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_abbrev 0000094c  00000000  00000000  00002b70  2**0
+  6 .debug_abbrev 0000098e  00000000  00000000  000026bf  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_line   00000889  00000000  00000000  000034bc  2**0
+  7 .debug_line   00000a98  00000000  00000000  0000304d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_frame  000005f4  00000000  00000000  00003d48  2**2
+  8 .debug_frame  000005f4  00000000  00000000  00003ae8  2**2
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_str    000006b6  00000000  00000000  0000433c  2**0
+  9 .debug_str    000006b9  00000000  00000000  000040dc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_loc    0000131b  00000000  00000000  000049f2  2**0
+ 10 .debug_loc    000012e9  00000000  00000000  00004795  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 00000208  00000000  00000000  00005d0d  2**0
+ 11 .debug_ranges 00000208  00000000  00000000  00005a7e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -194,11 +190,32 @@ void print_P(const char *s)
   a8:	6f c0       	rjmp	.+222    	; 0x188 <__bad_interrupt>
   aa:	00 00       	nop
 
-000000ac <descriptor_list>:
-  ac:	00 01 00 00 50 01 12 00 02 00 00 19 01 22 00 22     ....P........"."
-  bc:	00 00 3b 01 15 00 21 00 00 2b 01 09 00 03 00 00     ..;...!..+......
-  cc:	15 01 04 01 03 09 04 ff 00 14 02 03 09 04 dd 00     ................
-  dc:	20                                                   
+000000ac <__trampolines_end>:
+  ac:	00 01       	movw	r0, r0
+  ae:	00 00       	nop
+  b0:	50 01       	movw	r10, r0
+  b2:	12 00       	.word	0x0012	; ????
+  b4:	02 00       	.word	0x0002	; ????
+  b6:	00 19       	sub	r16, r0
+  b8:	01 22       	and	r0, r17
+  ba:	00 22       	and	r0, r16
+  bc:	00 00       	nop
+  be:	3b 01       	movw	r6, r22
+  c0:	15 00       	.word	0x0015	; ????
+  c2:	21 00       	.word	0x0021	; ????
+  c4:	00 2b       	or	r16, r16
+  c6:	01 09       	sbc	r16, r1
+  c8:	00 03       	mulsu	r16, r16
+  ca:	00 00       	nop
+  cc:	15 01       	movw	r2, r10
+  ce:	04 01       	movw	r0, r8
+  d0:	03 09       	sbc	r16, r3
+  d2:	04 ff       	sbrs	r16, 4
+  d4:	00 14       	cp	r0, r0
+  d6:	02 03       	mulsu	r16, r18
+  d8:	09 04       	cpc	r0, r9
+  da:	dd 00       	.word	0x00dd	; ????
+  dc:	20 20       	and	r2, r0
 
 000000dd <string2>:
   dd:	20 03 59 00 6f 00 75 00 72 00 20 00 55 00 53 00      .Y.o.u.r. .U.S.
@@ -237,7 +254,7 @@ void print_P(const char *s)
  172:	cd bf       	out	0x3d, r28	; 61
 
 00000174 <__do_clear_bss>:
- 174:	11 e0       	ldi	r17, 0x01	; 1
+ 174:	21 e0       	ldi	r18, 0x01	; 1
  176:	a0 e0       	ldi	r26, 0x00	; 0
  178:	b1 e0       	ldi	r27, 0x01	; 1
  17a:	01 c0       	rjmp	.+2      	; 0x17e <.do_clear_bss_start>
@@ -247,10 +264,10 @@ void print_P(const char *s)
 
 0000017e <.do_clear_bss_start>:
  17e:	af 36       	cpi	r26, 0x6F	; 111
- 180:	b1 07       	cpc	r27, r17
+ 180:	b2 07       	cpc	r27, r18
  182:	e1 f7       	brne	.-8      	; 0x17c <.do_clear_bss_loop>
  184:	02 d0       	rcall	.+4      	; 0x18a <main>
- 186:	dd c2       	rjmp	.+1466   	; 0x742 <_exit>
+ 186:	dc c2       	rjmp	.+1464   	; 0x740 <_exit>
 
 00000188 <__bad_interrupt>:
  188:	3b cf       	rjmp	.-394    	; 0x0 <__vectors>
@@ -1058,7 +1075,7 @@ ISR(USB_COM_vect)
  504:	80 91 e8 00 	lds	r24, 0x00E8
         if (intbits & (1<<RXSTPI)) {
  508:	83 ff       	sbrs	r24, 3
- 50a:	00 c1       	rjmp	.+512    	; 0x70c <__vector_11+0x240>
+ 50a:	ff c0       	rjmp	.+510    	; 0x70a <__vector_11+0x23e>
                 bmRequestType = UEDATX;
  50c:	90 91 f1 00 	lds	r25, 0x00F1
                 bRequest = UEDATX;
@@ -1128,7 +1145,7 @@ ISR(USB_COM_vect)
 			for (i=0; ; i++) {
 				if (i >= NUM_DESC_LIST) {
  56a:	81 f7       	brne	.-32     	; 0x54c <__vector_11+0x80>
- 56c:	cf c0       	rjmp	.+414    	; 0x70c <__vector_11+0x240>
+ 56c:	ce c0       	rjmp	.+412    	; 0x70a <__vector_11+0x23e>
 				desc_val = pgm_read_word(list);
 				if (desc_val != wIndex) {
 					list += sizeof(struct descriptor_list_struct)-2;
@@ -1177,7 +1194,7 @@ static inline void usb_send_in(void)
  598:	d9 f3       	breq	.-10     	; 0x590 <__vector_11+0xc4>
 				if (i & (1<<RXOUTI)) return;	// abort
  59a:	92 fd       	sbrc	r25, 2
- 59c:	ba c0       	rjmp	.+372    	; 0x712 <__vector_11+0x246>
+ 59c:	b9 c0       	rjmp	.+370    	; 0x710 <__vector_11+0x244>
 				// send IN packet
 				n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
  59e:	98 2f       	mov	r25, r24
@@ -1224,7 +1241,7 @@ static inline void usb_send_in(void)
  5c6:	e4 cf       	rjmp	.-56     	; 0x590 <__vector_11+0xc4>
  5c8:	90 32       	cpi	r25, 0x20	; 32
  5ca:	11 f3       	breq	.-60     	; 0x590 <__vector_11+0xc4>
- 5cc:	a2 c0       	rjmp	.+324    	; 0x712 <__vector_11+0x246>
+ 5cc:	a1 c0       	rjmp	.+322    	; 0x710 <__vector_11+0x244>
 			return;
                 }
 		if (bRequest == SET_ADDRESS) {
@@ -1248,14 +1265,14 @@ static inline void usb_send_in(void)
  5da:	00 68       	ori	r16, 0x80	; 128
 			UDADDR = wValue | (1<<ADDEN);
  5dc:	00 93 e3 00 	sts	0x00E3, r16
- 5e0:	98 c0       	rjmp	.+304    	; 0x712 <__vector_11+0x246>
+ 5e0:	97 c0       	rjmp	.+302    	; 0x710 <__vector_11+0x244>
 			return;
  5e2:	89 30       	cpi	r24, 0x09	; 9
 		}
 		if (bRequest == SET_CONFIGURATION && bmRequestType == 0) {
- 5e4:	41 f5       	brne	.+80     	; 0x636 <__vector_11+0x16a>
+ 5e4:	39 f5       	brne	.+78     	; 0x634 <__vector_11+0x168>
  5e6:	91 11       	cpse	r25, r1
- 5e8:	4b c0       	rjmp	.+150    	; 0x680 <__vector_11+0x1b4>
+ 5e8:	4a c0       	rjmp	.+148    	; 0x67e <__vector_11+0x1b2>
  5ea:	00 93 6e 01 	sts	0x016E, r16
 			usb_configuration = wValue;
  5ee:	8e ef       	ldi	r24, 0xFE	; 254
@@ -1294,7 +1311,7 @@ static inline void usb_send_in(void)
 				UECONX = en;
  60c:	55 23       	and	r21, r21
 				if (en) {
- 60e:	61 f0       	breq	.+24     	; 0x628 <__vector_11+0x15c>
+ 60e:	59 f0       	breq	.+22     	; 0x626 <__vector_11+0x15a>
  610:	f9 01       	movw	r30, r18
 					UECFG0X = pgm_read_byte(cfg++);
  612:	24 91       	lpm	r18, Z
@@ -1303,265 +1320,264 @@ static inline void usb_send_in(void)
 					UECFG1X = pgm_read_byte(cfg++);
  61a:	2d 5f       	subi	r18, 0xFD	; 253
  61c:	3f 4f       	sbci	r19, 0xFF	; 255
- 61e:	fc 01       	movw	r30, r24
- 620:	32 96       	adiw	r30, 0x02	; 2
- 622:	84 91       	lpm	r24, Z
- 624:	80 93 ed 00 	sts	0x00ED, r24
- 628:	4f 5f       	subi	r20, 0xFF	; 255
+ 61e:	31 96       	adiw	r30, 0x01	; 1
+ 620:	84 91       	lpm	r24, Z
+ 622:	80 93 ed 00 	sts	0x00ED, r24
+ 626:	4f 5f       	subi	r20, 0xFF	; 255
 		}
 		if (bRequest == SET_CONFIGURATION && bmRequestType == 0) {
 			usb_configuration = wValue;
 			usb_send_in();
 			cfg = endpoint_config_table;
 			for (i=1; i<5; i++) {
- 62a:	45 30       	cpi	r20, 0x05	; 5
- 62c:	11 f0       	breq	.+4      	; 0x632 <__vector_11+0x166>
- 62e:	c9 01       	movw	r24, r18
- 630:	e4 cf       	rjmp	.-56     	; 0x5fa <__vector_11+0x12e>
- 632:	8e e1       	ldi	r24, 0x1E	; 30
+ 628:	45 30       	cpi	r20, 0x05	; 5
+ 62a:	11 f0       	breq	.+4      	; 0x630 <__vector_11+0x164>
+ 62c:	c9 01       	movw	r24, r18
+ 62e:	e5 cf       	rjmp	.-54     	; 0x5fa <__vector_11+0x12e>
+ 630:	8e e1       	ldi	r24, 0x1E	; 30
 				if (en) {
 					UECFG0X = pgm_read_byte(cfg++);
 					UECFG1X = pgm_read_byte(cfg++);
 				}
 			}
         		UERST = 0x1E;
- 634:	45 c0       	rjmp	.+138    	; 0x6c0 <__vector_11+0x1f4>
- 636:	88 30       	cpi	r24, 0x08	; 8
+ 632:	45 c0       	rjmp	.+138    	; 0x6be <__vector_11+0x1f2>
+ 634:	88 30       	cpi	r24, 0x08	; 8
         		UERST = 0;
 			return;
 		}
 		if (bRequest == GET_CONFIGURATION && bmRequestType == 0x80) {
- 638:	49 f4       	brne	.+18     	; 0x64c <__vector_11+0x180>
- 63a:	90 38       	cpi	r25, 0x80	; 128
- 63c:	09 f0       	breq	.+2      	; 0x640 <__vector_11+0x174>
- 63e:	66 c0       	rjmp	.+204    	; 0x70c <__vector_11+0x240>
- 640:	01 df       	rcall	.-510    	; 0x444 <usb_wait_in_ready>
+ 636:	49 f4       	brne	.+18     	; 0x64a <__vector_11+0x17e>
+ 638:	90 38       	cpi	r25, 0x80	; 128
+ 63a:	09 f0       	breq	.+2      	; 0x63e <__vector_11+0x172>
+ 63c:	66 c0       	rjmp	.+204    	; 0x70a <__vector_11+0x23e>
+ 63e:	02 df       	rcall	.-508    	; 0x444 <usb_wait_in_ready>
 			usb_wait_in_ready();
- 642:	80 91 6e 01 	lds	r24, 0x016E
+ 640:	80 91 6e 01 	lds	r24, 0x016E
 			UEDATX = usb_configuration;
- 646:	80 93 f1 00 	sts	0x00F1, r24
- 64a:	16 c0       	rjmp	.+44     	; 0x678 <__vector_11+0x1ac>
- 64c:	81 11       	cpse	r24, r1
- 64e:	18 c0       	rjmp	.+48     	; 0x680 <__vector_11+0x1b4>
+ 644:	80 93 f1 00 	sts	0x00F1, r24
+ 648:	16 c0       	rjmp	.+44     	; 0x676 <__vector_11+0x1aa>
+ 64a:	81 11       	cpse	r24, r1
+ 64c:	18 c0       	rjmp	.+48     	; 0x67e <__vector_11+0x1b2>
 			usb_send_in();
 			return;
 		}
 
 		if (bRequest == GET_STATUS) {
- 650:	99 83       	std	Y+1, r25	; 0x01
- 652:	f8 de       	rcall	.-528    	; 0x444 <usb_wait_in_ready>
+ 64e:	99 83       	std	Y+1, r25	; 0x01
+ 650:	f9 de       	rcall	.-526    	; 0x444 <usb_wait_in_ready>
 			usb_wait_in_ready();
- 654:	99 81       	ldd	r25, Y+1	; 0x01
- 656:	92 38       	cpi	r25, 0x82	; 130
- 658:	51 f4       	brne	.+20     	; 0x66e <__vector_11+0x1a2>
+ 652:	99 81       	ldd	r25, Y+1	; 0x01
+ 654:	92 38       	cpi	r25, 0x82	; 130
+ 656:	51 f4       	brne	.+20     	; 0x66c <__vector_11+0x1a0>
 			i = 0;
 			#ifdef SUPPORT_ENDPOINT_HALT
 			if (bmRequestType == 0x82) {
- 65a:	e0 92 e9 00 	sts	0x00E9, r14
- 65e:	80 91 eb 00 	lds	r24, 0x00EB
+ 658:	e0 92 e9 00 	sts	0x00E9, r14
+ 65c:	80 91 eb 00 	lds	r24, 0x00EB
 				UENUM = wIndex;
- 662:	85 fb       	bst	r24, 5
+ 660:	85 fb       	bst	r24, 5
 				if (UECONX & (1<<STALLRQ)) i = 1;
- 664:	88 27       	eor	r24, r24
- 666:	80 f9       	bld	r24, 0
- 668:	10 92 e9 00 	sts	0x00E9, r1
- 66c:	01 c0       	rjmp	.+2      	; 0x670 <__vector_11+0x1a4>
+ 662:	88 27       	eor	r24, r24
+ 664:	80 f9       	bld	r24, 0
+ 666:	10 92 e9 00 	sts	0x00E9, r1
+ 66a:	01 c0       	rjmp	.+2      	; 0x66e <__vector_11+0x1a2>
 				UENUM = 0;
- 66e:	80 e0       	ldi	r24, 0x00	; 0
- 670:	80 93 f1 00 	sts	0x00F1, r24
+ 66c:	80 e0       	ldi	r24, 0x00	; 0
+ 66e:	80 93 f1 00 	sts	0x00F1, r24
 			return;
 		}
 
 		if (bRequest == GET_STATUS) {
 			usb_wait_in_ready();
 			i = 0;
- 674:	10 92 f1 00 	sts	0x00F1, r1
+ 672:	10 92 f1 00 	sts	0x00F1, r1
 				UENUM = wIndex;
 				if (UECONX & (1<<STALLRQ)) i = 1;
 				UENUM = 0;
 			}
 			#endif
 			UEDATX = i;
- 678:	8e ef       	ldi	r24, 0xFE	; 254
+ 676:	8e ef       	ldi	r24, 0xFE	; 254
 			UEDATX = 0;
- 67a:	80 93 e8 00 	sts	0x00E8, r24
+ 678:	80 93 e8 00 	sts	0x00E8, r24
 {
 	while (!(UEINTX & (1<<TXINI))) ;
 }
 static inline void usb_send_in(void)
 {
 	UEINTX = ~(1<<TXINI);
- 67e:	49 c0       	rjmp	.+146    	; 0x712 <__vector_11+0x246>
- 680:	48 2f       	mov	r20, r24
- 682:	4d 7f       	andi	r20, 0xFD	; 253
- 684:	41 30       	cpi	r20, 0x01	; 1
+ 67c:	49 c0       	rjmp	.+146    	; 0x710 <__vector_11+0x244>
+ 67e:	48 2f       	mov	r20, r24
+ 680:	4d 7f       	andi	r20, 0xFD	; 253
+ 682:	41 30       	cpi	r20, 0x01	; 1
 			UEDATX = 0;
 			usb_send_in();
 			return;
 		}
 		#ifdef SUPPORT_ENDPOINT_HALT
 		if ((bRequest == CLEAR_FEATURE || bRequest == SET_FEATURE)
- 686:	09 f0       	breq	.+2      	; 0x68a <__vector_11+0x1be>
- 688:	41 c0       	rjmp	.+130    	; 0x70c <__vector_11+0x240>
- 68a:	92 30       	cpi	r25, 0x02	; 2
- 68c:	f1 f4       	brne	.+60     	; 0x6ca <__vector_11+0x1fe>
- 68e:	01 2b       	or	r16, r17
+ 684:	09 f0       	breq	.+2      	; 0x688 <__vector_11+0x1bc>
+ 686:	41 c0       	rjmp	.+130    	; 0x70a <__vector_11+0x23e>
+ 688:	92 30       	cpi	r25, 0x02	; 2
+ 68a:	f1 f4       	brne	.+60     	; 0x6c8 <__vector_11+0x1fc>
+ 68c:	01 2b       	or	r16, r17
 		  && bmRequestType == 0x02 && wValue == 0) {
- 690:	e9 f5       	brne	.+122    	; 0x70c <__vector_11+0x240>
- 692:	2e 2d       	mov	r18, r14
- 694:	2f 77       	andi	r18, 0x7F	; 127
- 696:	9f ef       	ldi	r25, 0xFF	; 255
+ 68e:	e9 f5       	brne	.+122    	; 0x70a <__vector_11+0x23e>
+ 690:	2e 2d       	mov	r18, r14
+ 692:	2f 77       	andi	r18, 0x7F	; 127
+ 694:	9f ef       	ldi	r25, 0xFF	; 255
 			i = wIndex & 0x7F;
- 698:	92 0f       	add	r25, r18
- 69a:	94 30       	cpi	r25, 0x04	; 4
+ 696:	92 0f       	add	r25, r18
+ 698:	94 30       	cpi	r25, 0x04	; 4
 			if (i >= 1 && i <= MAX_ENDPOINT) {
- 69c:	b8 f5       	brcc	.+110    	; 0x70c <__vector_11+0x240>
- 69e:	9e ef       	ldi	r25, 0xFE	; 254
- 6a0:	90 93 e8 00 	sts	0x00E8, r25
+ 69a:	b8 f5       	brcc	.+110    	; 0x70a <__vector_11+0x23e>
+ 69c:	9e ef       	ldi	r25, 0xFE	; 254
+ 69e:	90 93 e8 00 	sts	0x00E8, r25
 {
 	while (!(UEINTX & (1<<TXINI))) ;
 }
 static inline void usb_send_in(void)
 {
 	UEINTX = ~(1<<TXINI);
- 6a4:	20 93 e9 00 	sts	0x00E9, r18
- 6a8:	83 30       	cpi	r24, 0x03	; 3
+ 6a2:	20 93 e9 00 	sts	0x00E9, r18
+ 6a6:	83 30       	cpi	r24, 0x03	; 3
 		if ((bRequest == CLEAR_FEATURE || bRequest == SET_FEATURE)
 		  && bmRequestType == 0x02 && wValue == 0) {
 			i = wIndex & 0x7F;
 			if (i >= 1 && i <= MAX_ENDPOINT) {
 				usb_send_in();
 				UENUM = i;
- 6aa:	81 f1       	breq	.+96     	; 0x70c <__vector_11+0x240>
- 6ac:	89 e1       	ldi	r24, 0x19	; 25
+ 6a8:	81 f1       	breq	.+96     	; 0x70a <__vector_11+0x23e>
+ 6aa:	89 e1       	ldi	r24, 0x19	; 25
 				if (bRequest == SET_FEATURE) {
- 6ae:	80 93 eb 00 	sts	0x00EB, r24
+ 6ac:	80 93 eb 00 	sts	0x00EB, r24
 					UECONX = (1<<STALLRQ)|(1<<EPEN);
 				} else {
 					UECONX = (1<<STALLRQC)|(1<<RSTDT)|(1<<EPEN);
- 6b2:	81 e0       	ldi	r24, 0x01	; 1
- 6b4:	90 e0       	ldi	r25, 0x00	; 0
- 6b6:	02 2e       	mov	r0, r18
+ 6b0:	81 e0       	ldi	r24, 0x01	; 1
+ 6b2:	90 e0       	ldi	r25, 0x00	; 0
+ 6b4:	02 2e       	mov	r0, r18
 					UERST = (1 << i);
- 6b8:	01 c0       	rjmp	.+2      	; 0x6bc <__vector_11+0x1f0>
- 6ba:	88 0f       	add	r24, r24
- 6bc:	0a 94       	dec	r0
- 6be:	ea f7       	brpl	.-6      	; 0x6ba <__vector_11+0x1ee>
- 6c0:	80 93 ea 00 	sts	0x00EA, r24
- 6c4:	10 92 ea 00 	sts	0x00EA, r1
- 6c8:	24 c0       	rjmp	.+72     	; 0x712 <__vector_11+0x246>
+ 6b6:	01 c0       	rjmp	.+2      	; 0x6ba <__vector_11+0x1ee>
+ 6b8:	88 0f       	add	r24, r24
+ 6ba:	0a 94       	dec	r0
+ 6bc:	ea f7       	brpl	.-6      	; 0x6b8 <__vector_11+0x1ec>
+ 6be:	80 93 ea 00 	sts	0x00EA, r24
+ 6c2:	10 92 ea 00 	sts	0x00EA, r1
+ 6c6:	24 c0       	rjmp	.+72     	; 0x710 <__vector_11+0x244>
 					UERST = 0;
- 6ca:	81 30       	cpi	r24, 0x01	; 1
- 6cc:	f9 f4       	brne	.+62     	; 0x70c <__vector_11+0x240>
- 6ce:	91 3a       	cpi	r25, 0xA1	; 161
+ 6c8:	81 30       	cpi	r24, 0x01	; 1
+ 6ca:	f9 f4       	brne	.+62     	; 0x70a <__vector_11+0x23e>
+ 6cc:	91 3a       	cpi	r25, 0xA1	; 161
 				}
 				return;
 			}
 		}
 		#endif
 		if (bRequest == HID_GET_REPORT && bmRequestType == 0xA1) {
- 6d0:	e9 f4       	brne	.+58     	; 0x70c <__vector_11+0x240>
- 6d2:	ef 28       	or	r14, r15
- 6d4:	d9 f4       	brne	.+54     	; 0x70c <__vector_11+0x240>
- 6d6:	3e ef       	ldi	r19, 0xFE	; 254
+ 6ce:	e9 f4       	brne	.+58     	; 0x70a <__vector_11+0x23e>
+ 6d0:	ef 28       	or	r14, r15
+ 6d2:	d9 f4       	brne	.+54     	; 0x70a <__vector_11+0x23e>
+ 6d4:	3e ef       	ldi	r19, 0xFE	; 254
 			if (wIndex == 0) {
- 6d8:	80 91 e8 00 	lds	r24, 0x00E8
+ 6d6:	80 91 e8 00 	lds	r24, 0x00E8
 {
 	while (!(UEINTX & (1<<TXINI))) ;
 }
 static inline void usb_send_in(void)
 {
 	UEINTX = ~(1<<TXINI);
- 6dc:	98 2f       	mov	r25, r24
+ 6da:	98 2f       	mov	r25, r24
 			if (wIndex == 0) {
 				len = wLength;
 				do {
 					// wait for host ready for IN packet
 					do {
 						i = UEINTX;
- 6de:	95 70       	andi	r25, 0x05	; 5
- 6e0:	d9 f3       	breq	.-10     	; 0x6d8 <__vector_11+0x20c>
+ 6dc:	95 70       	andi	r25, 0x05	; 5
+ 6de:	d9 f3       	breq	.-10     	; 0x6d6 <__vector_11+0x20a>
 					} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
- 6e2:	82 fd       	sbrc	r24, 2
- 6e4:	16 c0       	rjmp	.+44     	; 0x712 <__vector_11+0x246>
- 6e6:	82 2f       	mov	r24, r18
+ 6e0:	82 fd       	sbrc	r24, 2
+ 6e2:	16 c0       	rjmp	.+44     	; 0x710 <__vector_11+0x244>
+ 6e4:	82 2f       	mov	r24, r18
 					if (i & (1<<RXOUTI)) return;	// abort
- 6e8:	21 32       	cpi	r18, 0x21	; 33
- 6ea:	08 f0       	brcs	.+2      	; 0x6ee <__vector_11+0x222>
+ 6e6:	21 32       	cpi	r18, 0x21	; 33
+ 6e8:	08 f0       	brcs	.+2      	; 0x6ec <__vector_11+0x220>
 					// send IN packet
 					n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
- 6ec:	80 e2       	ldi	r24, 0x20	; 32
- 6ee:	98 2f       	mov	r25, r24
- 6f0:	99 23       	and	r25, r25
- 6f2:	21 f0       	breq	.+8      	; 0x6fc <__vector_11+0x230>
+ 6ea:	80 e2       	ldi	r24, 0x20	; 32
+ 6ec:	98 2f       	mov	r25, r24
+ 6ee:	99 23       	and	r25, r25
+ 6f0:	21 f0       	breq	.+8      	; 0x6fa <__vector_11+0x22e>
 					for (i = n; i; i--) {
- 6f4:	10 92 f1 00 	sts	0x00F1, r1
- 6f8:	91 50       	subi	r25, 0x01	; 1
+ 6f2:	10 92 f1 00 	sts	0x00F1, r1
+ 6f6:	91 50       	subi	r25, 0x01	; 1
 						UEDATX = 0;
- 6fa:	fa cf       	rjmp	.-12     	; 0x6f0 <__vector_11+0x224>
- 6fc:	28 1b       	sub	r18, r24
+ 6f8:	fa cf       	rjmp	.-12     	; 0x6ee <__vector_11+0x222>
+ 6fa:	28 1b       	sub	r18, r24
 						i = UEINTX;
 					} while (!(i & ((1<<TXINI)|(1<<RXOUTI))));
 					if (i & (1<<RXOUTI)) return;	// abort
 					// send IN packet
 					n = len < ENDPOINT0_SIZE ? len : ENDPOINT0_SIZE;
 					for (i = n; i; i--) {
- 6fe:	30 93 e8 00 	sts	0x00E8, r19
+ 6fc:	30 93 e8 00 	sts	0x00E8, r19
 						UEDATX = 0;
 					}
 					len -= n;
- 702:	21 11       	cpse	r18, r1
+ 700:	21 11       	cpse	r18, r1
 {
 	while (!(UEINTX & (1<<TXINI))) ;
 }
 static inline void usb_send_in(void)
 {
 	UEINTX = ~(1<<TXINI);
- 704:	e9 cf       	rjmp	.-46     	; 0x6d8 <__vector_11+0x20c>
- 706:	80 32       	cpi	r24, 0x20	; 32
+ 702:	e9 cf       	rjmp	.-46     	; 0x6d6 <__vector_11+0x20a>
+ 704:	80 32       	cpi	r24, 0x20	; 32
 					for (i = n; i; i--) {
 						UEDATX = 0;
 					}
 					len -= n;
 					usb_send_in();
 				} while (len || n == ENDPOINT0_SIZE);
- 708:	39 f3       	breq	.-50     	; 0x6d8 <__vector_11+0x20c>
- 70a:	03 c0       	rjmp	.+6      	; 0x712 <__vector_11+0x246>
- 70c:	81 e2       	ldi	r24, 0x21	; 33
- 70e:	80 93 eb 00 	sts	0x00EB, r24
+ 706:	39 f3       	breq	.-50     	; 0x6d6 <__vector_11+0x20a>
+ 708:	03 c0       	rjmp	.+6      	; 0x710 <__vector_11+0x244>
+ 70a:	81 e2       	ldi	r24, 0x21	; 33
+ 70c:	80 93 eb 00 	sts	0x00EB, r24
 				return;
 			}
 		}
         }
 	UECONX = (1<<STALLRQ) | (1<<EPEN);	// stall
- 712:	0f 90       	pop	r0
- 714:	df 91       	pop	r29
- 716:	cf 91       	pop	r28
+ 710:	0f 90       	pop	r0
+ 712:	df 91       	pop	r29
+ 714:	cf 91       	pop	r28
 }
- 718:	ff 91       	pop	r31
- 71a:	ef 91       	pop	r30
- 71c:	bf 91       	pop	r27
- 71e:	af 91       	pop	r26
- 720:	9f 91       	pop	r25
- 722:	8f 91       	pop	r24
- 724:	7f 91       	pop	r23
- 726:	6f 91       	pop	r22
- 728:	5f 91       	pop	r21
- 72a:	4f 91       	pop	r20
- 72c:	3f 91       	pop	r19
- 72e:	2f 91       	pop	r18
- 730:	1f 91       	pop	r17
- 732:	0f 91       	pop	r16
- 734:	ff 90       	pop	r15
- 736:	ef 90       	pop	r14
- 738:	0f 90       	pop	r0
- 73a:	0f be       	out	0x3f, r0	; 63
- 73c:	0f 90       	pop	r0
- 73e:	1f 90       	pop	r1
- 740:	18 95       	reti
+ 716:	ff 91       	pop	r31
+ 718:	ef 91       	pop	r30
+ 71a:	bf 91       	pop	r27
+ 71c:	af 91       	pop	r26
+ 71e:	9f 91       	pop	r25
+ 720:	8f 91       	pop	r24
+ 722:	7f 91       	pop	r23
+ 724:	6f 91       	pop	r22
+ 726:	5f 91       	pop	r21
+ 728:	4f 91       	pop	r20
+ 72a:	3f 91       	pop	r19
+ 72c:	2f 91       	pop	r18
+ 72e:	1f 91       	pop	r17
+ 730:	0f 91       	pop	r16
+ 732:	ff 90       	pop	r15
+ 734:	ef 90       	pop	r14
+ 736:	0f 90       	pop	r0
+ 738:	0f be       	out	0x3f, r0	; 63
+ 73a:	0f 90       	pop	r0
+ 73c:	1f 90       	pop	r1
+ 73e:	18 95       	reti
 
-00000742 <_exit>:
- 742:	f8 94       	cli
+00000740 <_exit>:
+ 740:	f8 94       	cli
 
-00000744 <__stop_program>:
- 744:	ff cf       	rjmp	.-2      	; 0x744 <__stop_program>
+00000742 <__stop_program>:
+ 742:	ff cf       	rjmp	.-2      	; 0x742 <__stop_program>
