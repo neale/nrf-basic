@@ -111,7 +111,7 @@ void setRadioRXPayloadSize(uint8_t dataPipe, uint8_t size)
   closePort();
 }
 
-void setRadioTXPayload(int8_t* frame, int8_t payloadSize)
+void setRadioTXPayload(uint8_t* frame, int8_t payloadSize)
 {
   openPort();
   SPI_masterTransmit(0b10100000);  // Initiate writing of payload

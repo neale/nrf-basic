@@ -3,9 +3,9 @@ Archive member included because of file (symbol)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
                               /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o (exit)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
-                              receive.o (__do_copy_data)
+                              com.o (__do_copy_data)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
-                              receive.o (malloc)
+                              com.o (malloc)
 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
                               /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o) (__do_clear_bss)
 
@@ -18,18 +18,8 @@ __flp               0x2               /usr/local/CrossPack-AVR-20131216/lib/gcc/
 Discarded input sections
 
  .bss           0x00000000        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
- .text          0x00000000        0x0 receive.o
- .bss           0x00000000        0x0 receive.o
- .text.build_packet
-                0x00000000       0x10 receive.o
- .text.uart_putchar
-                0x00000000        0xe receive.o
- .text.uart_putstring
-                0x00000000       0x1a receive.o
- .rodata.str1.1
-                0x00000000       0x25 receive.o
- .text.transmit
-                0x00000000       0xb0 receive.o
+ .text          0x00000000        0x0 com.o
+ .bss           0x00000000        0x0 com.o
  .text          0x00000000        0x0 ../../lib/spi/spi.o
  .bss           0x00000000        0x0 ../../lib/spi/spi.o
  .text.digiPotInitWiper
@@ -40,24 +30,19 @@ Discarded input sections
                 0x00000000       0x18 ../../lib/spi/spi.o
  .text          0x00000000        0x0 ../../lib/radio_control/radioctl.o
  .bss           0x00000000        0x0 ../../lib/radio_control/radioctl.o
- .text.initRadioTX
-                0x00000000       0x14 ../../lib/radio_control/radioctl.o
  .text.activateFeatures
                 0x00000000       0x14 ../../lib/radio_control/radioctl.o
- .text.setRadioTXAddress
-                0x00000000       0x3a ../../lib/radio_control/radioctl.o
- .text.setRadioTXPayload
-                0x00000000       0x46 ../../lib/radio_control/radioctl.o
- .text.getTX_DS
-                0x00000000       0x22 ../../lib/radio_control/radioctl.o
- .text.getMAX_RT
-                0x00000000       0x20 ../../lib/radio_control/radioctl.o
  .text.getTX_FULL
                 0x00000000       0x1e ../../lib/radio_control/radioctl.o
- .text.clearMAX_RT
-                0x00000000       0x14 ../../lib/radio_control/radioctl.o
- .text.clearTX_DS
-                0x00000000       0x14 ../../lib/radio_control/radioctl.o
+ .text          0x00000000        0x0 ../../lib/i2c/i2c.o
+ .bss           0x00000000        0x0 ../../lib/i2c/i2c.o
+ .text.ERROR1   0x00000000        0x2 ../../lib/i2c/i2c.o
+ .text.ERROR2   0x00000000        0x2 ../../lib/i2c/i2c.o
+ .text.initI2C  0x00000000        0xe ../../lib/i2c/i2c.o
+ .text.batteryICI2C
+                0x00000000       0x5e ../../lib/i2c/i2c.o
+ .text.I2C_receive_batteryIC
+                0x00000000       0x92 ../../lib/i2c/i2c.o
  .text          0x00000000        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
  .bss           0x00000000        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
  .text.libgcc.mul
@@ -122,9 +107,10 @@ Linker script and memory map
 
 Address of section .data set to 0x800100
 LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
-LOAD receive.o
+LOAD com.o
 LOAD ../../lib/spi/spi.o
 LOAD ../../lib/radio_control/radioctl.o
+LOAD ../../lib/i2c/i2c.o
 LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libm.a
 START GROUP
 LOAD /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a
@@ -222,7 +208,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0x51a
+.text           0x00000000      0x728
  *(.vectors)
  .vectors       0x00000000       0xac /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
                 0x00000000                __vectors
@@ -325,62 +311,98 @@ END GROUP
                 0x000000e4                . = ALIGN (0x2)
  *(.text.*)
  .text.initUART
-                0x000000e4       0x20 receive.o
+                0x000000e4       0x20 com.o
                 0x000000e4                initUART
+ .text.build_packet
+                0x00000104       0x10 com.o
+                0x00000104                build_packet
+ .text.uart_putchar
+                0x00000114        0xe com.o
+                0x00000114                uart_putchar
+ .text.uart_putstring
+                0x00000122       0x18 com.o
+                0x00000122                uart_putstring
+ .text.transmit
+                0x0000013a       0x9c com.o
+                0x0000013a                transmit
+ .text.init_ports
+                0x000001d6       0x10 com.o
+                0x000001d6                init_ports
  .text.startup.main
-                0x00000104       0x90 receive.o
-                0x00000104                main
+                0x000001e6       0xee com.o
+                0x000001e6                main
  .text.SPI_masterInit
-                0x00000194        0xa ../../lib/spi/spi.o
-                0x00000194                SPI_masterInit
+                0x000002d4        0xa ../../lib/spi/spi.o
+                0x000002d4                SPI_masterInit
  .text.SPI_masterReceive
-                0x0000019e        0xe ../../lib/spi/spi.o
-                0x0000019e                SPI_masterReceive
+                0x000002de        0xe ../../lib/spi/spi.o
+                0x000002de                SPI_masterReceive
  .text.SPI_masterTransmit
-                0x000001ac        0xc ../../lib/spi/spi.o
-                0x000001ac                SPI_masterTransmit
+                0x000002ec        0xc ../../lib/spi/spi.o
+                0x000002ec                SPI_masterTransmit
  .text.openPort
-                0x000001b8        0x4 ../../lib/radio_control/radioctl.o
-                0x000001b8                openPort
+                0x000002f8        0x4 ../../lib/radio_control/radioctl.o
+                0x000002f8                openPort
  .text.closePort
-                0x000001bc        0xe ../../lib/radio_control/radioctl.o
-                0x000001bc                closePort
+                0x000002fc        0xe ../../lib/radio_control/radioctl.o
+                0x000002fc                closePort
+ .text.initRadioTX
+                0x0000030a        0xc ../../lib/radio_control/radioctl.o
+                0x0000030a                initRadioTX
  .text.initRadioRX
-                0x000001ca        0xc ../../lib/radio_control/radioctl.o
-                0x000001ca                initRadioRX
+                0x00000316        0xc ../../lib/radio_control/radioctl.o
+                0x00000316                initRadioRX
  .text.setRadioAddressWidth
-                0x000001d6       0x12 ../../lib/radio_control/radioctl.o
-                0x000001d6                setRadioAddressWidth
+                0x00000322       0x12 ../../lib/radio_control/radioctl.o
+                0x00000322                setRadioAddressWidth
  .text.setRadioFrequency
-                0x000001e8       0x12 ../../lib/radio_control/radioctl.o
-                0x000001e8                setRadioFrequency
+                0x00000334       0x12 ../../lib/radio_control/radioctl.o
+                0x00000334                setRadioFrequency
+ .text.setRadioTXAddress
+                0x00000346       0x2e ../../lib/radio_control/radioctl.o
+                0x00000346                setRadioTXAddress
  .text.setRadioRXAddress
-                0x000001fa       0x2e ../../lib/radio_control/radioctl.o
-                0x000001fa                setRadioRXAddress
+                0x00000374       0x2e ../../lib/radio_control/radioctl.o
+                0x00000374                setRadioRXAddress
  .text.setRadioRXPayloadSize
-                0x00000228       0x26 ../../lib/radio_control/radioctl.o
-                0x00000228                setRadioRXPayloadSize
+                0x000003a2       0x26 ../../lib/radio_control/radioctl.o
+                0x000003a2                setRadioRXPayloadSize
+ .text.setRadioTXPayload
+                0x000003c8       0x3e ../../lib/radio_control/radioctl.o
+                0x000003c8                setRadioTXPayload
  .text.getRadioRXPayload
-                0x0000024e       0x3a ../../lib/radio_control/radioctl.o
-                0x0000024e                getRadioRXPayload
+                0x00000406       0x3a ../../lib/radio_control/radioctl.o
+                0x00000406                getRadioRXPayload
  .text.getRadioStatus
-                0x00000288       0x14 ../../lib/radio_control/radioctl.o
-                0x00000288                getRadioStatus
+                0x00000440       0x14 ../../lib/radio_control/radioctl.o
+                0x00000440                getRadioStatus
  .text.getRX_DR
-                0x0000029c       0x20 ../../lib/radio_control/radioctl.o
-                0x0000029c                getRX_DR
+                0x00000454       0x20 ../../lib/radio_control/radioctl.o
+                0x00000454                getRX_DR
+ .text.getTX_DS
+                0x00000474       0x20 ../../lib/radio_control/radioctl.o
+                0x00000474                getTX_DS
+ .text.getMAX_RT
+                0x00000494       0x1e ../../lib/radio_control/radioctl.o
+                0x00000494                getMAX_RT
+ .text.clearMAX_RT
+                0x000004b2        0xc ../../lib/radio_control/radioctl.o
+                0x000004b2                clearMAX_RT
+ .text.clearTX_DS
+                0x000004be        0xc ../../lib/radio_control/radioctl.o
+                0x000004be                clearTX_DS
  .text.clearRX_DR
-                0x000002bc        0xc ../../lib/radio_control/radioctl.o
-                0x000002bc                clearRX_DR
+                0x000004ca        0xc ../../lib/radio_control/radioctl.o
+                0x000004ca                clearRX_DR
  .text.avr-libc
-                0x000002c8      0x24e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
-                0x000002c8                malloc
-                0x000003f8                free
-                0x00000516                . = ALIGN (0x2)
+                0x000004d6      0x24e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
+                0x000004d6                malloc
+                0x00000606                free
+                0x00000724                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000516        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
-                0x00000516                exit
-                0x00000516                _exit
+ .fini9         0x00000724        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
+                0x00000724                exit
+                0x00000724                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -399,18 +421,19 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000516        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
+ .fini0         0x00000724        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
  *(.fini0)
-                0x0000051a                _etext = .
+                0x00000728                _etext = .
 
-.data           0x00800100        0x8 load address 0x0000051a
+.data           0x00800100       0x2c load address 0x00000728
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
- .data          0x00800100        0x1 receive.o
+ .data          0x00800100        0x1 com.o
                 0x00800100                mode
  .data          0x00800101        0x0 ../../lib/spi/spi.o
  .data          0x00800101        0x0 ../../lib/radio_control/radioctl.o
+ .data          0x00800101        0x0 ../../lib/i2c/i2c.o
  .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
  .data          0x00800101        0x0 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
  .data          0x00800101        0x6 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
@@ -421,30 +444,31 @@ END GROUP
  *(.data*)
  *(.rodata)
  *(.rodata*)
+ .rodata.str1.1
+                0x00800107       0x25 com.o
  *(.gnu.linkonce.d*)
-                0x00800108                . = ALIGN (0x2)
- *fill*         0x00800107        0x1 
-                0x00800108                _edata = .
-                0x00800108                PROVIDE (__data_end, .)
+                0x0080012c                . = ALIGN (0x2)
+                0x0080012c                _edata = .
+                0x0080012c                PROVIDE (__data_end, .)
 
-.bss            0x00800108        0x4
-                0x00800108                PROVIDE (__bss_start, .)
+.bss            0x0080012c        0x4
+                0x0080012c                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
  *(COMMON)
- COMMON         0x00800108        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
-                0x00800108                __brkval
-                0x0080010a                __flp
-                0x0080010c                PROVIDE (__bss_end, .)
-                0x0000051a                __data_load_start = LOADADDR (.data)
-                0x00000522                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080012c        0x4 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
+                0x0080012c                __brkval
+                0x0080012e                __flp
+                0x00800130                PROVIDE (__bss_end, .)
+                0x00000728                __data_load_start = LOADADDR (.data)
+                0x00000754                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x0080010c        0x0
-                0x0080010c                PROVIDE (__noinit_start, .)
+.noinit         0x00800130        0x0
+                0x00800130                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x0080010c                PROVIDE (__noinit_end, .)
-                0x0080010c                _end = .
-                0x0080010c                PROVIDE (__heap_start, .)
+                0x00800130                PROVIDE (__noinit_end, .)
+                0x00800130                _end = .
+                0x00800130                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -485,10 +509,11 @@ END GROUP
 
 .comment        0x00000000       0x11
  *(.comment)
- .comment       0x00000000       0x11 receive.o
+ .comment       0x00000000       0x11 com.o
                                  0x12 (size before relaxing)
  .comment       0x00000000       0x12 ../../lib/spi/spi.o
  .comment       0x00000000       0x12 ../../lib/radio_control/radioctl.o
+ .comment       0x00000000       0x12 ../../lib/i2c/i2c.o
  .comment       0x00000000       0x12 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
 
 .debug
@@ -503,72 +528,81 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x1a8
+.debug_aranges  0x00000000      0x1f0
  *(.debug_aranges)
  .debug_aranges
-                0x00000000       0x48 receive.o
+                0x00000000       0x50 com.o
  .debug_aranges
-                0x00000048       0x48 ../../lib/spi/spi.o
+                0x00000050       0x48 ../../lib/spi/spi.o
  .debug_aranges
-                0x00000090       0xb8 ../../lib/radio_control/radioctl.o
+                0x00000098       0xb8 ../../lib/radio_control/radioctl.o
  .debug_aranges
-                0x00000148       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
+                0x00000150       0x40 ../../lib/i2c/i2c.o
  .debug_aranges
-                0x00000168       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
+                0x00000190       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
  .debug_aranges
-                0x00000188       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
+                0x000001b0       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
+ .debug_aranges
+                0x000001d0       0x20 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x132a
+.debug_info     0x00000000     0x1569
  *(.debug_info)
- .debug_info    0x00000000      0x712 receive.o
- .debug_info    0x00000712      0x220 ../../lib/spi/spi.o
- .debug_info    0x00000932      0x7be ../../lib/radio_control/radioctl.o
- .debug_info    0x000010f0       0xbe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
- .debug_info    0x000011ae       0xbe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
- .debug_info    0x0000126c       0xbe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
+ .debug_info    0x00000000      0x82f com.o
+ .debug_info    0x0000082f      0x220 ../../lib/spi/spi.o
+ .debug_info    0x00000a4f      0x7be ../../lib/radio_control/radioctl.o
+ .debug_info    0x0000120d      0x122 ../../lib/i2c/i2c.o
+ .debug_info    0x0000132f       0xbe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
+ .debug_info    0x000013ed       0xbe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
+ .debug_info    0x000014ab       0xbe /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000      0x52d
+.debug_abbrev   0x00000000      0x627
  *(.debug_abbrev)
- .debug_abbrev  0x00000000      0x253 receive.o
- .debug_abbrev  0x00000253      0x111 ../../lib/spi/spi.o
- .debug_abbrev  0x00000364      0x18d ../../lib/radio_control/radioctl.o
- .debug_abbrev  0x000004f1       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
- .debug_abbrev  0x00000505       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
- .debug_abbrev  0x00000519       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
+ .debug_abbrev  0x00000000      0x27e com.o
+ .debug_abbrev  0x0000027e      0x111 ../../lib/spi/spi.o
+ .debug_abbrev  0x0000038f      0x18d ../../lib/radio_control/radioctl.o
+ .debug_abbrev  0x0000051c       0xcf ../../lib/i2c/i2c.o
+ .debug_abbrev  0x000005eb       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
+ .debug_abbrev  0x000005ff       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
+ .debug_abbrev  0x00000613       0x14 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
 
-.debug_line     0x00000000      0x672
+.debug_line     0x00000000      0x7ba
  *(.debug_line)
- .debug_line    0x00000000      0x227 receive.o
- .debug_line    0x00000227       0xec ../../lib/spi/spi.o
- .debug_line    0x00000313      0x248 ../../lib/radio_control/radioctl.o
- .debug_line    0x0000055b       0x58 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
- .debug_line    0x000005b3       0x61 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
- .debug_line    0x00000614       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
+ .debug_line    0x00000000      0x260 com.o
+ .debug_line    0x00000260       0xec ../../lib/spi/spi.o
+ .debug_line    0x0000034c      0x248 ../../lib/radio_control/radioctl.o
+ .debug_line    0x00000594      0x10f ../../lib/i2c/i2c.o
+ .debug_line    0x000006a3       0x58 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
+ .debug_line    0x000006fb       0x61 /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
+ .debug_line    0x0000075c       0x5e /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_clear_bss.o)
 
-.debug_frame    0x00000000      0x36c
+.debug_frame    0x00000000      0x3e0
  *(.debug_frame)
- .debug_frame   0x00000000       0xa0 receive.o
- .debug_frame   0x000000a0       0x88 ../../lib/spi/spi.o
- .debug_frame   0x00000128      0x244 ../../lib/radio_control/radioctl.o
+ .debug_frame   0x00000000       0xb0 com.o
+ .debug_frame   0x000000b0       0x88 ../../lib/spi/spi.o
+ .debug_frame   0x00000138      0x244 ../../lib/radio_control/radioctl.o
+ .debug_frame   0x0000037c       0x64 ../../lib/i2c/i2c.o
 
-.debug_str      0x00000000      0x3f4
+.debug_str      0x00000000      0x471
  *(.debug_str)
- .debug_str     0x00000000      0x2c3 receive.o
-                                0x310 (size before relaxing)
- .debug_str     0x000002c3       0x75 ../../lib/spi/spi.o
-                                0x1c5 (size before relaxing)
- .debug_str     0x00000338       0xbc ../../lib/radio_control/radioctl.o
-                                0x31c (size before relaxing)
+ .debug_str     0x00000000      0x2e8 com.o
+                                0x335 (size before relaxing)
+ .debug_str     0x000002e8       0x75 ../../lib/spi/spi.o
+                                0x1c8 (size before relaxing)
+ .debug_str     0x0000035d       0xaf ../../lib/radio_control/radioctl.o
+                                0x31f (size before relaxing)
+ .debug_str     0x0000040c       0x65 ../../lib/i2c/i2c.o
+                                0x1a2 (size before relaxing)
 
-.debug_loc      0x00000000      0xa27
+.debug_loc      0x00000000      0xa42
  *(.debug_loc)
- .debug_loc     0x00000000      0x31b receive.o
- .debug_loc     0x0000031b       0xd2 ../../lib/spi/spi.o
- .debug_loc     0x000003ed      0x63a ../../lib/radio_control/radioctl.o
+ .debug_loc     0x00000000      0x2bd com.o
+ .debug_loc     0x000002bd       0xd2 ../../lib/spi/spi.o
+ .debug_loc     0x0000038f      0x63a ../../lib/radio_control/radioctl.o
+ .debug_loc     0x000009c9       0x79 ../../lib/i2c/i2c.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -576,22 +610,26 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x118
+.debug_ranges   0x00000000      0x168
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x38 receive.o
- .debug_ranges  0x00000038       0x38 ../../lib/spi/spi.o
- .debug_ranges  0x00000070       0xa8 ../../lib/radio_control/radioctl.o
+ .debug_ranges  0x00000000       0x58 com.o
+ .debug_ranges  0x00000058       0x38 ../../lib/spi/spi.o
+ .debug_ranges  0x00000090       0xa8 ../../lib/radio_control/radioctl.o
+ .debug_ranges  0x00000138       0x30 ../../lib/i2c/i2c.o
 
 .debug_macro
  *(.debug_macro)
-OUTPUT(receive.elf elf32-avr)
+OUTPUT(com.elf elf32-avr)
 LOAD linker stubs
 
 Cross Reference Table
 
 Symbol                                            File
+ERROR1                                            ../../lib/i2c/i2c.o
+ERROR2                                            ../../lib/i2c/i2c.o
+I2C_receive_batteryIC                             ../../lib/i2c/i2c.o
 SPI_masterInit                                    ../../lib/spi/spi.o
-                                                  receive.o
+                                                  com.o
 SPI_masterReceive                                 ../../lib/spi/spi.o
                                                   ../../lib/radio_control/radioctl.o
 SPI_masterTransmit                                ../../lib/spi/spi.o
@@ -607,7 +645,7 @@ __do_clear_bss                                    /usr/local/CrossPack-AVR-20131
                                                   /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
 __do_copy_data                                    /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_copy_data.o)
                                                   /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
-                                                  receive.o
+                                                  com.o
 __flp                                             /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
 __heap_end                                        /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
                                                   /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
@@ -664,52 +702,56 @@ __vectors                                         /usr/local/CrossPack-AVR-20131
 _exit                                             /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
 accelerometerReceive                              ../../lib/spi/spi.o
 activateFeatures                                  ../../lib/radio_control/radioctl.o
-build_packet                                      receive.o
+batteryICI2C                                      ../../lib/i2c/i2c.o
+build_packet                                      com.o
 clearMAX_RT                                       ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 clearRX_DR                                        ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 clearTX_DS                                        ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 closePort                                         ../../lib/radio_control/radioctl.o
 digiPotInitWiper                                  ../../lib/spi/spi.o
 exit                                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/avr5/libgcc.a(_exit.o)
                                                   /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
 free                                              /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
 getMAX_RT                                         ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 getRX_DR                                          ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 getRadioRXPayload                                 ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 getRadioStatus                                    ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 getTX_DS                                          ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 getTX_FULL                                        ../../lib/radio_control/radioctl.o
+initI2C                                           ../../lib/i2c/i2c.o
 initRadioRX                                       ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 initRadioTX                                       ../../lib/radio_control/radioctl.o
-                                                  receive.o
-initUART                                          receive.o
+                                                  com.o
+initUART                                          com.o
 init_accel                                        ../../lib/spi/spi.o
-main                                              receive.o
+init_ports                                        com.o
+main                                              com.o
                                                   /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm32u4.o
 malloc                                            /usr/local/CrossPack-AVR-20131216/lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/libc.a(malloc.o)
-                                                  receive.o
-mode                                              receive.o
+                                                  com.o
+mode                                              com.o
 openPort                                          ../../lib/radio_control/radioctl.o
 setRadioAddressWidth                              ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 setRadioFrequency                                 ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 setRadioRXAddress                                 ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 setRadioRXPayloadSize                             ../../lib/radio_control/radioctl.o
-                                                  receive.o
+                                                  com.o
 setRadioTXAddress                                 ../../lib/radio_control/radioctl.o
+                                                  com.o
 setRadioTXPayload                                 ../../lib/radio_control/radioctl.o
-                                                  receive.o
-transmit                                          receive.o
-uart_putchar                                      receive.o
-uart_putstring                                    receive.o
+                                                  com.o
+transmit                                          com.o
+uart_putchar                                      com.o
+uart_putstring                                    com.o

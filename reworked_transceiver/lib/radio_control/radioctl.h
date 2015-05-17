@@ -60,7 +60,7 @@ void setRadioAddressWidth(uint8_t width);
 void setRadioFrequency(uint8_t frequency); 
 void setRadioTXAddress(uint32_t address);
 void setRadioRXAddress(int32_t address);
-void setRadioTXPayload(int8_t* frame, int8_t payloadSize);
+void setRadioTXPayload(uint8_t* frame, int8_t payloadSize);
 void setRadioRXPayloadSize(uint8_t dataPipe, uint8_t size);
 
 void getRadioRXPayload(uint8_t* payload, uint8_t payloadSize);
